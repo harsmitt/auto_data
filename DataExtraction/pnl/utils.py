@@ -88,13 +88,25 @@ def table_content(**kwargs):
                     for i in range(10):
                         data = get_page_content(page=page_num,path=kwargs['path'],file=kwargs['file'])
                         if any(('Financial Statements and Supplementary Data').lower() in i.decode('utf-8').lower() for i in data):
-                            kwargs['page_detail']['page_list'] = {' '.join(i.decode('utf-8').split()[0:6]) : i.decode('utf-8').split()[-1]
+                            statements_page = {' '.join(i.decode('utf-8').split()[0:6]) : i.decode('utf-8').split()[-1]
                                                                   for i in data if any(index in i.decode('utf-8').lower() for index in index_list)
                                                                   and i.decode('utf-8').split()[-1].isdigit()==True}
                             # print (kwargs['page_detail'])
+                            kwargs['page_detail']['page_list'].update(statements_page)
                             break;
                         else:
                             page_num= int(page_num)+ 1
+
+            elif "Management's Discussion and Analysis of" in str1.decode('utf-8'):
+                page_num = str1.decode('utf-8').split()[-1]
+                next_num = kwargs['data'][num + 1].decode('utf-8').split()[-1]
+                key =get_aplha( str1.decode('utf-8').split('.')[-1].strip())
+                if (int(next_num) - int(page_num)) > 1:
+                    if 'page_list' in kwargs['page_detail']:
+                        kwargs['page_detail']['page_list']['start-end'] ={key: page_num+'-'+ next_num}
+                    else:
+                        kwargs['page_detail']['page_list'] ={'start-end':{key:page_num+'-'+ next_num}}
+
 
             elif any(i in str1.decode('utf-8').lower() for i in index_list) and str1.decode('utf-8').split()[-1].isdigit()==True:
                 page_num = str1.decode('utf-8').split()[-1]
@@ -116,6 +128,7 @@ def table_content(**kwargs):
                         break;
                     else:
                         page_num = int(page_num) + 1
+
     return kwargs['page_detail']
 
 
@@ -139,13 +152,12 @@ def get_operations_data(**kwargs):
                         break;
                 elif date_val == True:
                     word = i.strip().replace(':', '')
+                    # import pdb;pdb.set_trace()
                     if 'per share' in word:
                         break;
                     elif any(ex.lower() in word.lower() for ex in exceptional):
                         values = re.split('  +', word)
                         if data_dict[list(data_dict.keys())[-1]]=={}:
-                            # new_values = list(map(lambda x: x.replace(x, '-') if x in spl_char else x, values[1:]))
-                            # new = [int(i.replace(',', '').replace('(', '-').replace(')', '').replace('$','')) for i in values[1:]]
                             new = list(
                                 map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), values[1:]))))
                             data_dict[list(data_dict.keys())[-1]]=list(zip(date_obj,new))
@@ -158,11 +170,13 @@ def get_operations_data(**kwargs):
                         pass
                     elif word and word.split()[0].istitle() and len(word) < 100 and any(
                             check_datetime(str1) for str1 in word.split()) == False:
+
                         if word.lower() in data_dict:
                                 pass
-                        elif alpha_there(word):
-                            new_key = get_aplha(word)
-                            data_dict[new_key.lower()] = {}
+
+                        elif alpha_there(word) and not num_there(word):
+                            # new_key = get_aplha(word)
+                            data_dict[word.strip().lower()] = {}
 
                         elif data_dict and num_there(word) and not alpha_there(word):
                             values = list(filter(lambda name: num_there(name), word.split()))
@@ -178,9 +192,10 @@ def get_operations_data(**kwargs):
                     elif len(word) > 100:
                         values = re.split('  +', word)
                         new_key = values[0] if len(values[0]) < 60 else values[0].split(',')[0]
-                        new_key = get_aplha(new_key)
+                        new_key =  new_key.strip().lower()
+                        val = values[1].split() if len(values) == 2  else values[1:]#get_aplha(new_key)
                         # new_values = list(map(lambda x: x.replace(x, '-') if x in spl_char else x, values[1:]))
-                        new = list(map(lambda num : get_digit(num),list(filter(lambda x: num_there(x),values[1:]))))
+                        new = list(map(lambda num : get_digit(num),list(filter(lambda x: num_there(x),val))))
                         data_dict[new_key] = list(zip(date_obj,new))
 
                     elif len(word) > 100 and ('                       ') not in word:
@@ -204,3 +219,108 @@ def calculations(old,new):
     new = list(map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), new))))
     new_values = [a + b for a, b in zip(values, new)]
     return new_values
+
+
+def get_notes_data(**kwargs):
+    import copy
+    old_data_dict = copy.deepcopy(kwargs['page_data'])
+    notes_sec_start=False
+    notes_key =['net sales', 'cost of sales','selling, general and administrative expenses','interest expense', 'other (income) expense, net']
+    sec_name = list(kwargs['notes_sec'].keys())[0]
+
+    start= list(kwargs['notes_sec'].values())[0].split('-')[0]
+    end = list(kwargs['notes_sec'].values())[0].split('-')[-1]
+    total_notes = int(end) - int(start)
+    for notes in range(int(start)-1,int(end)+5):
+        data = get_page_content(page=notes, path=kwargs['path'], file=kwargs['file'])
+        if any(sec_name in get_aplha(i.decode('utf-8')) for i in data ) and not notes_sec_start:
+            notes_sec_start = True
+            keys = list(kwargs['page_data'].keys())
+            for key in keys:
+                r1 = '[A-Za-z0-9. - ]* %s[ ,A-Za-z0-9.-]*$' %(key)
+                r2 = '%s[ ,A-Za-z0-9.-]*$' %(key)
+                re_obj = re.compile(r1, re.I)
+                re_obj2 = re.compile(r2, re.I)
+                for line in data:
+                    if re_obj.match(line.decode('utf-8')) or re_obj2.match(line.decode('utf-8')):
+                        print ("match kr gya")
+
+        elif notes_sec_start:
+            qtr_exists = ''
+            date_val = False
+            date_obj = []
+            new_key_dict = OrderedDict()
+
+            keys = list(kwargs['page_data'].keys())
+            for key in keys:
+                if key in notes_key:
+                    r1 = '[A-Za-z0-9. - ]* %s[ ,A-Za-z0-9.-]*$' % (key)
+                    r2 = '%s[ ,A-Za-z0-9.-]*$' % (key)
+                    re_obj = re.compile(r1, re.I)
+                    re_obj2 = re.compile(r2, re.I)
+                    if any(re_obj2.match(line.decode('utf-8')) for line_num,line in enumerate(data) ) :
+                        key_line_num =[line_num for line_num,line in enumerate(data) if re_obj2.match(line.decode('utf-8'))]
+
+                        for num,line in enumerate(data[key_line_num[0]:]):
+                            line = line.decode('utf8').strip()
+                            if line and num_there(line) and not date_val:
+                                date_obj, qtr_exists, date_val = get_year(date_obj, line, date_val, qtr_exists)
+                                if qtr_exists == False and len(date_obj) > 1:
+                                    qtr_exists = False
+                                    break;
+                            elif date_val == True:
+                                # import pdb;pdb.set_trace()
+                                if line.replace('-',' ').split()[0].istitle() and not num_there(line):
+                                    if line.lower() in kwargs['page_data']:
+                                        pass
+
+                                    elif alpha_there(line) and not num_there(line):
+                                        # new_key = get_aplha(word)
+                                        new_key_dict[line.strip().lower()] = {}
+
+                                    elif new_key_dict and num_there(line) and not alpha_there(line):
+                                        values = list(filter(lambda name: num_there(name), line.split()))
+                                        new = list(
+                                            map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), values))))
+
+                                        dict1 = list(zip(date_obj, new))
+                                        for d1 in new_key_dict:
+                                            for key in new_key_dict[d1]:
+                                                if new_key_dict[d1][key] in [[], {}]:
+                                                    new_key_dict[d1][key] = dict1
+
+                                elif line.replace('-',' ').split()[0].istitle() and len(re.split('   +',line))>1:
+                                    values = re.split('  +', line)
+                                    new_key = values[0] if len(values[0]) < 60 else values[0].split(',')[0]
+                                    val = values[1].split() if len(values)==2  else values[1:]
+                                    new_key = new_key.strip().lower()
+                                    if new_key not in keys:
+                                        if 'total' not in new_key:
+                                            new = list(
+                                                map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), val))))
+                                            if kwargs['page_data'][key]!= list(zip(date_obj, new)):
+                                                # import pdb;pdb.set_trace()
+                                                new_key_dict[new_key] = list(zip(date_obj, new))
+                                            else:
+                                                old_data_dict.update(new_key_dict)
+                                                break;
+
+                                        if new_key.split()[0].lower()=='total' :
+                                            new = list(
+                                                map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), val))))
+                                            new_key_dict[new_key] = list(zip(date_obj, new))
+                                            old_data_dict.update(new_key_dict)
+                                            break;
+                                    elif (new_key == key) :
+                                        old_data_dict.update(new_key_dict)
+                                        break;
+
+                    # print (kwargs['page_data'][key])
+
+
+
+
+        else:
+            print ("different page")
+    # import pdb;pdb.set_trace()
+    return old_data_dict

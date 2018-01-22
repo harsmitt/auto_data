@@ -14,29 +14,6 @@ qtr_dict=qtr_date()
 year_dict = year_date()
 
 
-# class MyAdminSite(AdminSite):
-
-def custom_view(request):
-    import pdb;pdb.set_trace()
-    sec_obj = Section.objects.filter(id=1)
-    sub_obj = SubSection.objects.filter(section=sec_obj)
-    s2_obj = S2Section.objects.filter(subsection__in=sub_obj)
-    s1 = list(sec_obj) + list(sub_obj) + list(s2_obj)
-    print ("mahima")
-
-    return render(request, 'admin/review.html',{'sec_obj':s1})
-
-#     def get_urls(self):
-#         from django.conf.urls import url
-#         urls = super(MyAdminSite, self).get_urls()
-#         urls += [
-#             url(r'^admin/custom_view/$', self.admin_view(self.custom_view))
-#         ]
-#         return urls
-#
-# admin_site = MyAdminSite()
-
-
 class SectionForm( forms.ModelForm ):
     i_synonyms = forms.CharField( widget=forms.Textarea )
 
@@ -84,16 +61,6 @@ class S2SectionAdmin(admin.ModelAdmin):
     form = S2SectionForm
     list_display=['subsection','item']
 
-    # def get_queryset(self, obj):
-    #     import pdb;
-    #     pdb.set_trace()
-    #     print ("reset")
-    #     sec_obj = Section.objects.filter(id=1)
-    #     sub_obj = SubSection.objects.filter(section=sec_obj)
-    #     s2_obj = S2Section.objects.filter(subsection__in=sub_obj)
-    #     s1 = list(sec_obj) + list(sub_obj) + list(s2_obj)
-    #
-    #     return s1
 
     def save_model(self, request, obj, form, change):
         obj.i_synonyms = '##'.join(obj.i_synonyms.split('\r\n'))
@@ -102,16 +69,9 @@ class S2SectionAdmin(admin.ModelAdmin):
 def show_image(request):
     from django.shortcuts import render
 
-    import pdb;pdb.set_trace()
-    sec_obj = Section.objects.filter(id=1)
-    sub_obj = SubSection.objects.filter(section=sec_obj)
-    s2_obj = S2Section.objects.filter(subsection__in=sub_obj)
-    s1 = list(sec_obj) + list(sub_obj) + list(s2_obj)
-    return render(request, 'admin/review.html',{'obj':s1})
-
-    # pdf_path= request.GET['pdf_path']
-    # path = 'http://10.10.0.84/media/'+ pdf_path.split('/')[-3]+'/'+pdf_path.split('/')[-2]+'/'+pdf_path.split('/')[-1]
-    # return render(request, 'image.html',{'path':path})
+    pdf_path= request.GET['pdf_path']
+    path = 'http://10.10.0.84/media/'+ pdf_path.split('/')[-3]+'/'+pdf_path.split('/')[-2]+'/'+pdf_path.split('/')[-1]
+    return render(request, 'image.html',{'path':path})
 
 def submit(request):
     obj = GbcData.objects.filter(id=request.GET['obj_id'])

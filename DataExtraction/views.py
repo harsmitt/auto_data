@@ -16,9 +16,9 @@ def getQuarterContent(path,c_name):
         else:
             data,qtr_exists = pdftotext(path,page=i,file_type='qtr',company_name=company_name)
             if data :
-                # import pdb;pdb.set_trace()
-                # img_path = Create_blank_sheet(company_name,path,i)
-                status = match_keyword_qtr(data,path,page=i,company_name=company_name)
+                img_path,c_name=Create_blank_sheet(company_name,path,i)
+
+                status = match_keyword_qtr(data,img_path,page=i,company_name=c_name)
                 break;
     return company_name
 
@@ -33,9 +33,11 @@ def getYearContent(path,c_name):
             company_name = c_name.encode('utf-8') if not company_name or company_name[0].decode('utf-8') =='' else company_name[0]
         else:
             print (i)
+
             data,qtr_exists = pdftotext(path,page=i,file_type='year',company_name=company_name)
             if data:
-                status = match_keyword(data=data,path=path,page=i,company_name=company_name,new_dict=True)
+                img_path = Create_blank_sheet(company_name, path, i)
+                status = match_keyword(data,img_path,page=i,company_name=company_name,new_dict=True)
                 break;
     print (i)
 
@@ -45,11 +47,11 @@ def LoopPdfDir():
     #                'Hilton','HotelResortOperators','JakksPacific','KoonHoldings','Mid-ConEnergy',
     #                'ScorpioTankers','SocialNetworking','TechnologyConsultingServices','UnitedStatesSteelcompany']
 
-    company_list=['American_Woodmark','Biolase','Apple_1','BOSTONBEER','Hilton','JakksPacific','SocialNetworking','TechnologyConsultingServices','UnitedStatesSteelcompany']
-    # company_list =['American_Woodmark']
+    company_list=['Biolase','Apple_1','BOSTONBEER','Hilton','JakksPacific','SocialNetworking','TechnologyConsultingServices','UnitedStatesSteelcompany']
+    # company_list =['Biolase']
     import os
     for name in company_list:
-        path_list = [fix_path+name+'/Quarter/', fix_path+name+'/Year/']
+        path_list = [fix_path+name+'/Quarter/',fix_path+name+'/Year/']
         print (path_list)
         for path in path_list:
             # import pdb;pdb.set_trace()

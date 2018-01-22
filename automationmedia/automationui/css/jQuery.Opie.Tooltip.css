@@ -1,0 +1,137 @@
+.o-tooltip {
+	position: absolute;
+	z-index: 9999;
+	display: block;
+	visibility: visible;
+	font-size: 13px;
+}
+.o-tooltip-inner {
+	padding: 15px 20px;
+	color: #666;
+	text-align: center;
+	text-decoration: none;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow:0 2px 3px rgba(0,0,0,.04);
+	border:1px solid #e0e0e0;
+}
+.o-tooltip.bl, .o-tooltip.bc, .o-tooltip.br {
+	margin-top: -12px
+}
+.o-tooltip.ml {
+	margin-left: 12px
+}
+.o-tooltip.tl, .o-tooltip.tc, .o-tooltip.tl, .o-tooltip.tr {
+	margin-top: 12px
+}
+.o-tooltip.mr {
+	margin-left: -12px
+}
+.o-tooltip.bc .o-tooltip-arrow {
+	left: 50%;
+	margin-left: -12px;
+	background:url(../images/sprite.png) no-repeat 0 -26px;
+	width:20px;
+	height:12px;
+}
+.o-tooltip.mr .o-tooltip-arrow {
+	top: 50%;
+	right: -12px;
+	margin-top: -12px;
+	border-top: 12px solid transparent;
+	border-bottom: 12px solid transparent;
+	border-left: 12px solid #1ABC9C
+}
+.o-tooltip.tc .o-tooltip-arrow {
+	left: 50%;
+	margin-left: -12px;
+	background:url(../images/sprite.png) no-repeat 0 -41px;
+	width:20px;
+	height:12px;
+	z-index:99;
+}
+.o-tooltip.ml .o-tooltip-arrow {
+	top: 50%;
+	left: -12px;
+	margin-top: -12px;
+	border-top: 12px solid transparent;
+	border-bottom: 12px solid transparent;
+	border-right: 12px solid #1ABC9C
+}
+.o-tooltip.tl .o-tooltip-arrow {
+	left: 0;
+	border-top: 12px solid rgba(0, 0, 0, 0);
+	border-bottom: 12px solid transparent;
+	border-left: 12px solid #1ABC9C;
+}
+.o-tooltip.bl .o-tooltip-arrow {
+	left: 0;
+	border-top: 12px solid rgba(0, 0, 0, 0);
+	border-bottom: 12px solid transparent;
+	border-left: 12px solid #1ABC9C;
+}
+.o-tooltip.tr .o-tooltip-arrow {
+	right: 0;
+	border-top: 12px solid rgba(0, 0, 0, 0);
+	border-bottom: 12px solid transparent;
+	border-right: 12px solid #1ABC9C;
+}
+.o-tooltip.br .o-tooltip-arrow {
+	top: 100%;
+	right: 0;
+	margin-top: -13px;
+	border-top: 12px solid rgba(0, 0, 0, 0);
+	border-bottom: 12px solid transparent;
+	border-right: 12px solid #1ABC9C;
+}
+/* Tooltip arrow bottom */
+.o-tooltip.bl .o-tooltip-arrow, .o-tooltip.bc .o-tooltip-arrow, .o-tooltip.br .o-tooltip-arrow {
+	bottom: -11px;
+}
+/* Tooltip arrow top */
+.o-tooltip.tl .o-tooltip-arrow, .o-tooltip.tc .o-tooltip-arrow, .o-tooltip.tr .o-tooltip-arrow {
+	top: -12px;
+}
+.o-tooltip-arrow {
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+.o-tooltip-close {
+	position: absolute;
+	width: 15px;
+	height: 15px;
+	background: #137861;
+	cursor: pointer;
+	left: 100%;
+	margin-left: -15px;
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 2px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-bottomleft: 2px;
+	border-top-right-radius: 3px;
+	border-bottom-left-radius: 2px;
+}
+.o-tooltip-close span {
+	display: block;
+	width: 4px;
+	height: 4px;
+	line-height: 4px;
+	font-size: 10px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -4px 0 0 -2px;
+	color: #FFF;
+	font-weight: bold;
+}
+.o-tooltip.mr .o-tooltip-close, .o-tooltip.tr .o-tooltip-close {
+	left: 0px;
+	margin: 0;
+	-webkit-border-top-left-radius: 3px;
+	-webkit-border-bottom-right-radius: 1px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-bottomright: 1px;
+	border-top-left-radius: 3px;
+	border-bottom-right-radius: 1px;
+}

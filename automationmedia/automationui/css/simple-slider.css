@@ -1,0 +1,43 @@
+.slider {
+  width: 300px;
+}
+
+.slider > .dragger {
+	background: rgba(0, 0, 0, 0) url("../images/sprite.png") no-repeat scroll -23px -26px;
+    display: block;
+    height: 30px;
+    width: 23px;
+}
+
+
+
+.slider > .track, .slider > .highlight-track {
+  background: #d3dcde;
+  border: 2px solid #d3dcde;
+  height: 4px;
+}
+
+.slider > .highlight-track {
+	background-color: #b2cd1e;
+	border-color: #b2cd1e;
+}
+
+.output {
+	color: #0073d3;
+    display: block;
+    padding: 10px 0 0;
+    text-align: center;
+	font-weight:bold;
+}
+
+.student .output:after {
+	color:#0073d3;
+	content:" Students"
+}
+
+
+.acres .output:after {
+	color:#0073d3;
+	content:" Acres"
+}
+

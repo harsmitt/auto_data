@@ -13,6 +13,7 @@ mapping_dict ={'assets':'current assets','LIABILITIES AND'.lower():'current liab
 
 main_keys_dict=['current assets','current liabilities','non current assets','non current liabilities','long term assets'
                 ,"Stockholders' equity",'shareholders\xe2\x80\x99 equity','stockholders\xe2\x80\x99 equity']
+
 spl_char=['\xe2\x80\x93','\xe2\x80\x99','\xe2\x80\x94']
 
 total_comp = list(mapping_dict.keys()) + list(mapping_dict.values())
@@ -100,11 +101,12 @@ def pdftotext(path, page=None,file_type=None,company_name=''):
                     i=i.decode('utf8')
 
                     if i and num_there(i) and not date_val:
-                        date_obj,qtr_exists,date_val = get_date_obj(date_obj, i, date_val,qtr_exists) if file_type=='qtr'\
+                        date_obj,qtr_exists,date_val = get_date_obj(date_obj,i,date_val,qtr_exists) if file_type=='qtr'\
                             else get_year(date_obj, i, date_val,qtr_exists)
                         if qtr_exists==False and len(date_obj)>1:
                             qtr_exists=False
                             break;
+
                     elif date_val == True:
                         word = i.strip().replace(':', '')
                         print (word)
@@ -162,10 +164,15 @@ def pdftotext(path, page=None,file_type=None,company_name=''):
                             pattern = re.compile('[(|),-]')
                             key_name= get_aplha(values[0])
                             if pattern.split(key_name)[0].strip() in ['total assets','total current assets','total current liabilities','total liabilities']:
+                                new_key = key_name if len(key_name) < 60 else key_name.split(',')[0]
+                                new_values = list(filter(lambda num: num_there(num), values[1:]))
+                                val = map(lambda x: str(get_digit(x)), new_values)
+                                data_dict[list(data_dict.keys())[-1]][new_key] = list(zip(date_obj, val))
                                 data_dict[mapping_dict[pattern.split(key_name)[0].strip()]] = {}
 
                             elif key_name in ['assets','liabilities']:
                                 if  key_name =='assets':
+                                    import pdb;pdb.set_trace()
                                     data_dict['current liabilities']={}
                                 else:
                                     data_dict['stockholders equity']={}
@@ -200,12 +207,12 @@ def pdftotext(path, page=None,file_type=None,company_name=''):
                                 # break;
                         elif data_dict and len(word) > 100 and  ('                       ') not in word :
 
-                            if list(filter(lambda x: True if str('total ' + str(x)) == word.lower() else False, total_comp)):
-                                pass
-                            else:
-                                word = word.split(',')[0]
-                                new_key = [word.replace(i, '-') for i in spl_char if i in word ]
-                                new_key = "".join(new_key[0].split()) if new_key else word
+                            # if list(filter(lambda x: True if str('total ' + str(x)) == word.lower() else False, total_comp)):
+                            #     pass
+                            # else:
+                            word = word.split(',')[0]
+                            new_key = [word.replace(i, '-') for i in spl_char if i in word ]
+                            new_key = "".join(new_key[0].split()) if new_key else word
 
                             data_dict[list(data_dict.keys())[-1]] = {new_key: {}}
             print (data_dict)

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import User
 
 Comp_type=(('Balance Sheet','Balance Sheet'),
            ('Profit and Loss','Profit and Loss'),
@@ -11,8 +12,8 @@ class Section(models.Model):
     i_synonyms = models.CharField(max_length=400, blank=True,null=True)
     i_related = models.CharField(max_length=200,choices=Comp_type)
     added_date = models.DateTimeField(auto_now=True)
-
-
+    added_by =models.ForeignKey(User,blank=True,null=True,related_name = 'Sec_Addition')
+    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'Sec_Modification')
     def __str__(self):
         return self.item
 
@@ -26,6 +27,8 @@ class SubSection(models.Model):
     i_keyword = models.CharField(max_length =1000,blank=True,null=True)
     i_deduction = models.CharField(max_length=2000, blank=True,null=True)
     added_date = models.DateTimeField(auto_now=True)
+    added_by =  models.ForeignKey(User,blank=True,null=True,related_name = 'subsec_Addition')
+    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'subsec_Modification')
 
     def __str__(self):
         return self.item
@@ -40,6 +43,9 @@ class S2Section(models.Model):
     i_deduction = models.CharField(max_length=2000, blank=True, null=True)
 
     added_date = models.DateTimeField(auto_now=True)
+
+    added_by = models.ForeignKey(User,blank=True,null=True,related_name = 'S2sec_Addition')
+    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'S2sec_Modification')
 
     def __str__(self):
         return self.item
@@ -88,10 +94,12 @@ class GbcData(models.Model):
     y3 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_3')
     y4 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_4')
     tlm = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_5')
+    added_by = models.ForeignKey(User,blank=True,null=True,related_name = 'GBC_Addition')
+    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'GBC_Modification')
 
 
     def __str__(self):
-        return self.subsection.item
+        return self.section.item
 
     class Meta:
         verbose_name = ("Raw data")

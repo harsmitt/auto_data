@@ -24,7 +24,6 @@ class KeywordsPool(object):
     c_lib_s2sec_map_dict = list(S2Section.objects.filter(subsection_id=16).values('i_synonyms','i_breakdown','i_keyword','item','subsection','subsection__section','id'))
     nc_lib_s2sec_map_dict =list(S2Section.objects.filter(subsection_id=19).values('i_synonyms','i_breakdown','i_keyword','item','subsection','subsection__section','id'))
 
-    pnl_map_dict = list(SubSection.objects.filter(section_id__in=[6,7,8,9,10]).values('i_synonyms','i_breakdown','i_keyword','item','section','id'))
 
     equity_map_dict = list(SubSection.objects.filter(section_id=5).values('i_synonyms','i_breakdown','i_keyword','item','section','id'))
 
@@ -43,4 +42,7 @@ class KeywordsPool(object):
                   'equity':['Other Equity','Other Equity Deduction']
                   }
 
+    pnl_subsection_dict = list(SubSection.objects.filter(section_id__in=[6,7,8,9,10]).values('i_synonyms','i_breakdown','i_keyword','item','section','id'))
+    pnl_sec_dict = list(Section.objects.filter(i_related='Profit and Loss'))
+    pnl_map_dict = pnl_sec_dict+pnl_subsection_dict
 keywords_relation = KeywordsPool()

@@ -16,6 +16,8 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
+
+ROOT_BASE_URL = '127.0.0.1:8000'
 # sys.path.append(os.path.join(PROJECT_DIR, 'DataAutomation'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -28,16 +30,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['10.10.0.84']
 
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'automationmedia').replace('\\', '/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'automationmedia').replace('\\', '/')
 MEDIA_URL = '/media/'
-MEDIA_PATH='10.10.0.164/media/images/'
+# MEDIA_PATH='10.10.0.84/media/images/'
 # Application definition
 
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static').replace('\\', '/')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\', '/')
 
 
-STATIC_URL = '/static/'
-ROOT_BASE_URL = '127.0.0.1:8000'
+# STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
@@ -66,8 +67,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'DataExtraction',
+
+    'AutomationUI',
+    'rest_framework',
+    # 'DataExtraction',
+
 ]
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    #     'django.template.loaders.eggs.Loader',
+)
+REST_FRAMEWORK = { 'DEFAULT_RENDERER_CLASSES': ( 'rest_framework.renderers.TemplateHTMLRenderer', 'rest_framework.renderers.JSONRenderer', 'rest_framework.renderers.BrowsableAPIRenderer', ) }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,9 +104,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
+        'libraries': {
+            'get_item': 'AutomationUI.templatetags.get_item',
+
+        }
         },
+
     },
+
 ]
 
 WSGI_APPLICATION = 'DataAutomation.wsgi.application'
@@ -133,9 +152,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.media',
-    'django.core.context_processors.request',)
+    "django.core.context_processors.request",
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    )
+
+#
+# TEMPLATE_CONTEXT_PROCESSORS = (
+#      'django.contrib.auth.context_processors.auth',
+#     'django.core.context_processors.media',
+#     'utils.context_processors.adminpath',
+# )
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -155,3 +183,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = "automationmedia/static/"

@@ -1,23 +1,36 @@
 from __future__ import unicode_literals
 
 from django.db import models
+
+from .choices import year_end,Comp_type,CountryList
 from django.contrib.auth.models import User
 
-Comp_type=(('Balance Sheet','Balance Sheet'),
-           ('Profit and Loss','Profit and Loss'),
-           )
+class Sector(models.Model):
+    sector_name = models.CharField(max_length =1000)
+    copy_main = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.sector_name)
+
+class SectorDit(models.Model):
+    sector =models.ForeignKey(Sector)
+    copy_Sector = models.BooleanField(default=True)
+    dit_name = models.CharField(max_length =1000)
+    dit_code = models.CharField(max_length =200)
+
+    def __str__(self):
+        return str(self.dit_name)
 
 class Section(models.Model):
     item = models.CharField(max_length=2000)
     i_synonyms = models.CharField(max_length=400, blank=True,null=True)
     i_related = models.CharField(max_length=200,choices=Comp_type)
     added_date = models.DateTimeField(auto_now=True)
-    added_by =models.ForeignKey(User,blank=True,null=True,related_name = 'Sec_Addition')
-    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'Sec_Modification')
+    added_by = models.ForeignKey(User,related_name = 'createdby',blank=True,null=True)
+    modified_by = models.ForeignKey(User,related_name = 'modifiedby',blank=True,null=True)
+
     def __str__(self):
-        return self.item
-
-
+        return str(self.item)
 
 class SubSection(models.Model):
     section = models.ForeignKey(Section)
@@ -27,12 +40,11 @@ class SubSection(models.Model):
     i_keyword = models.CharField(max_length =1000,blank=True,null=True)
     i_deduction = models.CharField(max_length=2000, blank=True,null=True)
     added_date = models.DateTimeField(auto_now=True)
-    added_by =  models.ForeignKey(User,blank=True,null=True,related_name = 'subsec_Addition')
-    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'subsec_Modification')
+    added_by = models.ForeignKey(User, blank=True, null=True, related_name='subsec_Addition')
+    modified_by = models.ForeignKey(User, blank=True, null=True, related_name='subsec_Modification')
 
     def __str__(self):
-        return self.item
-
+        return str(self.item)
 
 class S2Section(models.Model):
     subsection = models.ForeignKey(SubSection)
@@ -44,11 +56,8 @@ class S2Section(models.Model):
 
     added_date = models.DateTimeField(auto_now=True)
 
-    added_by = models.ForeignKey(User,blank=True,null=True,related_name = 'S2sec_Addition')
-    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'S2sec_Modification')
-
     def __str__(self):
-        return self.item
+        return str(self.item)
 
 
 class quarter_data(models.Model):
@@ -59,7 +68,7 @@ class quarter_data(models.Model):
     pdf_page = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.q1
+        return str(self.q1)
 
 class year_data(models.Model):
     year_date = models.CharField(max_length=200, blank=True, null=True)
@@ -69,40 +78,19 @@ class year_data(models.Model):
     pdf_page = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.year_date
+        return str(self.year_date)
+
 
 class CompanyList(models.Model):
     company_name= models.CharField(max_length=200)
-    ditcode = models.CharField(max_length = 200,blank=True,null=True)
+    ditname = models.ForeignKey(SectorDit)
+    y_end = models.CharField(max_length=200, choices=year_end, blank=True)
+    c_ticker = models.CharField(max_length = 200,blank=True,null=True)
+    country = models.CharField(max_length=50,choices = CountryList)
 
     def __str__(self):
-        return self.company_name
-
-class GbcData(models.Model):
-    gbc_name = models.ForeignKey(CompanyList)
-    section =models.ForeignKey(Section,blank=True,null=True)
-    subsection = models.ForeignKey(SubSection,blank=True,null=True)
-    s2section =models.ForeignKey(S2Section,blank=True,null=True)
-    # s3section =models.ForeignKey(SubSubSubsection,blank=True,null=True)
-    q1 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'Quarter_1')
-    q2 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'Quarter_2')
-    q3 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'Quarter_3')
-    q4 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'Quarter_4')
-    lrq = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'Latest_Reporting_Quarter')
-    y1 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_1')
-    y2 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_2')
-    y3 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_3')
-    y4 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_4')
-    tlm = models.ForeignKey(year_data,blank=True,null=True, related_name = 'Previous_Year_5')
-    added_by = models.ForeignKey(User,blank=True,null=True,related_name = 'GBC_Addition')
-    modified_by = models.ForeignKey(User,blank=True,null=True,related_name = 'GBC_Modification')
+        return str(self.company_name)
 
 
-    def __str__(self):
-        return self.section.item
 
-    class Meta:
-        verbose_name = ("Raw data")
-        verbose_name_plural = ("Raw data")
-        ordering = ('subsection', 's2section')
 

@@ -1,6 +1,8 @@
 from DataExtraction.models import *
+from BalanceSheet.models import *
 from collections import OrderedDict
-from DataExtraction.common_functions import *
+from DataExtraction.common_files.utils import *
+from DataExtraction.common_files.basic_functions import *
 
 def get_company_data(gbc_data):
     data=OrderedDict()
@@ -30,20 +32,20 @@ def get_company_data(gbc_data):
                         des = getattr(obj, loop).description.split('##')
                         des = list(filter(None, des))
                         for d_obj in des:
-                            if not get_aplha(d_obj) in inner_d:
-                                inner_d[get_aplha(d_obj)] = OrderedDict({loop: get_number(d_obj)} )
+                            if not get_alpha(d_obj) in inner_d:
+                                inner_d[get_alpha(d_obj)] = OrderedDict({loop: get_number(d_obj)} )
                             else:
-                                inner_d[get_aplha(d_obj)][loop] = get_number(d_obj)
+                                inner_d[get_alpha(d_obj)][loop] = get_number(d_obj)
 
                 else:
                     if getattr(obj, loop):
                         des = getattr(obj, loop).description.split('##')
                         des = list(filter(None, des))
                         for d_obj in des:
-                            if not get_aplha(d_obj) in inn2:
-                                inn2[get_aplha(d_obj)] = OrderedDict({loop: get_number(d_obj)} )
+                            if not get_alpha(d_obj) in inn2:
+                                inn2[get_alpha(d_obj)] = OrderedDict({loop: get_number(d_obj)} )
                             else:
-                                inn2[get_aplha(d_obj)][loop] =  get_number(d_obj)
+                                inn2[get_alpha(d_obj)][loop] =  get_number(d_obj)
 
 
                     # print(inn2)
@@ -120,9 +122,9 @@ def update_sub(key,val,obj):
         o_obj.update(**new_data)
 
 def update_data(data,c_id):
-    gbc_obj  =GbcData.objects.filter(gbc_name_id=c_id)
+    gbc_obj  =CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
     delete_old_data(gbc_obj)
-    gbc_obj = GbcData.objects.filter(gbc_name_id=c_id)
+    gbc_obj = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
     for sec, sub in data.items():
         for i,j in sub.items():
             if type(j) != OrderedDict:
@@ -156,7 +158,7 @@ def save_data(data,c_id):
                     row_data[sec].update(OrderedDict({sub:['',item]}))
         row_data[sec].update(sub_data)
     res = update_data(row_data,c_id)
-    gbc_data = GbcData.objects.filter(gbc_name_id=c_id)
+    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
     data = get_company_data(gbc_data)
     return data
 
@@ -168,7 +170,7 @@ def update_comp(request):
     subsection = SubSection.objects.filter(section__in=section)
     s2sec = S2Section.objects.filter(subsection__in=subsection)
 
-    gbc_data = GbcData.objects.filter(gbc_name_id=request.GET['c_id'])
+    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
 
     item = html.unescape(request.GET['item'])
     sub_list = list(SubSection.objects.filter(s2section=None).values_list('item', flat=True))

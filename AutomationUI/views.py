@@ -1,5 +1,5 @@
 from rest_framework.views import APIView, Response
-from DataExtraction.models import *
+from BalanceSheet.models import CompanyBalanceSheetData
 from .forms import *
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
@@ -18,7 +18,7 @@ class CompanyListView(APIView):
 
 class BalanceSheetFormView(APIView):
     template_name = 'AutomationUI/bs_data.html'
-    queryset = GbcData.objects
+    queryset = CompanyBalanceSheetData.objects
 
     def dispatch(self, *args, **kwargs):
         return super(BalanceSheetFormView, self).dispatch(*args, **kwargs)
@@ -29,7 +29,7 @@ class BalanceSheetFormView(APIView):
         section = Section.objects.filter(i_related ='Balance Sheet')
         subsection =SubSection.objects.filter(section__in =section)
         s2sec = S2Section.objects.filter(subsection__in=subsection)
-        gbc_data = GbcData.objects.filter(gbc_name_id=request.GET['c_id'])
+        gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
         comp = list(subsection.filter(s2section=None).values_list('item',flat=True))+ list(s2sec.values_list('item',flat=True))
         data = get_company_data(gbc_data)
 
@@ -44,14 +44,14 @@ class BalanceSheetFormView(APIView):
         new_data['section']=remake_dict('section','sec_',data)
         new_data['subsection'] = remake_dict('subsection','s1_',data)
         new_data['s2section'] = remake_dict('s2section', 's2_', data)
-        gbc_data =GbcData.objects.filter(gbc_name_id=1)
+        gbc_data =CompanyBalanceSheetData.objects.filter(gbc_name_id=1)
         return Response({'status': 'success'})
 
 def add_row(request):
     new_row=OrderedDict()
     g_data =dict(request.GET)
     l1 =['q1','q2','q3','q4','y1','y2','y3','y4']
-    gbc_data = GbcData.objects.filter(gbc_name_id=request.GET['c_id'])
+    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
     data = get_company_data(gbc_data)
     new_data = g_data['new_row[]']
     new_row[new_data[0]]=OrderedDict(zip(l1, new_data[1:]))
@@ -61,7 +61,7 @@ def add_row(request):
 
 def delete_row(request):
     g_data = OrderedDict(request.GET)
-    gbc_data = GbcData.objects.filter(gbc_name_id=request.GET['c_id'])
+    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
     data = get_company_data(gbc_data)
     data[g_data['section']][g_data['subsection']].pop(g_data['item'])
     data = save_data(data, request.GET['c_id'])

@@ -71,6 +71,9 @@ INSTALLED_APPS = [
     'AutomationUI',
     'rest_framework',
     # 'DataExtraction',
+    'BalanceSheet',
+    'PNL',
+    # 'DataExtraction',
 
 ]
 # List of callables that know how to import templates from various sources.
@@ -125,7 +128,7 @@ WSGI_APPLICATION = 'DataAutomation.wsgi.application'
 DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'data_automation',
+        'NAME': 'test_automation',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',  # Or an IP Address that your DB is hosted on

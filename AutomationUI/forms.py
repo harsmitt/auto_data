@@ -5,4 +5,4 @@ from DataExtraction.models import *
 class CompanyListForm(ModelForm):
     class Meta:
         model = CompanyList
-        fields = ('company_name','ditcode')
+        fields = ('company_name','ditname')

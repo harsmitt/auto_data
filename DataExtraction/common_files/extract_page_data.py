@@ -138,14 +138,14 @@ def scrap_pdf_page(**kwargs):
                         data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
                         data_dict = ExtractPNL(date_line=date_line,data_dict=data_dict, data=data, ignore_index=ignore_index,
                                                    date_obj=date_obj)
-                    if data_dict:
+                    if data_dict and len(data_dict) > 5:
                         comp_data = get_notes_data(n_sec = 'pnl',date_obj=date_obj,year_end=kwargs['year_end'],pdf_type=kwargs['pdf_type'],notes_sec=kwargs['notes'],
                                                    path=kwargs['path'], file=kwargs['file'], page_data=data_dict)
 
 
                         img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],
                                                               path=kwargs['path'], page=pdf_page)
-                        # import pdb;pdb.set_trace()
+                        import pdb;pdb.set_trace()
                         status = save_pnl(year_end=kwargs['year_end'], data=comp_data, img_path=img_path,
                                                page=i, c_name=c_name, new_dict=True, pdf_type=kwargs['pdf_type'])
                         return True

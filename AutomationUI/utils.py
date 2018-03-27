@@ -1,12 +1,13 @@
 from DataExtraction.models import *
 from BalanceSheet.models import *
+from PNL.models import CompanyPNLData
 from collections import OrderedDict
 from DataExtraction.common_files.utils import *
 from DataExtraction.common_files.basic_functions import *
 
-def get_company_data(gbc_data):
+def get_company_data(gbc_data,req_type):
     data=OrderedDict()
-    section = Section.objects.filter(i_related='Balance Sheet')
+    section = Section.objects.filter(i_related=req_type)
     subsection = SubSection.objects.filter(section__in=section)
     s2sec = S2Section.objects.filter(subsection__in=subsection)
 
@@ -15,6 +16,8 @@ def get_company_data(gbc_data):
         gbc_objs = gbc_data.filter(section=sec)
         obj_d = OrderedDict()
         for obj in gbc_objs:
+            print (obj)
+            # import pdb;pdb.set_trace()
             inner_d = OrderedDict()
             inn2 = OrderedDict()
             for loop in loop_list:
@@ -68,6 +71,7 @@ def get_company_data(gbc_data):
             data[sec.item] = obj_d
         else:
             data[sec.item].update(obj_d)
+    # import pdb;pdb.set_trace()
     return data
 
 
@@ -121,10 +125,15 @@ def update_sub(key,val,obj):
             o_obj = year_data.objects.filter(id=obj.values_list(key, flat=True))
         o_obj.update(**new_data)
 
-def update_data(data,c_id):
-    gbc_obj  =CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
-    delete_old_data(gbc_obj)
-    gbc_obj = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
+def update_data(data,c_id,req_type):
+    if req_type !='pnl':
+        gbc_obj  =CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
+        delete_old_data(gbc_obj)
+        gbc_obj = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
+    else:
+        gbc_obj = CompanyPNLData.objects.filter(gbc_name_id=c_id)
+        delete_old_data(gbc_obj)
+        gbc_obj = CompanyPNLData.objects.filter(gbc_name_id=c_id)
     for sec, sub in data.items():
         for i,j in sub.items():
             if type(j) != OrderedDict:
@@ -142,7 +151,7 @@ def update_data(data,c_id):
                            update_sub(s1, s2, s2_obj)
     return True
 
-def save_data(data,c_id):
+def save_data(data,c_id,req_type):
     row_data=OrderedDict()
     for sec,subsec in data.items():
         sub_data=OrderedDict()
@@ -157,9 +166,12 @@ def save_data(data,c_id):
                 else:
                     row_data[sec].update(OrderedDict({sub:['',item]}))
         row_data[sec].update(sub_data)
-    res = update_data(row_data,c_id)
-    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
-    data = get_company_data(gbc_data)
+    res = update_data(row_data,c_id,req_type=req_type)
+    if req_type !='pnl':
+        gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
+    else:
+        gbc_data = CompanyPNLData.objects.filter(gbc_name_id=c_id)
+    data = get_company_data(gbc_data,req_type=req_type)
     return data
 
 import html
@@ -169,8 +181,11 @@ def update_comp(request):
     section = Section.objects.filter(i_related='Balance Sheet')
     subsection = SubSection.objects.filter(section__in=section)
     s2sec = S2Section.objects.filter(subsection__in=subsection)
-
-    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
+    r_type = 'Profit and Loss' if request.GET['type'] == 'pnl' else 'Balance Sheet'
+    if request.GET['type']!='pnl':
+        gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
+    else:
+        gbc_data = CompanyPNLData.objects.filter(gbc_name_id=request.GET['c_id'])
 
     item = html.unescape(request.GET['item'])
     sub_list = list(SubSection.objects.filter(s2section=None).values_list('item', flat=True))
@@ -181,8 +196,9 @@ def update_comp(request):
     exist_sec = html.unescape(request.GET['existing_sec'])
     s2section = html.unescape(request.GET['s2sec']) if 's2sec' in request.GET else ''
 
-    data = get_company_data(gbc_data)
+    data = get_company_data(gbc_data,r_type)
 
+    # import pdb;pdb.set_trace()
     if not 's2sec' in request.GET:
         remove_item = data[sec][subsec].pop(exist_sec)
         if not len(data[sec][subsec])>=1:
@@ -209,7 +225,7 @@ def update_comp(request):
             data[s2_obj['subsection__section__item']][s2_obj['subsection__item']][s2_obj['item']] = OrderedDict([(exist_sec, remove_item)])
 
     comp = list(sub_list) + list(s2_list)
-    new_data =save_data(data,request.GET['c_id'])
+    new_data =save_data(data,request.GET['c_id'],request.GET['type'])
     return render(request, 'AutomationUI/table_body.html', {'data': new_data, 'comp': comp})
 
 def remake_dict(section,key,data):

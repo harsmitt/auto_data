@@ -35,6 +35,7 @@ class Section(models.Model):
 class SubSection(models.Model):
     section = models.ForeignKey(Section)
     item = models.CharField(max_length=2000)
+    neg_ro = models.BooleanField(default=False)
     i_synonyms = models.CharField(max_length=2000, blank=True,null=True)
     i_breakdown = models.CharField(max_length=5000, blank=True,null=True)
     i_keyword = models.CharField(max_length =1000,blank=True,null=True)

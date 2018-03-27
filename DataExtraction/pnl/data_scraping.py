@@ -31,18 +31,16 @@ def get_data(*args,**kwargs):
                 print (page_detail)
 
             else:
-                import pdb;pdb.set_trace()
                 for key,p_num in page_detail['page_list'].items():
                     if 'operations' in key.lower() or 'income' in key.lower():
                         op_data,real_page = get_operations_data(num=p_num,path=kwargs['path'],file=file_object)
                         print (op_data)
                         if op_data:
-                            import pdb;pdb.set_trace()
                             save_pnl(data=op_data,page=real_page,path=kwargs['path'],company_name=company_name[0])
 
                 # print ("abhi pending ha")
 
         except:
-            import pdb;pdb.set_trace()
-            # print ("kuch to locha ha")
+            # import pdb;pdb.set_trace()
+            print ("kuch to locha ha")
 

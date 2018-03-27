@@ -5,14 +5,10 @@ synonym_re = '[A-Za-z0-9. - ]* %s[ ,A-Za-z0-9.-]*$'
 similar_keyword_re = '[A-Za-z0-9. - ]*%s[ ,A-Za-z0-9.-]*$'
 
 def save_pnl(**kwargs):
-    import pdb;pdb.set_trace()
     found = False
-    print (kwargs['data'])
     for keyword in kwargs['data']:
-        print (keyword)
         pnl_dict = keywords_relation.pnl_map_dict
         img_path = save_image(kwargs['path'], kwargs['page'], kwargs['company_name'])
-        import pdb;pdb.set_trace()
         obj = match_keyword(keyword,pnl_dict, img_path,data=kwargs['data'], page= kwargs['page'], c_name=kwargs['company_name'])
         if not obj:
             if 'expense' in keyword.lower():
@@ -127,7 +123,6 @@ def match_keyword(keyword,pnl_dict,img_path,**kwargs):
 
 
 def save_data(**kwargs):
-    import pdb;pdb.set_trace()
     c_obj = CompanyList.objects.filter(company_name__icontains=kwargs['c_name'])
     if not c_obj:
         c_dict = {'company_name':kwargs['c_name']}

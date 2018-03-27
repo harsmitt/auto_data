@@ -282,7 +282,6 @@ def get_new_data(data,c_name,t_pdf,year_end):
         if year_exist :
             for i in data_list:
                 for dict1 in i:
-
                     old_dict = dict(i[dict1])
                     if year in old_dict:del(old_dict[year])
                     i[dict1] = [(i,j) for i,j in old_dict.items()]

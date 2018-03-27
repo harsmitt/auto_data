@@ -53,7 +53,6 @@ def update_financial_statements(**kwargs):
     ##means i have exact page number from table content
     for statement_key, p_num in page_detail['statement_section'].items():
         if 'statement' not in page_detail['statement_section']:
-            # import pdb;pdb.set_trace()
             if 'balance sheet' in statement_key.lower() or'balance sheets' in statement_key.lower():
                 print (page_detail)
 
@@ -93,10 +92,7 @@ def get_data(**kwargs):
         try:
             if num<=5 and not page_detail:
 
-                print (num)
-                # import pdb;pdb.set_trace()
                 page_detail = table_content(data=data,page_detail=page_detail,path=kwargs['path'],file=file_object)
-                print (page_detail)
                 if page_detail  and 'statement_section' in page_detail:
                     update_financial_statements(year_end=kwargs['year_end'],pdf_type =kwargs['pdf_type'],path=kwargs['path'],
                                                 page_detail=page_detail,company_name=kwargs['company_name'],f_obj=file_object,pdf=pdf)
@@ -136,7 +132,7 @@ def LoopPdfDir():
     #                'ScorpioTankers','SocialNetworking','TechnologyConsultingServices','UnitedStatesSteelcompany']
 
     # company_list=['Apple_1','BOSTONBEER','Hilton','JakksPacific','SocialNetworking','TechnologyConsultingServices','UnitedStatesSteelcompany','Biolase']
-    company_list =['ScorpioTankers']
+    company_list =['Mid-ConEnergy']
     import os
     for name in company_list:
         path_list = [fix_path+name+'/Year/',fix_path+name+'/Quarter/']
@@ -147,7 +143,7 @@ def LoopPdfDir():
                 year_list = y_sorting(os.listdir(path))
                 for year in year_list:
                     new_path = path+str(year)+'.pdf'
-                    get_data(path=new_path,company_name=name,pdf_type='year',year_end = 'December')
+                    get_data(                        path=new_path,company_name=name, pdf_type='year', year_end='December')
             else:
                 q_list = q_sorting(os.listdir(path))
                 for qtr in q_list:

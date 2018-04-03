@@ -7,9 +7,9 @@ notes_key =['net sales', 'cost of sales','selling, general and administrative ex
 
 def get_notes_data(**kwargs):
     import copy
-    # import pdb;pdb.set_trace()
-    date_obj = []
-    new_key_dict = OrderedDict()
+    # # import pdb;pdb.set_trace()
+    # date_obj = []
+    # new_key_dict = OrderedDict()
     old_data_dict = copy.deepcopy(kwargs['page_data'])
     notes_sec_start=False
 
@@ -38,8 +38,9 @@ def get_notes_data(**kwargs):
 
             elif notes_sec_start:
                 date_obj = []
-                new_key_dict = OrderedDict()
                 for key in keys:
+                    new_key_dict = OrderedDict()
+                    # import pdb;pdb.set_trace()
                     if key in notes_key:
                         r1 = notes_re1 % (key)
                         r2 = notes_re2 % (key)
@@ -49,8 +50,6 @@ def get_notes_data(**kwargs):
                             key_line_num = [line_num for line_num, line in enumerate(data) if re_obj2.match(line)]
                             for num, line in enumerate(data[key_line_num[0]:key_line_num[0]+5]):
                                 print (line)
-                                # import pdb;
-                                # pdb.set_trace()
                                 if kwargs['pdf_type'] =='year':
                                     date_obj, date_line = check_date_obj(pdf_type=kwargs['pdf_type'], line=line,
                                                                          year_end=kwargs['year_end'],data=data,
@@ -65,6 +64,8 @@ def get_notes_data(**kwargs):
                                                                          date_line=0,l_num=num)
                             if date_obj == kwargs['date_obj']:
                                 for num, line in enumerate(data[key_line_num[0]+date_line-1:]):
+                                    print (line)
+                                    import pdb;pdb.set_trace()
                                     if line.split()[0].split('-')[0].istitle() and not num_there(line):
                                         if line.lower() in kwargs['page_data']:
                                             pass
@@ -102,20 +103,25 @@ def get_notes_data(**kwargs):
                                                 if kwargs['page_data'][key] != list(zip(date_obj, new)):
                                                     new_key_dict[new_key] = list(zip(date_obj, new))
                                                 else:
-                                                    old_data_dict.update(new_key_dict)
+                                                    base_key = old_data_dict.pop(key)
+                                                    new_key_dict[key]=base_key
+                                                    old_data_dict.update(OrderedDict({key:new_key_dict}))
                                                     break;
 
                                             elif new_key.split()[0].lower() == 'total':
                                                 new = list(
-                                                    map(lambda num: get_digit(num),
+                                                    map(lambda num: str(get_digit(num)),
                                                         list(filter(lambda x: num_there(x), val))))
                                                 if kwargs['page_data'][key] != list(zip(date_obj, new)):
                                                     new_key_dict[new_key] = list(zip(date_obj, new))
-
-                                                old_data_dict.update(new_key_dict)
+                                                base_key = old_data_dict.pop(key)
+                                                new_key_dict[key] = base_key
+                                                old_data_dict.update(OrderedDict({key:new_key_dict}))
                                                 break;
                                         elif (new_key == key):
-                                            old_data_dict.update(new_key_dict)
+                                            base_key = old_data_dict.pop(key)
+                                            new_key_dict[key] = base_key
+                                            old_data_dict.update(OrderedDict({key:new_key_dict}))
                                             break;
 
             else:

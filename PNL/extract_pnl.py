@@ -6,20 +6,20 @@ from collections import OrderedDict
 import copy
 import itertools
 
-pass_list = ['total','gross margin','diluted','basic','per share']
+pass_list = ['diluted','basic','per share']
 index_list =['consolidated','balance sheets','operations','income','cash flow']
 spl_char=['\xe2\x80\x93','\xe2\x80\x99','\xe2\x80\x94']
 exceptional = ['current','deferred']
 
 def ExtractPNL(**kwargs):
     last_notes_no=0
+    sub_dict = False
     data_dict = copy.deepcopy(kwargs['data_dict'])
 
     for l_num, line in enumerate(kwargs['data'][kwargs['date_line']:]):
         print (line)
         print ("********************************++++++++++++++++++++++++++************************")
         print (data_dict)
-        # import pdb;pdb.set_trace()
 
         if data_dict and any(word in line.lower() for word in ['per share','comprehensive','per common share']):
             break;
@@ -52,7 +52,7 @@ def ExtractPNL(**kwargs):
                     if data_dict[d1] in [[], {}] :
                         data_dict[d1] = dict1
                             
-            elif alpha_there(line) and line.split()[0].split('-')[0].istitle() and not check_datetime(line.split()[0]):
+            elif alpha_there(line) and line.split()[0][0].split('-')[0].istitle() and not check_datetime(line.split()[0]):
                 print ("ye karna hai")
                 new_key = get_alpha(line,pnl=True)
                 data_dict[new_key] = OrderedDict()
@@ -67,9 +67,9 @@ def ExtractPNL(**kwargs):
             # this loop executes when 'total' exist in key then we add a new key in data dict
             # mentioned in mapping dict for that `total ` key
             # todo ignore_index concept
-
-
-            # todo ignore_index concept
+            #
+            #
+            # # # todo ignore_index concept
             new_key = values[0]
             if kwargs['ignore_index']:
                 values, last_notes_no = remove_ignore_index(values, last_notes_no, ignore_index=kwargs['ignore_index'],
@@ -78,11 +78,17 @@ def ExtractPNL(**kwargs):
             val = map(lambda x: str(get_digit(x)), new_values)
 
             if (new_key.split()[0].split('-')[0].istitle()or new_key.split()[0][0].split('-')[0].istitle() ) and not check_datetime(new_key.split()[0]):
-                if data_dict and not data_dict[list(data_dict.keys())[-1]]:
+                # import pdb;pdb.set_trace()
+                if data_dict and not data_dict[list(data_dict.keys())[-1]] or sub_dict:
+                    last_key = list(data_dict.keys())[-1]
+                    sub_dict = False if last_key in key_name else True
+                    if not 'total' in key_name.lower():
+                        data_dict[list(data_dict.keys())[-1]][key_name] = list(zip(kwargs['date_obj'], val))
+                    else:
+                        data_dict[key_name] = list(zip(kwargs['date_obj'], val))
 
-                    data_dict[list(data_dict.keys())[-1]] = list(zip(kwargs['date_obj'], val))
                 else:
-                    data_dict[get_alpha(new_key,pnl=True)] = list(zip(kwargs['date_obj'], val))
+                    data_dict[key_name] = list(zip(kwargs['date_obj'], val))
 
             else:
                 print (line)

@@ -111,6 +111,7 @@ TEMPLATES = [
             ],
         'libraries': {
             'get_item': 'AutomationUI.templatetags.get_item',
+            'get_value': 'AutomationUI.templatetags.get_value',
 
         }
         },

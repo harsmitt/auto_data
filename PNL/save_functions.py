@@ -3,8 +3,10 @@ from PNL.models import *
 from DataExtraction.common_files.basic_functions import *
 from DataExtraction.common_files.utils import *
 from DataExtraction.common_files.all_regex import *
-
+# from .redefined_extracted_data import *
 from django.db.models import Q
+
+
 def not_match(**kwargs):
 
     # if 'expense' in kwargs['keyword'].lower():
@@ -30,6 +32,7 @@ def not_match(**kwargs):
 
 
 def save_year_data(**kwargs):
+    print (kwargs['comp'])
     for i, j in enumerate(kwargs['pdf_obj']):
         y_key = get_year_name(j[0],kwargs['year_end'])
         if y_key:
@@ -91,27 +94,31 @@ def match_synonym(**kwargs):
                 re_obj = re.compile(sim_key, re.I)
                 re_obj2 = re.compile(key_2, re.I)
                 if re_obj.match(b_comp.replace('-', '')) or re_obj2.match(b_comp.replace('-', '')):
+                    pdf_val = redefined_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
+                                                      pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                                      d_obj=kwargs['db_key_list'][loop], type='breakdown',
+                                                      c_name=kwargs['c_name'])
                     if 'insert' in db_obj:
                         found, save_obj = True, True
                         if kwargs['pdf_type'] == 'year':
                             save_obj = save_year_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
-                                                      pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                                      pdf_obj=pdf_val,
                                                       d_obj=kwargs['db_key_list'][loop], type='breakdown',
                                                       c_name=kwargs['c_name'], insert=True)
                         else:
                             save_obj = save_qtr_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
-                                                     pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                                     pdf_obj=pdf_val,
                                                      d_obj=kwargs['db_key_list'][loop], type='breakdown',
                                                      c_name=kwargs['c_name'], insert=True)
-                        break;
+                        if save_obj:break;
                     if kwargs['pdf_type'] == 'year':
                         save_obj = save_year_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
-                                                  pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                                  pdf_obj=pdf_val,
                                                   d_obj=kwargs['db_key_list'][loop],
                                                   type='breakdown', c_name=kwargs['c_name'])
                     else:
                         save_obj = save_qtr_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
-                                                 pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                                 pdf_obj=pdf_val,
                                                  d_obj=kwargs['db_key_list'][loop], type='breakdown',
                                                  c_name=kwargs['c_name'])
                     break;
@@ -222,3 +229,36 @@ def get_new_data(data,c_name,t_pdf,year_end):
         #             i[dict1] = [(i,j) for i,j in old_dict.items()]
 
     return data
+
+
+def redefined_data(**kwargs):
+    print ("mahima")
+    sub_obj = SubSection.objects.filter(item=kwargs['d_obj']['item'].split('##')[-1])
+    if sub_obj and (sub_obj[0].is_expense or sub_obj[0].neg_ro):
+        year_list, val = map(list, zip(*kwargs['pdf_obj']))
+        # val_list = any(i.isdigit() for i in val)
+        new_val = list(map(lambda x1: str(-int(x1)) if any(i.isdigit() for i in x1) else x1, val))
+        new_data = list(zip(year_list,new_val))
+        return new_data
+    elif sub_obj and sub_obj[0].is_income :
+        new_list = []
+        year_list, val = map(list, zip(*kwargs['pdf_obj']))
+        for i,j in enumerate(val) :
+            if any(i_d.isdigit() for i_d in j) and int(j) > 0:
+                new_list.append('0')
+            else:
+                new_list.append(j)
+                val[i]='0'
+        if any(i!= '0' for i in new_list ):
+            new_data = list(zip(year_list,new_list))
+            other_obj = SubSection.objects.filter(item__icontains='Income with negative value')
+            other_obj = list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'section', 'id'))[0]
+            save_year_data(year_end=kwargs['year_end'], comp=kwargs['comp'], pdf_obj=new_data,
+                           d_obj=other_obj, type=kwargs['type'], c_name=kwargs['c_name'])
+
+            # save_year_data(year_end=kwargs['year_end'], comp=kwargs['keyword'],
+            #                pdf_obj=kwargs['data'], d_obj=other_obj, type=kwargs['type'],
+            #                c_name=kwargs['c_name'])
+        return list(zip(year_list,val))
+    else:
+        return kwargs['pdf_obj']

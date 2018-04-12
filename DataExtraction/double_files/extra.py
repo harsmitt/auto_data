@@ -1,5 +1,5 @@
 # if [i for i in data if r1.search(i.decode('utf-8'))]:
-#     import pdb;pdb.set_trace()
+#
 #
 #     for i in data:
 #         i = i.decode('utf8')
@@ -13,8 +13,6 @@
 #         elif date_val == True:
 #             word = i.strip().replace(':', '')
 #             print (word)
-#             import pdb;
-#             pdb.set_trace()
 #             if any(val in word.lower() for val in pass_list):
 #                 pass
 #             elif word.istitle() and len(word) < 100 and any(

@@ -2,7 +2,6 @@ from DataExtraction.common_files.mapping_data import pnl_objs,mapping_dict
 from .save_functions import *
 
 def save_pnl(**kwargs):
-    import pdb;pdb.set_trace()
     try:
         if kwargs['new_dict']:
             data = get_new_data(kwargs['data'], c_name=kwargs['c_name'], t_pdf=kwargs['pdf_type'],
@@ -33,10 +32,14 @@ def save_pnl(**kwargs):
 
             else:
                 key_map = mapping_dict.pnl_mapping_dict
+                # key_map2= mapping_dict.pnl2_mapping_dict
+
                 data_sec = [j for i, j in key_map.items() for p1 in i if keyword.strip(' s').strip() == p1.strip(' s').lower()]
 
+                if not data_sec:
+                    data_sec = ['opearting cost and expense and nonop']
+
                 for key_obj in data[keyword]:
-                    # import pdb;pdb.set_trace()
                     section_list =  list(pnl_objs.sector_section['Oil and Gas Sector'].keys()) if not data_sec else data_sec
                     ##todo find that keyword belongs to which section and loop directly that section so that we can save loop time
 
@@ -76,23 +79,27 @@ def match_with_db(**kwargs):
     found = False
     for loop, db_obj in enumerate(kwargs['db_key_list']):
         save_obj = False
-        print(db_obj)
-        # import pdb;pdb.set_trace()
         for synonym in [key for key in db_obj['i_synonyms'].strip().split('##')  if key]:
             scomp_list = get_alpha(synonym).split()
             c_list = get_alpha(kwargs['pdf_obj']).split()
             if  set(filter(lambda x:x.isalpha() , scomp_list))== set(filter(lambda x:x.isalpha() , c_list)) or \
                             kwargs['pdf_obj'].strip().lower()== synonym.strip(' s').lower():
+
+                pdf_val = redefined_data(comp=kwargs['pdf_obj'],year_end=kwargs['year_end'],
+                                        pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                        d_obj=kwargs['db_key_list'][loop],type='breakdown',
+                                              c_name=kwargs['c_name'])
+
                 if 'insert' in db_obj :
                     found,save_obj=True,True
                     if kwargs['pdf_type']=='year':
                         save_obj = save_year_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
-                                              pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                              pdf_obj=pdf_val,
                                               d_obj=kwargs['db_key_list'][loop], type='breakdown',
                                               c_name=kwargs['c_name'], insert=True)
                     else:
                         save_obj = save_qtr_data(year_end=kwargs['year_end'], comp=kwargs['pdf_obj'],
-                                                  pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                                                  pdf_obj=pdf_val,
                                                   d_obj=kwargs['db_key_list'][loop], type='breakdown',
                                                   c_name=kwargs['c_name'], insert=True)
                     break;
@@ -100,15 +107,15 @@ def match_with_db(**kwargs):
                 found = True
                 # save_obj = save_data(comp, data_dict[comp], s1sec[s1_counter], type='synonym', c_name=c_name)
                 if kwargs['pdf_type']=='year':
-                    save_obj = save_year_data(year_end= kwargs['year_end'],comp=kwargs['pdf_obj'], pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                    save_obj = save_year_data(year_end= kwargs['year_end'],comp=kwargs['pdf_obj'], pdf_obj=pdf_val,
                                         d_obj=kwargs['db_key_list'][loop], type='synonym', c_name=kwargs['c_name'])
                 else:
-                    save_obj = save_qtr_data(year_end= kwargs['year_end'],comp=kwargs['pdf_obj'], pdf_obj=kwargs['pdf_key_list'][kwargs['pdf_obj']],
+                    save_obj = save_qtr_data(year_end= kwargs['year_end'],comp=kwargs['pdf_obj'], pdf_obj=pdf_val,
                                          d_obj=kwargs['db_key_list'][loop], type='synonym', c_name=kwargs['c_name'])
 
                 break;
         if found != True and 'i_breakdown' in db_obj and db_obj['i_breakdown']:
-           found,save_obj = match(year_end= kwargs['year_end'],obj_split= db_obj['i_breakdown'].split('##'),p_obj=kwargs['pdf_obj'],
+            found,save_obj = match(year_end= kwargs['year_end'],obj_split= db_obj['i_breakdown'].split('##'),p_obj=kwargs['pdf_obj'],
                                    obj_dict=db_obj,img =kwargs['img'],pdf_key_list = kwargs['pdf_key_list'],
                                          page=kwargs['page'], d_obj=kwargs['db_key_list'][loop],c_name= kwargs['c_name'],pdf_type=kwargs['pdf_type'])
 
@@ -135,20 +142,30 @@ def match(**kwargs):
         re_obj = re.compile(sim_key, re.I)
         re_obj2 = re.compile(key_2, re.I)
         if re_obj.match(kwargs['p_obj'].replace('-', '')) or re_obj2.match(kwargs['p_obj'].replace('-', '')):
+
+            pdf_val = redefined_data(year_end=kwargs['year_end'], comp=kwargs['p_obj'],
+                                          pdf_obj=kwargs['pdf_key_list'][kwargs['p_obj']],
+                                          d_obj=kwargs['d_obj'],type='breakdown', c_name=kwargs['c_name'])
+
             if 'insert' in kwargs['obj_dict']:
                 found = True
-
-                save_obj = save_year_data(year_end=kwargs['year_end'], comp=kwargs['p_obj'],
-                                          pdf_obj=kwargs['pdf_key_list'][kwargs['p_obj']],
+                if kwargs['pdf_type'] == 'year':
+                    save_obj = save_year_data(year_end=kwargs['year_end'], comp=kwargs['p_obj'],
+                                          pdf_obj=pdf_val,
                                           d_obj=kwargs['d_obj'], type='breakdown', c_name=kwargs['c_name'],insert=True)
-                break;
+                else:
+                    save_obj = save_qtr_data(year_end=kwargs['year_end'], comp=kwargs['p_obj'],
+                                          pdf_obj=pdf_val,
+                                          d_obj=kwargs['d_obj'], type='breakdown', c_name=kwargs['c_name'], insert=True)
+                if save_obj:break;
             found = True
             if kwargs['pdf_type']=='year':
-               save_obj = save_year_data(year_end = kwargs['year_end'],comp=kwargs['p_obj'], pdf_obj=kwargs['pdf_key_list'][kwargs['p_obj']],
+               save_obj = save_year_data(year_end = kwargs['year_end'],comp=kwargs['p_obj'], pdf_obj=pdf_val,
                                      d_obj=kwargs['d_obj'], type='breakdown', c_name=kwargs['c_name'])
             else:
-                save_obj = save_qtr_data(year_end = kwargs['year_end'],comp=kwargs['p_obj'], pdf_obj=kwargs['pdf_key_list'][kwargs['p_obj']],
+                save_obj = save_qtr_data(year_end = kwargs['year_end'],comp=kwargs['p_obj'], pdf_obj=pdf_val,
                                           d_obj=kwargs['d_obj'], type='breakdown', c_name=kwargs['c_name'])
+            if save_obj: break;
             # save_obj = save_data(comp=kwargs['p_obj'], pdf_obj=kwargs['pdf_key_list'][kwargs['p_obj']],
             #                      img=kwargs['img'],
             #                      page=kwargs['page'], db_obj=kwargs['d_obj'])

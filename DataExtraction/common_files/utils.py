@@ -141,7 +141,6 @@ def get_pdf_quarter(**kwargs):
                     pass
 
     if len(q_list)>=1 and len(y_list)!=2 or len(q_list)!=2 and len(y_list)==2 :
-        # import pdb;pdb.set_trace()
         num =kwargs['l_num'] +1
         while num <= kwargs['l_num']+3:
             if num_there(kwargs['data'][num]):
@@ -202,7 +201,6 @@ def check_date_obj(**kwargs):
         if len(kwargs['date_obj']) < 2:
             kwargs['date_obj'] = []
         else:
-            # import pdb;pdb.set_trace()
             kwargs['date_line'] = kwargs['l_num'] + 1
     else:
         kwargs['date_obj'] = get_pdf_quarter(year_end=kwargs['year_end'], word_list=kwargs['line'].split(), pdf_type=kwargs['pdf_type'],
@@ -212,6 +210,5 @@ def check_date_obj(**kwargs):
             kwargs['date_obj'] = []
 
         else:
-            # import pdb;pdb.set_trace()
             kwargs['date_line'] = kwargs['l_num'] + 1
     return  kwargs['date_obj'],kwargs['date_line']

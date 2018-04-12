@@ -88,7 +88,6 @@ def scrap_pdf_page(**kwargs):
     for i in range(loop):
         data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
         print (data)
-        # import pdb;pdb.set_trace()
 
         if any(i in ' '.join(data[:10]).lower() for i in kwargs['pdf_page']):
             for l_num,line in enumerate(data[:20]):
@@ -103,49 +102,50 @@ def scrap_pdf_page(**kwargs):
                 ## todo list should be rewrite
 
                 if line and not ignore_index and any(re.search(r'\b' + word + r'\b',  line.lower()) for word in ['group','company','notes','note']) and len(line.split())<6:
-                    # import pdb;pdb.set_trace()
                     ignore_index,date_obj,date_line = get_ignore_index(year_end=kwargs['year_end'],data=data,l_num=l_num,pdf_type=kwargs['pdf_type'],date_obj=date_obj)
-                    break;
+                    if date_obj:break;
                 elif line and not date_obj and not ignore_index:
                     next_line = data[l_num + 1] if len(data) > l_num + 1 else ''
+
                     date_obj,date_line = check_date_obj(pdf_type=kwargs['pdf_type'],line = line,
                                                         year_end=kwargs['year_end'],date_obj=date_obj,
                                                         date_line =date_line,data=data,
                                                         next_line= next_line,l_num=l_num)
+                    if date_obj : break;
+
+
 
             if date_obj:
                 # for pdf in range(pdf_page_next):
-
                 if 'balance sheet' in kwargs['pdf_page']:
                     for pdf in range(pdf_page_next):
                         pdf_page = int(pdf_page)+pdf
-                        # import pdb;
-                        # pdb.set_trace()
 
                         data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
                         data_dict = ExtractBalnceSheet(date_line=date_line,data_dict=data_dict,data=data,ignore_index=ignore_index,date_obj=date_obj)
 
                     if data_dict:
                         img_path, c_name = Create_blank_sheet(year_end=kwargs['year_end'],c_name=kwargs['c_name'], path=kwargs['path'], page=pdf_page)
-                        # import pdb;pdb.set_trace()
                         status = match_keyword(year_end=kwargs['year_end'],data=data_dict, img_path=img_path, page=i, c_name=c_name,new_dict=True,pdf_type = kwargs['pdf_type'])
                         return True
 
                 elif any(i in kwargs['pdf_page'] for i in  ['income','operations']):
-
                     for pdf in range(pdf_page_next):
                         pdf_page = int(pdf_page) + pdf
+
                         data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
                         data_dict = ExtractPNL(date_line=date_line,data_dict=data_dict, data=data, ignore_index=ignore_index,
                                                    date_obj=date_obj)
-                    if data_dict and len(data_dict) > 5:
+
+
+                    if data_dict and (len(data_dict) > 5 or any('revenue' in x.strip(' s') for x in list(data_dict.keys()))):
+
                         comp_data = get_notes_data(n_sec = 'pnl',date_obj=date_obj,year_end=kwargs['year_end'],pdf_type=kwargs['pdf_type'],notes_sec=kwargs['notes'],
                                                    path=kwargs['path'], file=kwargs['file'], page_data=data_dict)
 
 
                         img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],
                                                               path=kwargs['path'], page=pdf_page)
-                        import pdb;pdb.set_trace()
                         status = save_pnl(year_end=kwargs['year_end'], data=comp_data, img_path=img_path,
                                                page=i, c_name=c_name, new_dict=True, pdf_type=kwargs['pdf_type'])
                         return True

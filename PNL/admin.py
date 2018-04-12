@@ -9,19 +9,43 @@ from .keywords_handling import *
 qtr_dict=qtr_date(year_end='December')
 year_dict = year_date(year_end='December')
 
+from django import forms
+
+class SectorSubSectionForm(forms.ModelForm):
+    i_synonyms = forms.CharField(widget=forms.Textarea)
+    i_breakdown =forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = SectorSubSection
+        fields = '__all__'
+
 class SectorSubAdmin(admin.TabularInline):
     model = SectorSubSection
-    exclude = ['section','i_deduction','neg_ro']
-    readonly_fields = ['item']
+    exclude =('section','item','neg_ro','is_expense','is_income','i_synonyms','i_breakdown','i_keyword','i_deduction','added_date','added_by','modified_by')
+    readonly_fields = ['link']
+
+    def link(self, obj):
+        # url = reverse(...)
+        return mark_safe("<a href='/admin/PNL/sectorsubsection/%s'>%s</a>" % (obj.id,obj.item.split('##')[-1]))
+
+    # the following is necessary if 'link' method is also used in list_display
+    link.allow_tags = True
 
 
 class SectorSectionAdmin(admin.TabularInline):
     inlines =[SectorSubAdmin]
     model = SectorSection
 
+class SectorSubSectionAdmin(admin.ModelAdmin):
+    form = SectorSubSectionForm
+
+    # def save_model(self, request, obj, form, change):
+    #     obj.i_synonyms = '##'.join(obj.i_synonyms.split('\r\n'))
+    #     obj.save()
 
 
 class SectorAdmin(admin.ModelAdmin):
+    readonly_fields = ('sector_name',)
     inlines = [SectorSubAdmin]
     def save_model(self, request, obj, form, change):
         if obj.copy_main:
@@ -96,7 +120,6 @@ class GBCADMIN(admin.ModelAdmin):
 
     def q1_url(self, obj):
         if obj.q1:
-            # import pdb;pdb.set_trace()
             val = obj.q1.q1#'('+str(obj.q1.q1)+')' if obj.subsection and obj.subsection.neg_ro else obj.q1.q1
             return ('<a href="/show_image?pdf_path=%s&gbc_name=%s">%s</a>' % (obj.q1.pdf_image_path,obj.gbc_name.id,val) ,
                     "<a target='_blank' href='/admin/DataExtraction/quarter_data/%d/'>Change</a>" % obj.q1.id)
@@ -143,5 +166,5 @@ admin.site.register(SectorDit)
 admin.site.register(DITSectorSection)
 admin.site.register(DITSectorSubSection)
 admin.site.register(SectorSection)
-admin.site.register(SectorSubSection)
+admin.site.register(SectorSubSection,SectorSubSectionAdmin)
 admin.site.register(CompanyPNLData,GBCADMIN)

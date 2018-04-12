@@ -41,7 +41,7 @@ def table_content(**kwargs):
     statement_find=False
     old_value={}
     try:
-        if any(i in ' '.join(kwargs['data']) for i in ['table of contents','table of content','index','contents'] ):
+        if any(i in ' '.join(kwargs['data']) for i in ['table of contents','table of content','index','contents','page no'] ):
             for l_num, line in enumerate(kwargs['data']):
                 print (line)
                 if statement_find:break;
@@ -57,9 +57,6 @@ def table_content(**kwargs):
                 elif not statement_find and any(word in get_alpha(line) for word in financial_statement):
                     kwargs['page_detail'] = get_page_num(l_num, section_name='statement_section', key_name='statement',
                                                          data=kwargs['data'],page_detail=kwargs['page_detail'])
-                    #
-                    # import pdb;
-                    # pdb.set_trace()
                     statement_page,n_dict = get_financial_statements(path=kwargs['path'],file=kwargs['file'],item_no=line,statement= kwargs['page_detail']['statement_section']['statement'])
 
                     if statement_page:
@@ -83,7 +80,6 @@ def table_content(**kwargs):
                 elif not statement_find and any(index in get_alpha(line) for index in index_list):
                     statements_page, n_dict = financial_page(line=line, data=kwargs['data'], line_num=l_num, i=0, index=-1)
                     ##if page number at the starting of a line
-                    # import pdb;pdb.set_trace()
                     if not statements_page and not n_dict:
                         statements_page, n_dict = financial_page(line=line, data=kwargs['data'], line_num=l_num, i=0, index=0)
 

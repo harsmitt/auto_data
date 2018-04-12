@@ -54,8 +54,7 @@ class S2SectionAdmin(admin.ModelAdmin):
     list_display = ['subsection', 'item']
 
     # def get_queryset(self, obj):
-    #     import pdb;
-    #     pdb.set_trace()
+    #
     #     print ("reset")
     #     sec_obj = Section.objects.filter(id=1)
     #     sub_obj = SubSection.objects.filter(section=sec_obj)
@@ -127,7 +126,6 @@ def show_image(request):
     # return HttpResponseRedirect('/admin/DataExtraction/gbcdata/')
 #
 # # def reject(request):
-# #     import pdb;pdb.set_trace()
 # #     print ("mahima")
 # #     obj = GbcData.objects.filter(id=request.GET['obj_id'])
 # #     q1_id = obj[0].q1.id
@@ -146,7 +144,6 @@ class CompanyAdmin(admin.ModelAdmin):
 
     def PNL(self, obj):
         if obj:
-            # import pdb;pdb.set_trace()
             return('<a href="/admin/PNL/companypnldata/?gbc_name=%s">%s</a>' % (obj.id,"Company PNL") )
 
     PNL.allow_tags = True
@@ -154,8 +151,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
     def BalanceSheet(self, obj):
         if obj:
-            # import pdb;pdb.set_trace()
-            return('<a href="/admin/BalanceSheet/companybalancesheetdata/?gbc_name=%s">%s</a>' % (obj.id,"Company Balance Sheet") )
+           return('<a href="/admin/BalanceSheet/companybalancesheetdata/?gbc_name=%s">%s</a>' % (obj.id,"Company Balance Sheet") )
 
     BalanceSheet.allow_tags = True
 

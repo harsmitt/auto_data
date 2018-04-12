@@ -12,16 +12,12 @@ def num_there(s):
 def alpha_there(s):
     return any(i.isalpha() for i in s)
 
-
 def get_digit(s):
     if s in ['-','- -']:
         return s
     else:
-
         digit = ("".join(re.findall("[0-9()*]+", s.lower().strip())))
-
         return int(digit.replace(',', '').replace('(', '-').replace(')', '').replace('$', '').replace('*','0'))
-
 
 def get_alpha(s,pnl=False):
     str1 = s.split('(')[0]

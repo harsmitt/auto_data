@@ -17,7 +17,6 @@ def get_company_data(gbc_data,req_type):
         obj_d = OrderedDict()
         for obj in gbc_objs:
             print (obj)
-            # import pdb;pdb.set_trace()
             inner_d = OrderedDict()
             inn2 = OrderedDict()
             for loop in loop_list:
@@ -71,7 +70,6 @@ def get_company_data(gbc_data,req_type):
             data[sec.item] = obj_d
         else:
             data[sec.item].update(obj_d)
-    # import pdb;pdb.set_trace()
     return data
 
 
@@ -198,7 +196,6 @@ def update_comp(request):
 
     data = get_company_data(gbc_data,r_type)
 
-    # import pdb;pdb.set_trace()
     if not 's2sec' in request.GET:
         remove_item = data[sec][subsec].pop(exist_sec)
         if not len(data[sec][subsec])>=1:

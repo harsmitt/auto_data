@@ -5,7 +5,6 @@ register = template.Library()
 
 @register.filter
 def get_value(value):
-    # import pdb;pdb.set_trace()
 
     res = [i for i in value if type(i) == tuple and type(i[1])==OrderedDict ]
     if res : return True

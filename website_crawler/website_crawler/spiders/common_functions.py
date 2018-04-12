@@ -8,7 +8,6 @@ DEFAULT_DATA_PATH='/home/administrator/DataAutomation/company_pdf/'
 # from fun import year_date,qtr_date
 
 def qtr_date():
-    # import pdb;pdb.set_trace()
     date_time = datetime.now()-timedelta(days=45)
     month = date_time.month
     year = date_time.year
@@ -65,8 +64,7 @@ def save_qtr(date_obj,cname,ftype,link=None,file_type =None,file_name=None):
         except:
             pass
 
-    # import pdb;
-    # pdb.set_trace()
+
     make_directory(cname,ftype)
     path = os.path.join(DEFAULT_DATA_PATH, cname,ftype)
     pdf_name = '_'.join(pdf_qtr)

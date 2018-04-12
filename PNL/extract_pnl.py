@@ -9,7 +9,7 @@ import itertools
 pass_list = ['diluted','basic','per share']
 index_list =['consolidated','balance sheets','operations','income','cash flow']
 spl_char=['\xe2\x80\x93','\xe2\x80\x99','\xe2\x80\x94']
-exceptional = ['current','deferred']
+exceptional = ['current\n','deferred\n']
 
 def ExtractPNL(**kwargs):
     last_notes_no=0
@@ -18,13 +18,13 @@ def ExtractPNL(**kwargs):
 
     for l_num, line in enumerate(kwargs['data'][kwargs['date_line']:]):
         print (line)
-        print ("********************************++++++++++++++++++++++++++************************")
+        # print ("********************************++++++++++++++++++++++++++************************")
         print (data_dict)
 
         if data_dict and any(word in line.lower() for word in ['per share','comprehensive','per common share']):
             break;
 
-        elif any(ex.lower() in line.lower() for ex in exceptional):
+        elif any((re.split('  +',ex.lower())[0]) ==  line.lower() for ex in exceptional):
             values = re.split('  +', line)
             if data_dict[list(data_dict.keys())[-1]] == {}:
                 new = list(
@@ -39,7 +39,6 @@ def ExtractPNL(**kwargs):
             pass
 
         elif  (len(re.split('  +', line.replace('-','').strip())) < 2 and alpha_there(line.replace('-','').strip())) or (len(re.split('  +', line.replace('-','').strip())) ==2 and num_there(line) and not alpha_there(line)):
-
             if num_there(line) and not alpha_there(line):
                 values = list(filter(lambda name: num_there(name), line.split()))
                 if kwargs['ignore_index']:
@@ -54,8 +53,11 @@ def ExtractPNL(**kwargs):
                             
             elif alpha_there(line) and line.split()[0][0].split('-')[0].istitle() and not check_datetime(line.split()[0]):
                 print ("ye karna hai")
-                new_key = get_alpha(line,pnl=True)
-                data_dict[new_key] = OrderedDict()
+                if data_dict and not data_dict[list(data_dict.keys())[-1]]:
+                    pass
+                else:
+                    new_key = get_alpha(line,pnl=True)
+                    data_dict[new_key] = OrderedDict()
 
 
         elif len(re.split('  +', line)) > 2 :
@@ -78,10 +80,9 @@ def ExtractPNL(**kwargs):
             val = map(lambda x: str(get_digit(x)), new_values)
 
             if (new_key.split()[0].split('-')[0].istitle()or new_key.split()[0][0].split('-')[0].istitle() ) and not check_datetime(new_key.split()[0]):
-                # import pdb;pdb.set_trace()
                 if data_dict and not data_dict[list(data_dict.keys())[-1]] or sub_dict:
                     last_key = list(data_dict.keys())[-1]
-                    sub_dict = False if last_key in key_name else True
+                    sub_dict = False if last_key in key_name or key_name.split('total')[-1] in last_key else True
                     if not 'total' in key_name.lower():
                         data_dict[list(data_dict.keys())[-1]][key_name] = list(zip(kwargs['date_obj'], val))
                     else:
@@ -101,7 +102,6 @@ def remove_ignore_index(values,last_notes_no,**kwargs):
     ignore_index = list(kwargs['ignore_index'].values())
     ignore_index.sort()
     if 'notes' in kwargs['ignore_index']:
-        # import pdb;pdb.set_trace()
         current_notes = values[kwargs['ignore_index']['notes']]
         if last_notes_no and not (len(last_notes_no) == len(current_notes)):
             ignore_index.remove(kwargs['ignore_index']['notes'])

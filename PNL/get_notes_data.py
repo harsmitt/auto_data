@@ -1,13 +1,12 @@
 from DataExtraction.common_files.utils import *
 from DataExtraction.common_files.all_regex import *
 from DataExtraction.common_files.basic_functions import *
-notes_key =['net sales', 'cost of sales','selling, general and administrative expenses','interest expense', 'other (income) expense, net']
-
+notes_key =['net sales', 'cost of sales','selling, general and administrative expenses','interest expense', 'other income','other income expense, net', 'other income expense , net']
+import PyPDF2
 
 
 def get_notes_data(**kwargs):
     import copy
-    # # import pdb;pdb.set_trace()
     # date_obj = []
     # new_key_dict = OrderedDict()
     old_data_dict = copy.deepcopy(kwargs['page_data'])
@@ -17,12 +16,14 @@ def get_notes_data(**kwargs):
     for sec in sec_name:
 
         start= kwargs['notes_sec'][sec].split('-')[0]#list(kwargs['notes_sec'].values())[0].split('-')[0]
-        end = kwargs['notes_sec'][sec].split('-')[1]#list(kwargs['notes_sec'].values())[0].split('-')[-1]
-
+        if len(kwargs['notes_sec'][sec].split('-'))==2:
+            end = int(kwargs['notes_sec'][sec].split('-')[1])+5
+        else:#list(kwargs['notes_sec'].values())[0].split('-')[-1]
+            pdf = PyPDF2.PdfFileReader(kwargs['file'])
+            end =  (pdf.getNumPages()+1)
         total_notes = int(end) - int(start)
-        for notes in range(int(start) - 1, int(end) + 5):
+        for notes in range(int(start) - 1, int(end)):
             print (notes)
-            # import pdb;pdb.set_trace()
             data = get_page_content(seprator='@@', page=notes, path=kwargs['path'], file=kwargs['file'])
             keys = list(kwargs['page_data'].keys())
             if any(i in get_alpha(sec,pnl=True) for i in data) and not notes_sec_start:
@@ -40,7 +41,6 @@ def get_notes_data(**kwargs):
                 date_obj = []
                 for key in keys:
                     new_key_dict = OrderedDict()
-                    # import pdb;pdb.set_trace()
                     if key in notes_key:
                         r1 = notes_re1 % (key)
                         r2 = notes_re2 % (key)
@@ -65,7 +65,6 @@ def get_notes_data(**kwargs):
                             if date_obj == kwargs['date_obj']:
                                 for num, line in enumerate(data[key_line_num[0]+date_line-1:]):
                                     print (line)
-                                    import pdb;pdb.set_trace()
                                     if line.split()[0].split('-')[0].istitle() and not num_there(line):
                                         if line.lower() in kwargs['page_data']:
                                             pass
@@ -126,6 +125,5 @@ def get_notes_data(**kwargs):
 
             else:
                 print ("different page")
-    # import pdb;pdb.set_trace()
     return old_data_dict
 

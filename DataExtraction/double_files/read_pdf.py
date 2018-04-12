@@ -84,7 +84,6 @@ def pdftotext(path, page=None,file_type=None,company_name=''):
             r1 = re.compile('[ (A-Za-z0-9. - )]consolidated balance (sheets|sheet)*[ (A-Za-z0-9. - )$]', re.IGNORECASE)
             if filter(r1.search, data):
                 for i in data:
-                    # if page ==3:import pdb;pdb.set_trace()
                     if 'total' in i.lower() and 'equity' in i.lower():
                         break;
                     elif i and num_there(i) and not date_val:
@@ -115,7 +114,6 @@ def pdftotext(path, page=None,file_type=None,company_name=''):
 
                             # elif data_dict and  not num_there(word) and word.lower() not in ['long-term liabilities']:
                             #     print word
-                            #     import pdb;pdb.set_trace()
                             #     if '\xe2\x80\x99' in word:
                             #         word =word.replace('\xe2\x80\x99 ', '-')
                             #     if data_dict[data_dict.keys()[-1]] == {}:
@@ -140,12 +138,11 @@ def pdftotext(path, page=None,file_type=None,company_name=''):
 
 
                         elif data_dict and len(word) > 100 and  ('                      ') in word :
-                            # import pdb;pdb.set_trace()
                             values = re.split('  +', word)
                             if values[0].lower() in ['total current assets','total current liabilities']:
                                 data_dict[mapping_dict[values[0].lower()]] = {}
                             elif (data_dict[data_dict.keys()[-1]].keys() and num_there(word)):
-                                # import pdb;pdb.set_trace()
+
                             #     data_dict[data_dict.keys()[-1]][data_dict[data_dict.keys()[-1]].keys()[-1]] == {}
                                 values = filter(lambda name: num_there(name), word.split()[-2:])
                                 dict1 = zip(date_obj, values)

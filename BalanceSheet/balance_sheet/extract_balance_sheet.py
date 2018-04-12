@@ -17,7 +17,6 @@ def ExtractBalnceSheet(**kwargs):
         if data_dict and data_dict[list(data_dict.keys())[-1]] == [] :
             data_dict[list(data_dict.keys())[-1]] =OrderedDict()
         l_check = line if line and line.strip()[-1].isalpha() else line and line.replace('-','').strip()
-        # import pdb;pdb.set_trace()
         if (len(re.split('  +',l_check)) < 2 and alpha_there(l_check)) or \
                 (len(re.split('  +', l_check)) ==2 and num_there(line) and not alpha_there(line)):
             pass_list = ['LIABILITIES AND', ]

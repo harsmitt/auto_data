@@ -141,7 +141,6 @@ def Create_pnl(c_name,path,page,year_end):
         section = Section.objects.get(item = sectorsec_item)
         exist =add_gbc(img_path, page, c_name,year_end,c_obj, section,pdf_page='pnl')
         print(sec)
-        # import pdb;pdb.set_trace()
         if not exist:
             sub_obj = SubSection.objects.filter(section=sec) if sector_name.sector.copy_main else\
                         SectorSubSection.objects.filter(section=sec)

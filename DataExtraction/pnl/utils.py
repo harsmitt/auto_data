@@ -152,7 +152,6 @@ def get_operations_data(**kwargs):
                         break;
                 elif date_val == True:
                     word = i.strip().replace(':', '')
-                    # import pdb;pdb.set_trace()
                     if 'per share' in word:
                         break;
                     elif any(ex.lower() in word.lower() for ex in exceptional):
@@ -269,7 +268,6 @@ def get_notes_data(**kwargs):
                                     qtr_exists = False
                                     break;
                             elif date_val == True:
-                                # import pdb;pdb.set_trace()
                                 if line.replace('-',' ').split()[0].istitle() and not num_there(line):
                                     if line.lower() in kwargs['page_data']:
                                         pass
@@ -299,7 +297,6 @@ def get_notes_data(**kwargs):
                                             new = list(
                                                 map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), val))))
                                             if kwargs['page_data'][key]!= list(zip(date_obj, new)):
-                                                # import pdb;pdb.set_trace()
                                                 new_key_dict[new_key] = list(zip(date_obj, new))
                                             else:
                                                 old_data_dict.update(new_key_dict)
@@ -322,5 +319,4 @@ def get_notes_data(**kwargs):
 
         else:
             print ("different page")
-    # import pdb;pdb.set_trace()
     return old_data_dict

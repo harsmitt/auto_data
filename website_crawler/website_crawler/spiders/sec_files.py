@@ -38,7 +38,6 @@ class WebsiteSpider(CrawlSpider):
         c_filings = [i for i in self.driver.find_elements_by_tag_name('a') if i.text == 'COMPANY FILINGS']
         if c_filings :c_filings[0].click()
         time.sleep(20)
-        import pdb;pdb.set_trace()
         self.driver.find_element_by_css_selector('input[id=lesscompany]').send_keys(self.company_name)
         self.driver.find_element_by_css_selector('input[id=search_button_1]').click()
         time.sleep(10)

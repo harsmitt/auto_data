@@ -101,7 +101,6 @@ class PNLFormView(APIView):
         subsection =SubSection.objects.filter(section__in =section)
         gbc_data = CompanyPNLData.objects.filter(gbc_name_id=request.GET['c_id'])
         comp = list(subsection.filter(s2section=None).values_list('item',flat=True))
-        # import pdb;pdb.set_trace()
         data = get_company_data(gbc_data,req_type='Profit and Loss')
         return render(request, 'AutomationUI/pnl.html', locals())
 

@@ -25,21 +25,25 @@ class MappingDict(object):
 
     pnl_mapping_dict = {('Net revenue','Revenue','Net sales'):'Revenue',
                         ('cost of sales','Cost of Revenue'):'Cost of Revenue',
+                        ('Operating income', 'other income'): 'Other Operating Income',
                         ('selling, general and administrative expenses','selling and general expenses'):'selling and general',
-                        ('Operating expense','Expenses') :'Operating Expenses',
-                        ('Operating income','other income') :'Other Operating Income',
-                        ('other income expense, net','other expense'):'Non-Operating Income/(Expenses)',
-                        ('Operating costs and expenses','Costs and expenses'):'opearting cost and expense',
-                        ('Expenses and Other','operating expense and other'):'opearting expense and non operating',
-
-                        }
+                        ('other income expense, net','other income expense , net'):'Non-Operating Income/(Expenses)',
+                                                }
 
     other_pnl_mapping = {'Revenue':'Revenue','Cost of Revenue':'Cost of Revenue','Operating Expenses':'Other Operating Expense',
                          'Other Operating Income' :'Other Operating Revenue','selling and general':'Other Operating Expense',
                          'Non-Operating Income/(Expenses)' : 'Other Non-Operating Income/(Expenses)',
-                         'opearting cost and expense':'Other Operating Expense',
-                         'opearting expense and non operating':'Other Operating Expense',
+                         'opearting cost and expense and nonop':'Other Operating Expense',
+
+                         # 'opearting expense and non operating':'Other Operating Expense',
                          }
+
+    #todo create mapping dict for expense and income
+    # pnl2_mapping_dict = {('Operating expense','Expenses') :'opearting cost and expense and nonop',
+    #
+    #                      # ('Operating costs and expenses', 'Costs and expenses','Expenses and Other', 'operating expense and other'): 'opearting cost and expense and nonop',
+    #                      # (): 'opearting expense and non operating',
+    #                      }
 
 class ObjectMapping(object):
     c_assets_sec = Section.objects.filter(item = 'Current Assets').values()
@@ -97,15 +101,14 @@ class PNLMapping(object):
                 sec_subsec = SubSection.objects.filter(section=sec).values('i_synonyms','i_breakdown','i_keyword','item','section', 'id')
                 sector_section[i.sector_name].update({sec.item: list(sec_subsec)})
 
-            sec_subsec = SubSection.objects.filter(section__item__in=['Operating Expenses','Cost of Revenue']).values('i_synonyms', 'i_breakdown', 'i_keyword', 'item',
+            sec_subsec = SubSection.objects.filter(section__item__in=['Operating Expenses','Cost of Revenue','Non-Operating Income/(Expenses)']).values('i_synonyms', 'i_breakdown', 'i_keyword', 'item',
                                                                        'section', 'id')
-
-            sector_section[i.sector_name].update({'opearting cost and expense': list(sec_subsec)})
-            sec_subsec = SubSection.objects.filter(section__item__in=['Operating Expenses', 'Non-Operating Income/(Expenses)']).values(
-                'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
-                'section', 'id')
-
-            sector_section[i.sector_name].update({'opearting expense and non operating': list(sec_subsec)})
+            sector_section[i.sector_name].update({'opearting cost and expense and nonop': list(sec_subsec)})
+            # sec_subsec = SubSection.objects.filter(section__item__in=['Operating Expenses', ]).values(
+            #     'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
+            #     'section', 'id')
+            #
+            # sector_section[i.sector_name].update({'opearting expense and non operating': list(sec_subsec)})
         else:
             print (i.sector_name)
             sectorsec = SectorSection.objects.filter(sector = i)
@@ -120,33 +123,26 @@ class PNLMapping(object):
                 key =sec.item.split('##')[-1]
                 sector_section[i.sector_name].update({key:list(sec_subsec)})
 
-                opcost_exp = SectorSubSection.objects.filter(section__item__in=['Operating Expenses', 'Cost of Revenue']).values(
-                    'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
-                    'section', 'id')
+            sectorsection_name = [i.sector_name+'##Non-Operating Income/(Expenses)',i.sector_name+'##Operating Expenses',i.sector_name+'##Cost of Revenue']
 
-                sector_section[i.sector_name].update({'opearting cost and expense': list(opcost_exp)})
-                op_nop = SectorSubSection.objects.filter(
-                    section__item__in=['Operating Expenses', 'Non-Operating Income/(Expenses)']).values(
-                    'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
-                    'section', 'id')
-                sector_section[i.sector_name].update({'opearting expense and non operating': list(op_nop)})
+            opcost_exp = SectorSubSection.objects.filter(section__item__in=sectorsection_name).values(
+                'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
+                'section', 'id')
 
+            # sector_section[i.sector_name].update({'opearting cost and expense': list(opcost_exp)})
+            sector_section[i.sector_name].update({'opearting cost and expense and nonop': list(opcost_exp)})
+            # op_nop = SectorSubSection.objects.filter(
+            #     section__item__in=['Operating Expenses', 'Non-Operating Income/(Expenses)']).values(
+            #     'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
+            #     'section', 'id')
+            # sector_section[i.sector_name].update({'opearting expense and non operating': list(op_nop)})
 
+            sell_gen = SectorSubSection.objects.filter(
+                section__item__in=['Selling & Marketing Expenses', 'General & Administrative Expenses']).values(
+                'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
+                'section', 'id')
 
-                sell_gen = SectorSubSection.objects.filter(
-                    section__item__in=['Selling & Marketing Expenses', 'General & Administrative Expenses']).values(
-                    'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
-                    'section', 'id')
-
-                sector_section[i.sector_name].update({'selling and general': list(sell_gen)})
-
-
-            # import pdb;pdb.set_trace()
-            # print (sector_dict)
-
-
-
-
+            sector_section[i.sector_name].update({'selling and general': list(sell_gen)})
 
 bs_objs = ObjectMapping()
 pnl_objs = PNLMapping()

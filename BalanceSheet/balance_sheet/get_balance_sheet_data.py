@@ -122,8 +122,6 @@ def ExtractBalnceSheet(**kwargs):
 
                 # todo ignore_index concept
 
-                # import pdb;pdb.set_trace()
-
                 new_key = key_name.split(',')[0]
 
                 if kwargs['ignore_index']:

@@ -17,7 +17,6 @@ year_dict = year_date(year_end='December')
 # # class MyAdminSite(AdminSite):
 #
 # def custom_view(request):
-#     import pdb;pdb.set_trace()
 #     sec_obj = Section.objects.filter(id=1)
 #     sub_obj = SubSection.objects.filter(section=sec_obj)
 #     s2_obj = S2Section.objects.filter(subsection__in=sub_obj)
@@ -101,7 +100,6 @@ class GBCADMIN(admin.ModelAdmin):
 
     def q1_url(self, obj):
         if obj.q1:
-            # import pdb;pdb.set_trace()
             val = obj.q1.q1#'('+str(obj.q1.q1)+')' if obj.subsection and obj.subsection.neg_ro else obj.q1.q1
             return ('<a href="/show_image?pdf_path=%s&gbc_name=%s">%s</a>' % (obj.q1.pdf_image_path,obj.gbc_name.id,val) ,
                     "<a target='_blank' href='/admin/DataExtraction/quarter_data/%d/'>Change</a>" % obj.q1.id)

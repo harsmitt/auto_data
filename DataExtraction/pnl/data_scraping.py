@@ -41,6 +41,5 @@ def get_data(*args,**kwargs):
                 # print ("abhi pending ha")
 
         except:
-            # import pdb;pdb.set_trace()
             print ("kuch to locha ha")
 

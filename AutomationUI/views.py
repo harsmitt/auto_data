@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from .utils import *
+from DataExtraction.models import Sector
 
 class CompanyListView(APIView):
     template_name = 'AutomationUI/index.html'
@@ -115,5 +116,33 @@ class PNLFormView(APIView):
         gbc_data =CompanyBalanceSheetData.objects.filter(gbc_name_id=1)
         return Response({'status': 'success'})
 
+
+
+class UploadPDfView(APIView):
+    template_name = 'AutomationUI/bs_data.html'
+    queryset = CompanyBalanceSheetData.objects
+
+    def dispatch(self, *args, **kwargs):
+        return super(UploadPDfView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        sector_list = Sector.objects.all().values_list('sector_name',flat=True)
+
+
+        return render(request, 'AutomationUI/upload_pdf.html', locals())
+
+    def post(self, request, *args, **kwargs):
+        from .upload_pdf import upload_pdf
+        from DataExtraction.store_data import pdf_detail
+
+        if request.method == 'POST':
+            res,path= upload_pdf(request.FILES['file'], str(request.FILES['file']))
+            if res:
+                pdf_detail(c_name = request.POST['company_name'],sector = request.POST['sector'],year_end = request.POST['year_end'],
+                           file = path,pdf_type =request.POST['pdf_type']
+                           )
+            else:
+                return HttpResponse("Failed")
+            return HttpResponse("Successful")
 
 

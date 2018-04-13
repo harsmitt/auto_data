@@ -1,0 +1,57 @@
+{% extends 'AutomationUI/b_s1.html' %}
+{% load static %}
+
+{% block tabs %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 marginTop-20">
+    <form method="post" id="upload_form" action="/automation/upload_pdf/" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="col-md-6">
+            <label>Company name :</label>
+            <input type="text" name="company_name" value="">
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group marginBottom-0">
+                    <label for="exampleInputEmail1">Sector</label>
+                    <div class="selectdiv">
+                      <select name="sector" class="selectboxdiv" id="sector">
+                        <option value=" " selected= "selected">Select Sector</option>
+                        {% for sector in sector_list %}
+                        <option value="{{sector}}" >{{sector}}</option>
+                        {% endfor %}
+                      </select>
+                      <div class="out">Select Sector</div>
+                    </div>
+                  </div>
+            <!--{%for sector in sector_list%}-->
+                <!--<input type="text" name="sector" value="">-->
+            <!--{%endfor%}-->
+        </div>
+
+        <div class="col-md-6">
+            <label>Year End :</label>
+            <input type="text" name="year_end" value="">
+        </div>
+
+        <div class="col-md-6">
+            <label>PDF Type :</label>
+            <input type="text" name="pdf_type" value="">
+        </div>
+
+        <div class="col-md-6">
+            <input type="file" name="file">
+        </div>
+
+        <div class="col-md-6">
+            <input type="submit" value="Extract Data">
+        </div>
+    </form>
+</div>
+  </div>
+</div>
+
+{% endblock tabs %}

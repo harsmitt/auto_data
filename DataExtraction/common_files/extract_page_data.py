@@ -146,7 +146,7 @@ def scrap_pdf_page(**kwargs):
 
                         img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],
                                                               path=kwargs['path'], page=pdf_page)
-                        status = save_pnl(year_end=kwargs['year_end'], data=comp_data, img_path=img_path,
+                        status = save_pnl(sector =kwargs['sector'],year_end=kwargs['year_end'], data=comp_data, img_path=img_path,
                                                page=i, c_name=c_name, new_dict=True, pdf_type=kwargs['pdf_type'])
                         return True
 

@@ -7,7 +7,7 @@ def save_pnl(**kwargs):
             data = get_new_data(kwargs['data'], c_name=kwargs['c_name'], t_pdf=kwargs['pdf_type'],
                                 year_end=kwargs['year_end'])
 
-        obj_list = pnl_objs.sector_dict['Oil and Gas Sector']
+        obj_list = pnl_objs.sector_dict[kwargs['sector']]
         for keyword in data:
             print(keyword)
             if type(data[keyword])!=OrderedDict:

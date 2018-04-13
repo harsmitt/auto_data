@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.conf import settings as st
 
 from AutomationUI.views import *
+# from AutomationUI.upload_pdf import *
 from AutomationUI.utils import update_comp
 
 urlpatterns = [
@@ -12,5 +13,8 @@ urlpatterns = [
     url(r'^ajax_update_component/$', update_comp, name='updatecomp'),
     url(r'^add_row/$', add_row, name='addrow'),
     url(r'^delete_row/$', delete_row, name='deleterow'),
+    # url(r'^extract/$',upload_pdf, name='upload_pdf'),
+    url(r'^upload_pdf/$', UploadPDfView.as_view(), name='upload_pdf'),
+# /automation/extract_data/
     # url(r'^save_data/$', save_data, name='save_data'),
     ]

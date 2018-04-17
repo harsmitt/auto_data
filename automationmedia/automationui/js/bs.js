@@ -262,9 +262,7 @@ function sum_initail(val){
 };
 
 function sum_s2sec(val){
-    console.log(val)
     $( val).children('div').find('input').each(function() {
-        console.log(this)
         item = this.value
         g_index = this.name.split('_')[1]
         index_dict = {'q1':1,'q2':2,'q3':3,'q4':4,'y1':5,'y2':6,'y3':7,'y4':8}
@@ -296,7 +294,6 @@ function sum_val(val){
 
     $(val).parent().parent().closest('.subsection').find('input[type=text]').closest('input[name='+val.name+']').each(function() {
         item = this.value
-        console.log(this.value)
         parent_n = $(this).parent().parent().closest('.subsection').find('input[type=text]')[index_dict[g_index]].value
         $(this).parent().parent().closest('.subsection').find('input[type=text]')[index_dict[g_index]].value = parseInt(item) +parseInt(parent_n)
 
@@ -306,7 +303,6 @@ function sum_val(val){
      sum_sub = 0
      $(val).parent().parent().closest('.section').children().each(function() {
         item = $(this).find('input[type=text]')[index_dict[g_index]].value
-        console.log(item)
         sum_sub = sum_sub + parseInt($(this).find('input[type=text]')[index_dict[g_index]].value)
 
        $(this).closest('.section').find('input[type=text]')[index_dict[g_index]].value = sum_sub

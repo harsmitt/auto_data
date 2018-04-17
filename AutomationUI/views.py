@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 import json
 from .utils import *
 from DataExtraction.models import Sector
+from DataExtraction.choices import year_end,pdf_type
 
 class CompanyListView(APIView):
     template_name = 'AutomationUI/index.html'
@@ -127,7 +128,8 @@ class UploadPDfView(APIView):
 
     def get(self, request, *args, **kwargs):
         sector_list = Sector.objects.all().values_list('sector_name',flat=True)
-
+        c_year_end = list(year_end)
+        p_type = list(pdf_type)
 
         return render(request, 'AutomationUI/upload_pdf.html', locals())
 
@@ -143,6 +145,6 @@ class UploadPDfView(APIView):
                            )
             else:
                 return HttpResponse("Failed")
-            return HttpResponse("Successful")
+            return render(request, 'AutomationUI/upload_pdf.html', locals())
 
 

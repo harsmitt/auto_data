@@ -37,6 +37,12 @@ def all_pages(**kwargs):
                                          pdf_type=kwargs['pdf_type'],notes=notes_pages)
                 if pnl:
                     pnl = True
+
+    if bs_data and pnl:
+        return True
+
+    else:
+        return False
     # return
 
 
@@ -45,83 +51,78 @@ def all_pages(**kwargs):
 
 
 def update_financial_statements(**kwargs):
-    page_detail = kwargs['page_detail']
-    ##means i have exact page number from table content
+    try:
+        page_detail = kwargs['page_detail']
+        ##means i have exact page number from table content
 
-    for statement_key, p_num in page_detail['statement_section'].items():
-        if 'statement' not in page_detail['statement_section']:
-            if 'balance sheet' in statement_key.lower() or'balance sheets' in statement_key.lower():
-                print (page_detail)
+        for statement_key, p_num in page_detail['statement_section'].items():
+            if 'statement' not in page_detail['statement_section']:
+                if 'balance sheet' in statement_key.lower() or'balance sheets' in statement_key.lower():
+                    print (page_detail)
 
-                notes_pages = page_detail['notes_section'] if 'notes_section' in page_detail else 0
-                bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'],p_num=p_num,
-                                         path=kwargs['path'],
-                                         pdf_page=['balance sheet'],
-                                         file=kwargs['f_obj'], notes=notes_pages,
-                                         c_name=kwargs['company_name'], pdf_type=kwargs['pdf_type'])
-
-                print (bs_data)
-
-            else:
-                if 'operations' in statement_key.lower() or 'income' in statement_key.lower():
                     notes_pages = page_detail['notes_section'] if 'notes_section' in page_detail else 0
-                    bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'], p_num=p_num,
+                    bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'],p_num=p_num,
                                              path=kwargs['path'],
-                                             pdf_page=['operations','income'],
+                                             pdf_page=['balance sheet'],
                                              file=kwargs['f_obj'], notes=notes_pages,
                                              c_name=kwargs['company_name'], pdf_type=kwargs['pdf_type'])
 
+
                     print (bs_data)
-                print ("operations and cash flow pending hai")
-        else:
-            f_num = int(page_detail['statement_section']['statement'].split('-')[0])
-            l_num = int(page_detail['statement_section']['statement'].split('-')[1])
-            all_pages(page_detail =page_detail,year_end=kwargs['year_end'],pdf=kwargs['pdf'], file=kwargs['f_obj'], c_name=kwargs['company_name'], path=kwargs['path'],f_num =f_num,l_num=l_num,pdf_type=kwargs['pdf_type'])
-            break;
+
+                else:
+                    if 'operations' in statement_key.lower() or 'income' in statement_key.lower():
+                        notes_pages = page_detail['notes_section'] if 'notes_section' in page_detail else 0
+                        bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'], p_num=p_num,
+                                                 path=kwargs['path'],
+                                                 pdf_page=['operations','income'],
+                                                 file=kwargs['f_obj'], notes=notes_pages,
+                                                 c_name=kwargs['company_name'], pdf_type=kwargs['pdf_type'])
+
+                        print (bs_data)
+                    print ("operations and cash flow pending hai")
+            else:
+                f_num = int(page_detail['statement_section']['statement'].split('-')[0])
+                l_num = int(page_detail['statement_section']['statement'].split('-')[1])
+                all_pages(page_detail =page_detail,year_end=kwargs['year_end'],pdf=kwargs['pdf'], file=kwargs['f_obj'], c_name=kwargs['company_name'], path=kwargs['path'],f_num =f_num,l_num=l_num,pdf_type=kwargs['pdf_type'])
+                break;
+
+
+    except Exception as e:
+        return e
 
 
 def get_data(**kwargs):
-    page_detail={}
-    file_object = open(kwargs['path'], "rb")
-    pdf = PyPDF2.PdfFileReader(file_object)
-    for num in range(2, (pdf.getNumPages()+1)):
-        data = get_page_content(page=num,path=kwargs['path'],file=file_object)
-        try:
-            if num<=5 and not page_detail:
+    try:
+        page_detail={}
+        file_object = open(kwargs['path'], "rb")
+        pdf = PyPDF2.PdfFileReader(file_object)
+        for num in range(2, (pdf.getNumPages()+1)):
+            data = get_page_content(page=num,path=kwargs['path'],file=file_object)
 
-                page_detail = table_content(data=data,page_detail=page_detail,path=kwargs['path'],file=file_object)
-                print (num)
+            try:
+                if num<=5 and not page_detail:
+                    page_detail = table_content(data=data,page_detail=page_detail,path=kwargs['path'],file=file_object)
+                    print (num)
 
-                if page_detail  and 'statement_section' in page_detail:
-                    update_financial_statements(sector =kwargs['sector'],year_end=kwargs['year_end'],pdf_type =kwargs['pdf_type'],path=kwargs['path'],
-                                                page_detail=page_detail,company_name=kwargs['company_name'],f_obj=file_object,pdf=pdf)
+                    if page_detail  and 'statement_section' in page_detail:
+                        res = update_financial_statements(sector =kwargs['sector'],year_end=kwargs['year_end'],pdf_type =kwargs['pdf_type'],path=kwargs['path'],
+                                                    page_detail=page_detail,company_name=kwargs['company_name'],f_obj=file_object,pdf=pdf)
+                        break;
+
+                elif not page_detail or 'statement_section' not in page_detail:
+                    # need to loop every page in worst case.
+                    print (num)
+                    res = all_pages(sector =kwargs['sector'],page_detail=page_detail,year_end=kwargs['year_end'],pdf=pdf,file=file_object,c_name=kwargs['company_name'],path=kwargs['path'],pdf_type =kwargs['pdf_type'])
                     break;
 
-            elif not page_detail or 'statement_section' not in page_detail:
-                # need to loop every page in worst case.
-                print (num)
+            except Exception as e:
+                return e
+        return res
 
-                all_pages(sector =kwargs['sector'],page_detail=page_detail,year_end=kwargs['year_end'],pdf=pdf,file=file_object,c_name=kwargs['company_name'],path=kwargs['path'],pdf_type =kwargs['pdf_type'])
-                break;
-        except Exception as e:
-            print (e)
+    except Exception as e:
+        return e
 
-
-
-# def LoopPdfDir():
-#     path_list = [#'/home/administrator/DataAutomation/company_pdf/Apple/Quarter/','/home/administrator/DataAutomation/company_pdf/Apple/Year/',
-#                 '/home/administrator/DataAutomation/company_pdf/Orchids/Year']
-#                 #  '/home/administrator/DataAutomation/company_pdf/Tenet/Quarter/','/home/administrator/DataAutomation/company_pdf/Tenet/Year/',
-#                 #  '/home/administrator/DataAutomation/company_pdf/Kona/Quarter/','/home/administrator/DataAutomation/company_pdf/Kona/Year/',
-#                 # '/home/administrator/DataAutomation/company_pdf/SeaWorld/Quarter/','/home/administrator/DataAutomation/company_pdf/SeaWorld/Year/']
-#     # path_list=['2013.pdf','2016.pdf']
-#     import os
-#     for path in path_list:
-#         for filename in os.listdir(path):
-#             print (filename)
-#             new_path = path+filename
-#             data = get_data(path='/home/administrator/DataAutomation/company_pdf/Hilton/Quarter/June_2017.pdf',company_name='HotelResortOperators')
-#             # data = get_data(path='/home/administrator/DataAutomation/company_pdf/different patterns/KoonHoldings/Year/2016.pdf',company_name='Koon')
 
 
 def LoopPdfDir():
@@ -141,19 +142,21 @@ def LoopPdfDir():
                 year_list = y_sorting(os.listdir(path))
                 for year in year_list:
                     new_path = path+str(year)+'.pdf'
-                    get_data(sector ='Oil and Gas Sector',path='/home/administrator/DataAutomation/company_pdf/different patterns/aditi/A2 files for Testing/Town Sports_Fittness_2017 (Revenue & COGS).pdf',company_name=name, pdf_type='year', year_end='December')
+                    get_data(sector ='Oil and Gas Sector',path=new_path,company_name=name, pdf_type='year', year_end='December')
             else:
                 q_list = q_sorting(os.listdir(path))
                 for qtr in q_list:
                     new_path = path+qtr.replace(' ','_')+'.pdf'
-                    get_data(path=new_path,company_name=name,pdf_type='quarter',year_end = 'December')
+                    get_data(sector ='Oil and Gas Sector',path=new_path,company_name=name,pdf_type='quarter',year_end = 'December')
                     # pass
 
 
 # LoopPdfDir()
 
 def pdf_detail(**kwargs):
-   get_data(
-            path=kwargs['file'],
-            company_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'], year_end=kwargs['year_end'],sector =kwargs['sector'])
+    try:
+            result = get_data(path=kwargs['file'],company_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'], year_end=kwargs['year_end'],sector =kwargs['sector'])
+            return result
+    except Exception as e:
+            return e
 

@@ -14,7 +14,7 @@
             <input type="text" name="company_name" value="">
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="form-group marginBottom-0">
                     <label for="exampleInputEmail1">Sector</label>
                     <div class="selectdiv">
@@ -33,13 +33,37 @@
         </div>
 
         <div class="col-md-6">
-            <label>Year End :</label>
-            <input type="text" name="year_end" value="">
+            <div class="form-group marginBottom-0">
+                    <label for="exampleInputEmail1">Year End</label>
+                    <div class="selectdiv">
+                      <select name="year_end" class="selectboxdiv" id="year_end">
+                        <option value=" " selected= "selected">Select Company Year end</option>
+                        {% for y_end in c_year_end %}
+                        <option value="{{y_end.0}}" >{{y_end.1}}</option>
+                        {% endfor %}
+                      </select>
+                      <div class="out">Select Company Year End</div>
+                    </div>
+                  </div>
+            <!--<label>Year End :</label>-->
+            <!--<input type="text" name="year_end" value="">-->
+
+
         </div>
 
         <div class="col-md-6">
-            <label>PDF Type :</label>
-            <input type="text" name="pdf_type" value="">
+            <div class="form-group marginBottom-0">
+                    <label for="exampleInputEmail1">PDF Type</label>
+                    <div class="selectdiv">
+                      <select name="pdf_type" class="selectboxdiv" id="pdf_type">
+                        <option value=" " selected= "selected">Select Pdf Type</option>
+                        {% for p_t in p_type %}
+                        <option value="{{p_t.0}}" >{{p_t.1}}</option>
+                        {% endfor %}
+                      </select>
+                      <div class="out">Select Pdf Type</div>
+                    </div>
+                  </div>
         </div>
 
         <div class="col-md-6">

@@ -10,9 +10,7 @@ def ExtractBalnceSheet(**kwargs):
     key_value = ''
     data_dict = copy.deepcopy(kwargs['data_dict'])
     for l_num, line in enumerate(kwargs['data']):
-        print (l_num,line)
         if len(re.split('  +', line)) < 2:
-            print ("less than 100")
             if any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(line) in k):
                 if (next(v for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(line) in k)) in data_dict:
                     pass
@@ -121,8 +119,6 @@ def ExtractBalnceSheet(**kwargs):
             else:
 
                 # todo ignore_index concept
-
-                # import pdb;pdb.set_trace()
 
                 new_key = key_name.split(',')[0]
 

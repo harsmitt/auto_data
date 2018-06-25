@@ -3,9 +3,13 @@ from DataExtraction.common_files.utils import *
 from .statements_page import *
 from .utils import *
 
-index_list =['balance sheets','operations','income','notes','balance sheet']
+# index_list =['balance sheets','operations','income','notes','balance sheet']
 financial_statement =['financial statements and supplementary data',
-                      'financial content']##'exhibits and financial statement',
+                      'financial content','financial reporting']##'Consolidated financial statements',
+#
+# bs_keywords =  ['balance sheet','financial position']
+# pl_keywords =  ['income','operations','comprehensive loss']
+# notes_keywords = ['notes']
 
 
 def get_page_num(l_num,**kwargs):
@@ -41,15 +45,18 @@ def table_content(**kwargs):
     statement_find=False
     old_value={}
     try:
-        if any(i in ' '.join(kwargs['data']) for i in ['table of contents','table of content','index','contents'] ):
+        if len(kwargs['data'])>1 and check_content(data = kwargs['data'],p_type='toc'):#any(i in ' '.join(kwargs['data'][:10]) for i in ['table of content','index','content','page no'] ):
             for l_num, line in enumerate(kwargs['data']):
-                print (line)
+
+                key = ''
+
                 if statement_find:break;
 
                 if 'statement_section' in kwargs['page_detail']:
                     old_value = kwargs['page_detail']['statement_section']
 
-                if not statement_find and  all(word in get_alpha(line) for word in ['management','discussion']):
+                if not statement_find and  (all(word in get_alpha(line) for word in ['management','discussion'])
+                                            or all(word in get_alpha(line,remove_space=True,remove_s=True) for word in ['management','discussion'])):
                     kwargs['page_detail'] = get_page_num(l_num,section_name='notes_section',key_name='discussion',
                                                          data=kwargs['data'],
                                                          page_detail= kwargs['page_detail'])
@@ -57,9 +64,6 @@ def table_content(**kwargs):
                 elif not statement_find and any(word in get_alpha(line) for word in financial_statement):
                     kwargs['page_detail'] = get_page_num(l_num, section_name='statement_section', key_name='statement',
                                                          data=kwargs['data'],page_detail=kwargs['page_detail'])
-                    #
-                    # import pdb;
-                    # pdb.set_trace()
                     statement_page,n_dict = get_financial_statements(path=kwargs['path'],file=kwargs['file'],item_no=line,statement= kwargs['page_detail']['statement_section']['statement'])
 
                     if statement_page:
@@ -80,28 +84,37 @@ def table_content(**kwargs):
                     elif n_dict and not 'notes_section' in kwargs['page_detail']:
                         kwargs['page_detail'].update({'notes_section':n_dict})
 
-                elif not statement_find and any(index in get_alpha(line) for index in index_list):
-                    statements_page, n_dict = financial_page(line=line, data=kwargs['data'], line_num=l_num, i=0, index=-1)
-                    ##if page number at the starting of a line
-                    # import pdb;pdb.set_trace()
-                    if not statements_page and not n_dict:
-                        statements_page, n_dict = financial_page(line=line, data=kwargs['data'], line_num=l_num, i=0, index=0)
+                elif not statement_find :
 
-                    if statements_page:
+                    if check_content(data=line,p_type = 'bsheet') :
+                        key = 'bsheet'
+                    elif check_content(data=line,p_type ='pnl'):
+                        key='pnl'
+                    elif 'note' in get_alpha(line.lower(),remove_s=True):
+                        key='notes'
 
-                        if 'statement_section' in kwargs['page_detail']:
-                            key = list(statements_page.keys())[0]
-                            if not key in kwargs['page_detail']['statement_section']:
-                                kwargs['page_detail']['statement_section'].update(statements_page)
-                        else:
-                            kwargs['page_detail'].update({'statement_section': statements_page})
+                    if key:
+                        statements_page, n_dict = financial_page(line=line, data=kwargs['data'],key=key, line_num=l_num, i=0, index=-1)
 
-                    if n_dict:
+                        ##if page number at the starting of a line
+                        if not statements_page and not n_dict:
+                            statements_page, n_dict = financial_page(line=line, data=kwargs['data'],key=key, line_num=l_num, i=0, index=0)
 
-                        if 'notes_section' in kwargs['page_detail']:
-                            kwargs['page_detail']['notes_section'].update(n_dict)
-                        else:
-                            kwargs['page_detail'].update({'notes_section': n_dict})
+                        if statements_page:
+
+                            if 'statement_section' in kwargs['page_detail']:
+                                key = list(statements_page.keys())[0]
+                                if not key in kwargs['page_detail']['statement_section']:
+                                    kwargs['page_detail']['statement_section'].update(statements_page)
+                            else:
+                                kwargs['page_detail'].update({'statement_section': statements_page})
+
+                        if n_dict:
+
+                            if 'notes_section' in kwargs['page_detail']:
+                                kwargs['page_detail']['notes_section'].update(n_dict)
+                            else:
+                                kwargs['page_detail'].update({'notes_section': n_dict})
 
     except:
         return kwargs['page_detail']

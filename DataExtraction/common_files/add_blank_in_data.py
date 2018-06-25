@@ -27,128 +27,146 @@ from wand.image import Image
 
 
 def save_image(path, page, company_name):
-    import os
-    path1 = path + str([int(page) - 1])
-    make_directory(company_name)
-    with Image(filename=path1) as img:
-        # img.transform(resize="%dx%d>" % (width, height))
-        img_path = os.path.join(DEFAULT_DATA_PATH, company_name.split()[0])
-        img_path = img_path + '/' + path.split('/')[-1].split('.')[0] + '.png'
-        import os.path
-        if not os.path.exists(img_path):
-            img.save(filename=img_path)
-    return img_path
+    try:
+        import os
+        path1 = path + str([int(page) - 1])
+        make_directory(company_name)
+        with Image(filename=path1) as img:
+            # img.transform(resize="%dx%d>" % (width, height))
+            img_path = os.path.join(DEFAULT_DATA_PATH, company_name.split()[0])
+            img_path = img_path + '/' + path.split('/')[-1].split('.')[0] + '.png'
+            import os.path
+            if not os.path.exists(img_path):
+                img.save(filename=img_path)
+        return img_path
+    except Exception as e:
+        return e
 
 
-def add_quarter(path, page, company_name,year_end):
-    q_dict = {}
-    qtr_dict = qtr_date(year_end=year_end)
-    for k, v in qtr_dict.items():
-        key_dict = {'description': '', 'quarter_date': v, 'q1': 0,
-                    'pdf_page': page,
-                    'pdf_image_path': path}
-        query1 = quarter_data(**key_dict)
-        query1.save()
-        q_dict[k] = query1
-    return q_dict
-
-
-def add_year(path, page, c_name,year_end):
-    y_dict = {}
-    year_dict = year_date(year_end)
-    for k, v in year_dict.items():
-        key_dict = {'description': '', 'year_date': v, 'y1': 0,
-                    'pdf_page': page,
-                    'pdf_image_path': path}
-        query1 = year_data(**key_dict)
-        query1.save()
-        y_dict[k] = query1
-    return y_dict
+def add_quarter(path, page, qtr_dict,c_obj,subsection,section,s2section):
+    try:
+        q_dict = {}
+        qtr_obj = quarter_data.objects.filter(subsection=subsection, section=section, gbc_name=c_obj,
+                                                         s2section=s2section)
+        if not qtr_obj:
+            for k, v in qtr_dict.items():
+                key_dict = {'gbc_name': c_obj, 'section': section,'description': '',
+                            'quarter_date': v, 'q1': 0,'subsection':subsection,'s2section':s2section,
+                            'pdf_page': page,
+                            'pdf_image_path': path}
+                query1 = quarter_data(**key_dict)
+                query1.save()
+                q_dict[k] = query1
+            return q_dict
+    except Exception as e:
+        return e
+#
+#
+# def add_year(path, page, c_name,year_end):
+#     try:
+#         y_dict = {}
+#         year_dict = year_date(year_end)
+#         for k, v in year_dict.items():
+#             key_dict = {'description': '', 'quarter_date': v, 'q1': 0,
+#                         'pdf_page': page,
+#                         'pdf_image_path': path}
+#             query1 = quarter_data(**key_dict)
+#             query1.save()
+#             y_dict[k] = query1
+#         return y_dict
+#     except Exception as e:
+#         return e
 
 
 def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=None,pdf_page = None):
-    q_dict = add_quarter(img_path, page, c_name,year_end)
-    y_dict = add_year(img_path, page, c_name,year_end)
-    if not pdf_page:
-        gbc_obj = CompanyBalanceSheetData.objects.filter(subsection=sub_obj, section=sec, gbc_name=c_obj, s2section=s2_obj)
-    else:
+    try:
+        qtr_dict = qtr_date_pnl()
+        year_dict = year_date(year_end)
+        qtr_dict.update(year_dict)
+        q_dict = {}
 
-        gbc_obj = CompanyPNLData.objects.filter(subsection=sub_obj, section=sec, gbc_name=c_obj,
-                                                         s2section=s2_obj)
-    if not gbc_obj:
-        gbc_dict = {'gbc_name': c_obj, 'section': sec, 'q1': q_dict['q1'],
-                    'q2': q_dict['q2'], 'q3': q_dict['q3'], 'q4': q_dict['q4'],
-                    'lrq': q_dict['lrq'], 'y1': y_dict['y1'], 'y2': y_dict['y2'], 'y3': y_dict['y3'],
-                    'y4': y_dict['y4'],
-                    }
+        qtr_obj = quarter_data.objects.filter(subsection=sub_obj, section=sec, company_name=c_obj,
+                                              s2section=s2_obj)
 
-        if sub_obj and s2_obj:
-            gbc_dict['subsection'] = sub_obj
-            gbc_dict['s2section'] = s2_obj
+        pdf_extraction = 'bsheet' if pdf_page != 'pnl' else 'pnl'
+        if not qtr_obj:
+            for k, v in qtr_dict.items():
+                key_dict = {'company_name': c_obj, 'section': sec, 'description': '',
+                            'page_extraction':pdf_extraction,
+                            'quarter_date': v, 'q1': 0, 'subsection': sub_obj, 's2section': s2_obj,
+                            'pdf_page': page,
+                            'pdf_image_path': img_path}
+                query1 = quarter_data(**key_dict)
+                query1.save()
+                q_dict[k] = query1
+            return False
+        return True
 
-        elif sub_obj and not s2_obj:
-            gbc_dict['subsection'] = sub_obj
-        query1 = CompanyBalanceSheetData(**gbc_dict) if not pdf_page else CompanyPNLData(**gbc_dict)
-        query1.save()
-        return False
-
-    return True
-
+    except Exception as e:
+        return e
 
 def Create_blank_sheet(c_name, path, page,year_end):
-    c_obj = CompanyList.objects.filter(company_name__icontains=c_name)
-    if not c_obj:
-        c_dict = {'company_name': c_name,'ditname_id':214}
-        c_obj = CompanyList(**c_dict)
-        c_obj.save()
-    else:
-        c_obj = c_obj[0]
-    sec_obj = Section.objects.filter(i_related='Balance Sheet')
-
-    img_path = save_image(path, page, c_name)
-    for sec in sec_obj:
-        exist = add_gbc(img_path, page, c_name,year_end, c_obj, sec)
-        if not exist:
-            sub_obj = SubSection.objects.filter(section=sec)
-            for sub in sub_obj:
-                x = add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=sub)
-                s2_obj = S2Section.objects.filter(subsection=sub)
-                if s2_obj:
-                    for s2 in s2_obj:
-                        x = add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=sub, s2_obj=s2)
+    try:
+        c_obj = CompanyList.objects.filter(company_name__icontains=c_name)
+        if not c_obj:
+            c_dict = {'company_name': c_name,'ditname_id':214,'y_end':year_end}
+            c_obj = CompanyList(**c_dict)
+            c_obj.save()
         else:
-            break;
-    return img_path,c_obj.company_name
+            c_obj = c_obj[0]
+        sec_obj = Section.objects.filter(i_related='Balance Sheet')
+
+        img_path = save_image(path, page, c_name)
+        for sec in sec_obj:
+            import time
+            time.sleep(5)
+            exist = add_gbc(img_path, page, c_name,year_end, c_obj, sec)
+            if not exist:
+                sub_obj = SubSection.objects.filter(section=sec)
+                for sub in sub_obj:
+                    x = add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=sub)
+                    s2_obj = S2Section.objects.filter(subsection=sub)
+                    if s2_obj:
+                        for s2 in s2_obj:
+                            x = add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=sub, s2_obj=s2)
+            else:
+                break;
+        return img_path,c_obj.company_name
+
+    except Exception as e:
+        return e
 
 def Create_pnl(c_name,path,page,year_end):
-    c_obj = CompanyList.objects.filter(company_name__icontains=c_name)
-    if not c_obj:
-        c_dict = {'company_name': c_name,'ditname_id':214}
-        c_obj = CompanyList(**c_dict)
-        c_obj.save()
-    else:
-        c_obj = c_obj[0]
-
-    sector_name = SectorDit.objects.get(dit_name = c_obj.ditname)
-    if not sector_name.sector.copy_main:
-        sec_obj = SectorSection.objects.filter(sector = sector_name.sector)
-    else:
-        sec_obj = Section.objects.filter(i_related='Profit and Loss')
-    img_path = save_image(path, page, c_name)
-    for sec in sec_obj:
-        sectorsec_item = sec.item.split('##')[1]
-        section = Section.objects.get(item = sectorsec_item)
-        exist =add_gbc(img_path, page, c_name,year_end,c_obj, section,pdf_page='pnl')
-        print(sec)
-        if not exist:
-            sub_obj = SubSection.objects.filter(section=sec) if sector_name.sector.copy_main else\
-                        SectorSubSection.objects.filter(section=sec)
-
-            for sub in sub_obj:
-                sectorsubsec_item = sub.item.split('##')[1]
-                subsec = SubSection.objects.get(item=sectorsubsec_item)
-                x=add_gbc(img_path, page, c_name,year_end, c_obj,section,sub_obj=subsec,pdf_page='pnl')
-
+    try:
+        c_obj = CompanyList.objects.filter(company_name__icontains=c_name)
+        if not c_obj:
+            c_dict = {'company_name': c_name,'ditname_id':214,'y_end':year_end}
+            c_obj = CompanyList(**c_dict)
+            c_obj.save()
         else:
-            break;
-    return img_path,c_obj.company_name
+            c_obj = c_obj[0]
+        sector_name = SectorDit.objects.get(dit_name = c_obj.ditname)
+        if not sector_name.sector.copy_main:
+            sec_obj = SectorSection.objects.filter(sector = sector_name.sector)
+        else:
+            sec_obj = Section.objects.filter(i_related='Profit and Loss')
+        img_path = save_image(path, page, c_name)
+        for sec in sec_obj:
+            sectorsec_item = sec.item.split('##')[-1]
+            section = Section.objects.get(item = sectorsec_item)
+            exist =add_gbc(img_path, page, c_name,year_end,c_obj, section,pdf_page='pnl')
+            if not exist:
+                sub_obj = SubSection.objects.filter(section=sec) if sector_name.sector.copy_main else\
+                            SectorSubSection.objects.filter(section=sec)
+                if sub_obj:
+                    for sub in sub_obj:
+                        sectorsubsec_item = sub.item.split('##')[-1]
+                        subsec = SubSection.objects.get(item=sectorsubsec_item)
+                        x=add_gbc(img_path, page, c_name,year_end, c_obj,section,sub_obj=subsec,pdf_page='pnl')
+
+            else:
+                break;
+        return img_path,c_obj.company_name
+
+    except Exception as e:
+        return e

@@ -1,227 +1,189 @@
 from DataExtraction.models import *
 from BalanceSheet.models import *
+from PNL.models import CompanyPNLData
 from collections import OrderedDict
 from DataExtraction.common_files.utils import *
 from DataExtraction.common_files.basic_functions import *
-
-def get_company_data(gbc_data):
-    data=OrderedDict()
-    section = Section.objects.filter(i_related='Balance Sheet')
-    subsection = SubSection.objects.filter(section__in=section)
-    s2sec = S2Section.objects.filter(subsection__in=subsection)
-
-    for sec in section:
-        loop_list = ['q1', 'q2', 'q3', 'q4', 'y1', 'y2', 'y3', 'y4']
-        gbc_objs = gbc_data.filter(section=sec)
-        obj_d = OrderedDict()
-        for obj in gbc_objs:
-            inner_d = OrderedDict()
-            inn2 = OrderedDict()
-            for loop in loop_list:
-                if not obj.subsection:
-                    if getattr(obj, loop):
-                        if not inner_d:
-                            inner_d= OrderedDict({loop: getattr(obj, loop).q1} if 'q' in loop else {
-                                loop: getattr(obj, loop).y1})
-                        else:
-                            inner_d[loop] = getattr(obj, loop).q1 if 'q' in loop else getattr(obj, loop).y1
-
-                #
-                elif obj.subsection and not obj.s2section:
-                    if getattr(obj, loop):
-                        des = getattr(obj, loop).description.split('##')
-                        des = list(filter(None, des))
-                        for d_obj in des:
-                            if not get_alpha(d_obj) in inner_d:
-                                inner_d[get_alpha(d_obj)] = OrderedDict({loop: get_number(d_obj)} )
-                            else:
-                                inner_d[get_alpha(d_obj)][loop] = get_number(d_obj)
-
-                else:
-                    if getattr(obj, loop):
-                        des = getattr(obj, loop).description.split('##')
-                        des = list(filter(None, des))
-                        for d_obj in des:
-                            if not get_alpha(d_obj) in inn2:
-                                inn2[get_alpha(d_obj)] = OrderedDict({loop: get_number(d_obj)} )
-                            else:
-                                inn2[get_alpha(d_obj)][loop] =  get_number(d_obj)
+from .tranform_data import get_data
+from django.db.models import Q
+from django.core.cache import cache
 
 
-                    # print(inn2)
-                    if obj.s2section.item not in inner_d:
-                        inner_d[obj.s2section.item] = inn2
-
-                        inner_d['s2sec'] = 1
-                    else:
-                        inner_d[obj.s2section.item].update(inn2)
-
-            if obj.subsection :
-                if obj.subsection.item not in obj_d:
-                    obj_d[obj.subsection.item] = inner_d
-                else:
-                    obj_d[obj.subsection.item].update(inner_d)
-            else:
-                data[sec.item]=inner_d
-
-        if sec.item not in data:
-            data[sec.item] = obj_d
-        else:
-            data[sec.item].update(obj_d)
-    return data
-
-
+# import HTMLParser
+# parser = HTMLParser.HTMLParser()
 def sub_dict(s_dict):
     sub_d=OrderedDict()
     for i, j in s_dict.items():
         for j1, j2 in j.items():
-            if not int(j2)==0:
-                if not j1 in sub_d:
-                    sub_d[j1] =[i + '(' + str(j2) + ')',j2]
-                else:
-                    sub_d[j1] = [sub_d[j1][0] + '##' + i + '(' + str(j2) + ')',int(sub_d[j1][1])+int(j2)]
+            if not j2: j2=0
+            if j2:
+                val = int(j2) if not '.' in str(j2) else float(j2)
+                if not val==0:
+                    if not j1 in sub_d:
+                        sub_d[j1] =[i + '(' + str(val) + ')',val]
+                    else:
+                        old_val  = int(sub_d[j1][1]) if not '.' in str(sub_d[j1][1]) else float(sub_d[j1][1])
+                        sub_d[j1] = [sub_d[j1][0] + '##' + i + '(' + str(val) + ')',old_val+val]
     return sub_d
 
-def s2sec_dict(s2_dict):
-    com_dict = OrderedDict()
-    for i,j in s2_dict.items():
-        s2_d =OrderedDict()
-        if i!='s2sec':
-            s2_d[i]=sub_dict(j)
-        if com_dict:
-            com_dict.update(s2_d)
-        else:
-            com_dict=s2_d
-    return com_dict
+def del_old_data(sec_objs):
+    for obj in sec_objs:
+        obj.description =''
+        obj.q1=0
+        obj.save()
 
-def delete_old_data(gbc_obj):
-    for obj in gbc_obj:
-        obj.q1.description=''
-        obj.q1.save()
-        obj.q2.description = ''
-        obj.q2.save()
-        obj.q3.description = ''
-        obj.q3.save()
-        obj.q4.description = ''
-        obj.q4.save()
-        obj.y1.description = ''
-        obj.y1.save()
-        obj.y2.description = ''
-        obj.y2.save()
-        obj.y3.description = ''
-        obj.y3.save()
-        obj.y4.description = ''
-        obj.y4.save()
-def update_sub(key,val,obj):
-        if 'q' in key:
-            new_data = {'description': val[0], 'q1': val[1]}
-            o_obj = quarter_data.objects.filter(id=obj.values_list(key, flat=True))
-        else:
-            new_data = {'description': val[0], 'y1': val[1]}
-            o_obj = year_data.objects.filter(id=obj.values_list(key, flat=True))
-        o_obj.update(**new_data)
 
-def update_data(data,c_id):
-    gbc_obj  =CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
-    delete_old_data(gbc_obj)
-    gbc_obj = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
-    for sec, sub in data.items():
-        for i,j in sub.items():
-            if type(j) != OrderedDict:
-                sec_obj = gbc_obj.filter(section__item = sec,subsection=None)
-                update_sub(i,j,sec_obj)
+def update_qtr(data,c_id,req_type,action_type=None):
+    c_obj = CompanyList.objects.filter(id =c_id).values_list('y_end',flat=True)
+    all_objs = quarter_data.objects.filter(company_name_id=c_id,page_extraction=req_type)
+    sec_objs  = all_objs.filter(Q(section__item = list(data.keys())[0]),~Q(subsection=None))
+    if action_type:del_old_data(sec_objs)
+    date_objs = qtr_date_pnl()
+    date_objs.update(year_date(c_obj[0]))
+
+    for key,obj in data.items():
+        for k1, k2 in obj.items():
+            if type(k2) != list:
+                for des1,des2 in k2.items():
+                    q_date = des1
+                    if des2:
+                        des = str(des2[0])
+                        q_sum =int(des2[1]) if not '.' in str(des2) else float(int(des2[1]))
+                        sec_o = sec_objs.get(subsection__item=k1, quarter_date=date_objs[q_date])
+                        sec_o.description=des
+                        sec_o.q1 = q_sum
+                        sec_o.save()
             else:
-               for j1,j2 in j.items():
-                   if type(j2)!=OrderedDict:
-                       sub_obj = gbc_obj.filter(section__item = sec,subsection__item=i,s2section=None)
-                       update_sub(j1, j2, sub_obj)
+                for s2obj in k2:
+                    for s2,s2_obj in s2obj.items():
+                        for s2_key ,s2_val in s2_obj.items():
+                            if s2_val:
+                                q_date = s2_key
+                                des = str(s2_val[0])
+                                q_sum = int(s2_val[1]) if not '.' in str(s2_val[1]) else float(int(s2_val[1]))
+                                sec_o = sec_objs.get(subsection__item=k1, quarter_date=date_objs[q_date],s2section__item =s2)
+                                sec_o.description = des
+                                sec_o.q1 = q_sum
+                                sec_o.save()
 
-                   else:
-                       for s1,s2 in j2.items():
-                           s2_obj = gbc_obj.filter(section__item=sec, subsection__item=i, s2section__item=j1)
-                           update_sub(s1, s2, s2_obj)
-    return True
+        return True
 
-def save_data(data,c_id):
+
+def save_data(data,c_id,req_type,action_type=None,p_type=None):
     row_data=OrderedDict()
-    for sec,subsec in data.items():
+    for sec,sub_list in data.items():
         sub_data=OrderedDict()
-        for sub, item in subsec.items():
-            if type(item) == OrderedDict and not 's2sec' in item:
-                sub_data[sub]= sub_dict(item)
-            elif type(item) == OrderedDict and  's2sec' in item:
-                sub_data[sub]=s2sec_dict(item)
-            else:
-                if not sec in row_data:
-                    row_data[sec]= OrderedDict({sub:['',item]})
+        for subsec in sub_list:
+            for sub, item in subsec.items():
+                if type(item) != list:
+                    sub_data[sub]= sub_dict(item)
                 else:
-                    row_data[sec].update(OrderedDict({sub:['',item]}))
-        row_data[sec].update(sub_data)
-    res = update_data(row_data,c_id)
-    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=c_id)
-    data = get_company_data(gbc_data)
-    return data
+                    s2_data =OrderedDict()
+                    s2_list=[]
+                    for s2_obj in item:
+                        for s2_key,s2_ob in s2_obj.items():
+                            s2_data[s2_key] =sub_dict(s2_ob)
+                    s2_list.append(s2_data)
+                    sub_data[sub]=s2_list
 
-import html
+        row_data[sec]=sub_data
+    res = update_qtr(row_data,c_id,req_type=p_type,action_type=action_type)
+    # res = delete_qtr(row_data,c_id,req_type = req_type)
+    data_list, date_list, loop_key = get_data(req_type=p_type,section_type=req_type, c_id=c_id)
+    return data_list, date_list, loop_key
+
 from django.shortcuts import render
 
 def update_comp(request):
-    section = Section.objects.filter(i_related='Balance Sheet')
+    add_in_item = False
+    g_data = dict(request.GET)
+    r_type = 'Profit and Loss' if g_data['type'][0] == 'pnl' else 'Balance Sheet'
+    section = Section.objects.filter(i_related=r_type)
     subsection = SubSection.objects.filter(section__in=section)
     s2sec = S2Section.objects.filter(subsection__in=subsection)
-
-    gbc_data = CompanyBalanceSheetData.objects.filter(gbc_name_id=request.GET['c_id'])
-
-    item = html.unescape(request.GET['item'])
-    sub_list = list(SubSection.objects.filter(s2section=None).values_list('item', flat=True))
-    s2_list = list(S2Section.objects.values_list('item', flat=True))
-
-    sec = html.unescape(request.GET['section'])
-    subsec = html.unescape(request.GET['subsection'])
-    exist_sec = html.unescape(request.GET['existing_sec'])
-    s2section = html.unescape(request.GET['s2sec']) if 's2sec' in request.GET else ''
-
-    data = get_company_data(gbc_data)
-
-    if not 's2sec' in request.GET:
-        remove_item = data[sec][subsec].pop(exist_sec)
-        if not len(data[sec][subsec])>=1:
-            data[sec].pop(subsec)
-    else:
-        remove_item = data[sec][subsec][s2section].pop(exist_sec)
-        if not len(data[sec][subsec][s2section])>=1:
-            data[sec][subsec].pop(s2section)
-
-
-    if item in sub_list:
-        sub_obj = SubSection.objects.filter(item=item).values('section__item', 'item')[0]
-        if sub_obj['item'] in data[sub_obj['section__item']]:
-            data[sub_obj['section__item']][sub_obj['item']].update(OrderedDict([(exist_sec, remove_item)]))
+    req_type = 'pnl' if g_data['type'][0] == 'pnl' else 'bsheet'
+    if cache.has_key(request.GET['c_id']):
+        cache_dict = cache.get(request.GET['c_id'])
+        if  req_type in cache_dict:
+            data_list = cache_dict[req_type]
+            date_list = cache_dict['date_list']
+            loop_key = cache_dict['loop_key']
         else:
-            data[sub_obj['section__item']][sub_obj['item']] = OrderedDict([(exist_sec, remove_item)])
-
+            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
     else:
-
-        s2_obj = S2Section.objects.filter(item=item).values('subsection__section__item','subsection__item', 'item')[0]
-        if s2_obj['item'] in data[s2_obj['subsection__section__item']][s2_obj['subsection__item']]:
-            data[s2_obj['subsection__section__item']][s2_obj['subsection__item']][s2_obj['item']].update(OrderedDict([(exist_sec, remove_item)]))
-        else:
-            data[s2_obj['subsection__section__item']][s2_obj['subsection__item']][s2_obj['item']] = OrderedDict([(exist_sec, remove_item)])
+        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+    sub_list =list(subsection.filter(s2section=None).values_list('item',flat=True))
+    s2_list = list(s2sec.values_list('item', flat=True))
+    data=data_list
+    remove_item =''
+    if not remove_item:
+        for data in data_list:
+            if g_data['section'][0] in list(data.keys()):
+                for i in data[g_data['section'][0]]:
+                    for key, val in i.items():
+                        if type(val) != list and key == g_data['subsection'][0]:
+                            for d_key, d_val in val.items():
+                                if d_key == g_data['existing_sec'][0]:
+                                    remove_item=i[key].pop(g_data['existing_sec'][0])
+                                    break;
+                        elif key == g_data['subsection'][0] and 's2sec' in g_data:
+                            for s2sec in val:
+                                for s2, s2_o in s2sec.items():
+                                    if s2 == g_data['s2sec'][0]:
+                                        for s2_key, s2_val in s2_o.items():
+                                            if s2_key == g_data['existing_sec'][0]:
+                                                remove_item =s2sec[s2].pop(g_data['existing_sec'][0])
+                                                break;
+                                if remove_item:break;
+                    if remove_item:break;
+                data_list, date_list, loop_key = save_data(data, request.GET['c_id'], req_type=r_type,
+                                                           action_type='update', p_type=req_type)
+                if remove_item: break;
+    if remove_item and not add_in_item:
+        for data in data_list:
+            if g_data['item'][0] in sub_list:
+                sub_obj = SubSection.objects.filter(item=g_data['item'][0]).values('section__item', 'item')[0]
+                sec_name= sub_obj['section__item']
+            else:
+                sub_obj = S2Section.objects.filter(item=g_data['item'][0],subsection__item=g_data['subsection'][0]).values('subsection__section__item', 'item')[0]
+                sec_name = sub_obj['subsection__section__item']
+            if sec_name in list(data.keys()):
+                for i in data[sec_name]:
+                    for key, val in i.items():
+                        if type(val) != list and key == g_data['item'][0]:
+                            val.update({g_data['existing_sec'][0]: remove_item})
+                            add_in_item =True
+                            break;
+                        elif type(val) == list  and 's2sec' in g_data:
+                            for s2sec in val:
+                                for s2, s2_o in s2sec.items():
+                                    if s2 == g_data['item'][0] and not s2_o:
+                                        s2_o.update({g_data['existing_sec'][0]: remove_item})
+                                        add_in_item = True
+                                        # remove_item =s2sec[s2].pop(g_data['existing_sec'][0])
+                                        break;
+                                if add_in_item: break;
+                    if add_in_item :break;
+                data_list, date_list, loop_key = save_data(data, request.GET['c_id'], req_type=r_type,
+                                                       action_type='update', p_type=req_type)
+                if add_in_item: break;
 
     comp = list(sub_list) + list(s2_list)
-    new_data =save_data(data,request.GET['c_id'])
-    return render(request, 'AutomationUI/table_body.html', {'data': new_data, 'comp': comp})
-
-def remake_dict(section,key,data):
-    print (data)
-    new_data=OrderedDict()
-    inner_dict =OrderedDict()
-    keys_list = ['q1','q2','q3','q4','y1','y2','y3','y4']
-    sec_part = [i for i in data.keys() if key in i]
-    # sub_part =
-    for i in sec_part:
-        inner_dict[i.split('_')[1]]=data[i][0]
-    new_data[data['section'][0]]=inner_dict
-
-
-
+    if g_data['type']== 'pnl':
+        return render(request, 'AutomationUI/pnl.html', locals())
+    else:
+        return render(request, 'AutomationUI/bs_data.html', locals())
+#
+# def remake_dict(section,key,data):
+#     print (data)
+#     new_data=OrderedDict()
+#     inner_dict =OrderedDict()
+#     keys_list = ['q1','q2','q3','q4','lrq','y1','y2','y3','y4']
+#     sec_part = [i for i in data.keys() if key in i]
+#     # sub_part =
+#     for i in sec_part:
+#         inner_dict[i.split('_')[1]]=data[i][0]
+#     new_data[data['section'][0]]=inner_dict
+#
+#
+#

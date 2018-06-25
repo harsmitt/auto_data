@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-from .choices import year_end,Comp_type,CountryList
+from .choices import year_end,Comp_type,CountryList,pdf_extraction_page
 from django.contrib.auth.models import User
 
 class Sector(models.Model):
@@ -35,6 +35,9 @@ class Section(models.Model):
 class SubSection(models.Model):
     section = models.ForeignKey(Section)
     item = models.CharField(max_length=2000)
+    neg_ro = models.BooleanField(default=False)
+    is_expense = models.BooleanField(default=False)
+    is_income = models.BooleanField(default=False)
     i_synonyms = models.CharField(max_length=2000, blank=True,null=True)
     i_breakdown = models.CharField(max_length=5000, blank=True,null=True)
     i_keyword = models.CharField(max_length =1000,blank=True,null=True)
@@ -59,28 +62,6 @@ class S2Section(models.Model):
     def __str__(self):
         return str(self.item)
 
-
-class quarter_data(models.Model):
-    quarter_date = models.CharField(max_length=200, blank=True, null=True)
-    q1 = models.CharField(max_length=200, blank=True, null=True)
-    description =models.CharField(max_length=1000, blank=True, null=True)
-    pdf_image_path = models.CharField(max_length=1000,blank=True,null=True)
-    pdf_page = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return str(self.q1)
-
-class year_data(models.Model):
-    year_date = models.CharField(max_length=200, blank=True, null=True)
-    y1 = models.CharField(max_length=200, blank=True, null=True)
-    description = models.CharField(max_length=1000, blank=True, null=True)
-    pdf_image_path = models.CharField(max_length=1000, blank=True, null=True)
-    pdf_page = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return str(self.year_date)
-
-
 class CompanyList(models.Model):
     company_name= models.CharField(max_length=200)
     ditname = models.ForeignKey(SectorDit)
@@ -90,6 +71,24 @@ class CompanyList(models.Model):
 
     def __str__(self):
         return str(self.company_name)
+
+class quarter_data(models.Model):
+    company_name = models.ForeignKey(CompanyList)
+    page_extraction = models.CharField(max_length=200, choices=pdf_extraction_page, blank=True)
+    section = models.ForeignKey(Section, blank=True, null=True)
+    subsection = models.ForeignKey(SubSection, blank=True, null=True)
+    s2section = models.ForeignKey(S2Section, blank=True, null=True)
+    quarter_date = models.CharField(max_length=200, blank=True, null=True)
+    q1 = models.CharField(max_length=200, blank=True, null=True)
+    description =models.CharField(max_length=1000, blank=True, null=True)
+    pdf_image_path = models.CharField(max_length=1000,blank=True,null=True)
+    pdf_page = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.q1)
+
+
+
 
 
 

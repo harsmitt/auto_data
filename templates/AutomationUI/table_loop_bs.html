@@ -1,0 +1,105 @@
+{% load get_value %}
+{% load get_data %}
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+<!--.tg .tg-yw4l{vertical-align:top}-->
+<!--.tg thead-->
+<!--{-->
+    <!--position:fixed;-->
+<!--}-->
+</style>
+{%for obj in data_list%}
+
+  {% for sec,sub in obj.items%}
+    {%if not sub%}
+        <tr class="total_block">
+          <td class="tg-yw4l" style="border:none;"></td>
+          <td class="section" style="color:black;">{{sec}}</td>
+          {%for date in date_list%}
+            <td class="tg-yw4l" style="background-color:#228B22;">0</td>
+          {%endfor%}
+        </tr>
+    {%else%}
+        <tr class="sec_block">
+          <td class="tg-yw4l" style="border:none;"></td>
+          <td class="section" style="color:black;">{{sec}}</td>
+          {%for date in date_list%}
+            <td class="tg-yw4l" style="background-color:#228B22;">0</td>
+          {%endfor%}
+        </tr>
+    {%endif%}
+
+    {%for sub_l in sub%}
+      {%for s,s2 in sub_l.items%}
+          <tr class="sub_block">
+            <td class="tg-yw4l" style="border:none;"><input type="button" onclick="add_row(this)" value="Add row">
+            </td>
+            <td class="subsection" style="padding-left:40px">{{s}}</td>
+            {%for date in date_list%}
+                <td class="tg-yw4l" style="background-color:#EEE8AA">0</td>
+            {%endfor%}
+
+            <!--<span onclick="add_row(this)" class="sprite plus-icon"></span>-->
+          </tr>
+          {%for word , key in s2.items%}
+            <tr class="existing_block">
+              <td class="tg-yw4l" style="border:none;">
+                <select id="new_comp" style="width: 100px;";name="b_comp" onchange="change_comp(this);">
+                   <option value ='' selected>Select Head</option>
+                  {% for com in comp %}
+                              <option value="{{com}}" >{{com}}</option>
+                  {% endfor %}
+                </select>
+                <input type="button" onclick="delete_row(this)" value="Delete"></input>
+                <input type="button" onclick="SaveRow(this)" value="Save"> </input>
+               </td>
+              <td class="existing_sec" style="color:red;padding-left:80px">{{word}}</td>
+              {%for q_key,date in loop_key.items%}
+                  <td class="tg-yw4l" style="color:red;" onkeyup="change_sum(event,this)"  contenteditable='true'>{% get_data key q_key  %}
+                  </td>
+              {%endfor%}
+
+            </tr>
+
+          {%endfor%}
+          {%for s2obj in s2%}
+            {%for s2_o,i in s2obj.items%}
+                <tr class="s2sec_block">
+                  <td class="tg-yw4l" style="border:none" ><input type="button" onclick="add_row2(this)" value="Add row"></td>
+                  <td class="s2sec" style="color:black;padding-left:80px">{{s2_o}}</td>
+                  {%for q_key,date in loop_key.items%}
+                      <td class="tg-yw4l" style="background-color:#EEE8AA">0</td>
+                  {%endfor%}
+                </tr>
+              {%for hupp , sun in i.items%}
+                  <tr class="existing_block">
+                    <td class="tg-yw4l" style="border:none;">
+                    <select id="new_comp" style="width: 100px;";name="b_comp" onchange="move_s2section(this);">
+                       <option value ='' selected>Select Head</option>
+                      {% for com in comp %}
+                                  <option value="{{com}}" >{{com}}</option>
+                      {% endfor %}
+                    </select>
+                  <input type="button" onclick="delete_row2(this)" value="Delete"></input>
+                  <input type="button" onclick="SaveRow2(this)" value="Save"> </input>
+               </td>
+                    <td style="color:red;padding-left:120px" class="existing_sec">{{hupp}}</td>
+                    {%for q_key,date in loop_key.items%}
+                        <td class="tg-yw4l" style="color:red;" onkeyup="change_sum(event,this)" contenteditable='true'>{% get_data sun q_key  %}</td>
+                    {%endfor%}
+                  </tr>
+              {%endfor%}
+
+            {%endfor%}
+          {%endfor%}
+
+      {%endfor%}
+    {%endfor%}
+
+  {%endfor%}
+
+
+{%endfor%}
+<!--</table>-->

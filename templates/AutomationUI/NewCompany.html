@@ -1,0 +1,67 @@
+{% extends 'AutomationUI/b_s1.html' %}
+{% load static %}
+
+{% block tabs %}
+<div class="container-fluid navbar" id="header2">
+        <nav id="nav"  class="pull-left">
+            <ul id="tab_name">
+                <li><a href="/automation/company_list/" >Company List</a></li>
+                <li><a href="/automation/upload_pdf/">Upload PDF</a></li>
+                <li><a href="/automation/new_company/">New Company</a></li>
+                <li><a onclick="go_to_next(this)" style="color:blue;text-decoration: underline;" >Go to PNL</a></li>
+
+                <!--<li><a href="/automation/notification/" class="update-box">Update &amp; Notification {% if notice_count %}<span class="update-count">{{ notice_count }}</span>{% endif %}</a></li>-->
+            </ul>
+        </nav>
+    </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 marginTop-20">
+    <form method="post" id="new_form" action="/automation/new_company/" enctype="multipart/form-data">
+
+        {% csrf_token %}
+            <div>
+                <label>Company name :</label>
+                <input type="text" name="company_name" value="">
+
+                <label>Company Ticker :</label>
+                <input type="text" name="company_ticker" value="">
+
+                <label style="padding:0px 0px 0px 10px">Sector</label>
+                <select name="sector" id="sector">
+                    <option value=" " selected= "selected">Select Sector</option>
+                    {% for sector in sector_list %}
+                    <option value="{{sector}}" >{{sector}}</option>
+                    {% endfor %}
+                </select>
+
+                <label style="padding:0px 0px 0px 10px">Year End</label>
+                      <select name="year_end" id="year_end">
+                            <option value=" " selected= "selected">Select Company Year end</option>
+                            {% for y_end in c_year_end %}
+                            <option value="{{y_end.0}}" >{{y_end.1}}</option>
+                            {% endfor %}
+                      </select>
+
+
+            </div>
+
+            <div style="padding:30px 10px 0px 0px">
+
+                 <input type="submit" value="Start Crawl">
+            </div>
+
+            <!--{%for sector in sector_list%}-->
+                <!--<input type="text" name="sector" value="">-->
+            <!--{%endfor%}-->
+
+    </form>
+
+</div>
+  </div>
+</div>
+
+
+
+{% endblock tabs %}

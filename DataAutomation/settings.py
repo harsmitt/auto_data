@@ -67,15 +67,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+        # 'memcache',
     'AutomationUI',
     'rest_framework',
+    # 'website_crawler',
     # 'DataExtraction',
     'BalanceSheet',
     'PNL',
     # 'DataExtraction',
 
 ]
+
+
+# CACHE_MIDDLEWARE_ALIAS =
+
+# CACHE_MIDDLEWARE_KEY_PREFIX = ''
+# CACHE_MIDDLEWARE_SECONDS = 30 * 24 * 60 * 60
+
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -85,14 +94,22 @@ TEMPLATE_LOADERS = (
 REST_FRAMEWORK = { 'DEFAULT_RENDERER_CLASSES': ( 'rest_framework.renderers.TemplateHTMLRenderer', 'rest_framework.renderers.JSONRenderer', 'rest_framework.renderers.BrowsableAPIRenderer', ) }
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
 
 ROOT_URLCONF = 'DataAutomation.urls'
 
@@ -111,6 +128,8 @@ TEMPLATES = [
             ],
         'libraries': {
             'get_item': 'AutomationUI.templatetags.get_item',
+            'get_value': 'AutomationUI.templatetags.get_value',
+            'get_data': 'AutomationUI.templatetags.get_data',
 
         }
         },
@@ -127,7 +146,7 @@ WSGI_APPLICATION = 'DataAutomation.wsgi.application'
 
 DATABASES = {
         'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',#'django.db.backends.mysql',
         'NAME': 'test_automation',
         'USER': 'root',
         'PASSWORD': 'root',
@@ -160,6 +179,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
     )
+
+
 
 #
 # TEMPLATE_CONTEXT_PROCESSORS = (

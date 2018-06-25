@@ -1,0 +1,22 @@
+{% extends 'AutomationUI/b_s1.html' %}
+
+<script src="http://www.ittutorials.in/js/demo/numtoword.js" type="text/javascript"></script>
+{% block tabs %}
+<div class="container-fluid navbar" id="header2">
+        <nav id="nav"  class="pull-left">
+            <ul id="tab_name">
+                <li><a href="/automation/company_list/" >Company List</a></li>
+                <li><a href="/automation/upload_pdf/">Upload PDF</a></li>
+                <li><a onclick="calculate_pnl_qtr(this)" style="color:blue;text-decoration: underline;" >Calculate Pnl Last qtr</a></li>
+                <li><a onclick="generate(this)" style="color:blue;text-decoration: underline;" >Download Excel</a></li>
+                <li><a onclick="download_dump(this)" style="color:blue;text-decoration: underline;" >Download dump</a></li>
+
+
+
+                <!--<li><a href="/automation/notification/" class="update-box">Update &amp; Notification {% if notice_count %}<span class="update-count">{{ notice_count }}</span>{% endif %}</a></li>-->
+            </ul>
+        </nav>
+    </div>
+{% include 'AutomationUI/table_format_trail.html' %}
+{% endblock tabs %}
+</div>

@@ -22,3 +22,14 @@ CountryList=(
     ('India','India')
 
 )
+
+pdf_extraction_page= (
+
+    ('bsheet','bsheet'),
+    ('pnl','pnl'),
+)
+
+pdf_type = (
+            ('year','year'),
+            ('quarter','quarter'),
+            )

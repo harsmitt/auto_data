@@ -33,7 +33,6 @@ class WebsiteSpider(CrawlSpider):
             for counter, link in enumerate(
                     response.css('a::attr(href)').extract()):  # Get all the <a herf> value from response page.
                 if 'investor' in link or 'investors' in link:
-                    # import pdb;pdb.set_trace()
                     if 'http' not in link and'https' not in link :
                         link = self.url_list + link
                     # dont_filter=True gets passed duplicate urls to crawl.
@@ -41,6 +40,7 @@ class WebsiteSpider(CrawlSpider):
                     yield scrapy.Request(url=link, callback=self.parse_item,
                                          meta={'url': link}, dont_filter=True)
         except:
+
             print("unable to extract the %s keyword in url:%s" % (WebsiteSpider.keyword, link))
 
     #This method will find the quarterly pdf's from the url and pass the link one by one to the another method
@@ -81,7 +81,6 @@ runner = CrawlerRunner()
 @defer.inlineCallbacks
 def crawl():
     url = raw_input(' Enter the company url')
-    print (url)
     yield runner.crawl(WebsiteSpider,url=url)
     reactor.stop()
 

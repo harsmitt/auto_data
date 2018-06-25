@@ -1,0 +1,129 @@
+{% extends 'AutomationUI/b_s1.html' %}
+{% load static %}
+
+{% block tabs %}
+	<div class="page-wrap">
+	<header>
+		<div class="container">
+
+				<div class="col-sm-4">
+					<a href="#">
+						<img src="{{MEDIA_URL}}automationui/images/logo.png" alt="">
+					</a>
+				</div>
+
+				<div class="col-sm-8">
+					<ul>
+						<li>
+							<a href="/automation/company_list/">Company List</a>
+						</li>
+
+					</ul>
+				</div>
+
+		</div>
+	</header>
+
+
+
+	<div class="container contentmid">
+		<div class="col-xs-12 wholecontent">
+			<div class="compny-details">
+                <div class ="col-sm-12">
+                    <h3 style="color:black">{{msg}}</h3>
+
+                    <style>
+
+                        .form-common .input-div input[type=text],  .form-common .input-div select{
+                            padding:8px 16px; font-size:14px; color:#555;margin:0;width:80%;
+                        }
+                        .flt100{float:left;width:100%;}
+                        .form-common h5{ margin:0 0 10px;}
+                        .form-common .input-div{margin:0 0 20px;}
+                    </style>
+
+                </div>
+                <form method="post" id="upload_form" action="/automation/upload_pdf/" enctype="multipart/form-data" class="form-common">
+                {% csrf_token %}
+
+                    <div class="row">
+					<div class="col-sm-6 ">
+
+                        <h5><span>Company Name : </span> </h5>
+                        <div class="input-div flt100">
+                        <input type="text" class="flt100" name="company_name" style="border:1px !important" onblur="get_existing_date(this)" value="">
+					    </div>
+                        </div>
+
+                    <div class="col-sm-6" id="li_div" style="color:white;display:none" >
+                            <div style="margin-top:31px;" class="flt100" id="check1"></div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <h5><span>Sector : </span></h5>
+                        <div class="input-div flt100">
+                            <select name="sector" style="color:black" id="sector">
+                                    <option value=" " selected= "selected">Select Sector</option>
+                                    {% for sector in sector_list %}
+                                        <option value="{{sector}}" >{{sector}}</option>
+                                    {% endfor %}
+                                </select>
+                        </div>
+					</div>
+                        </div>
+
+                    <div class="row">
+
+                    <div class="col-sm-6">
+                        <h5><span>Year End : </span></h5>
+                            <div class="input-div flt100">
+                                <select name="year_end" style="color:black" id="year_end">
+                                    <option value=" " selected= "selected">Select Company Year end</option>
+                                        {% for y_end in c_year_end %}
+                                            <option value="{{y_end.0}}" >{{y_end.1}}</option>
+                                        {% endfor %}
+                                </select>
+                            </div>
+					</div>
+
+                    <div class="col-sm-6 ">
+                        <h5><span>PDF Type : </span></h5>
+                            <div class="input-div flt100">
+                                 <select name="pdf_type"  style="color:black" id="pdf_type">
+                                    <option value=" " selected= "selected">Select Pdf Type</option>
+                                    {% for p_t in p_type %}
+                                        <option value="{{p_t.0}}" >{{p_t.1}}</option>
+                                    {% endfor %}
+                                 </select>
+                            </div>
+					</div>
+                        </div>
+                    <div class="row">
+
+					<div class="col-sm-6">
+                        <h5>
+                            <input  type="file" name="file">
+                        </h5>
+					</div>
+                    <div class="col-sm-6">
+                        <h5>
+
+                             <input style="color:black" type="submit" value="Extract Data">
+                        </h5>
+                    </div>
+                        </div>
+                </form>
+			</div>
+
+
+		</div>
+	</div>
+
+
+
+
+	</div>
+
+
+
+{% endblock tabs %}

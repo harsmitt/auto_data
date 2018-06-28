@@ -81,7 +81,8 @@ def i_notes_index(**kwargs):#[(notes,group,company),(group,notes),(company,notes
         return kwargs['ignore_index']
 
 
-    elif 'note' not in extract_s(kwargs['line']).split()[0] and any(check_datetime(obj) for obj in extract_s(kwargs['line']).split()):
+    elif 'note' not in extract_s(kwargs['line']).split()[0] and \
+            (any(check_datetime(obj) for obj in extract_s(kwargs['line']).split()) or 'except share data' in kwargs['line'].lower()):
         n_index = re.split('  +',kwargs['line']).index(notes[0]) if len(re.split('  +',kwargs['line']))>1 \
                 else -1
     elif 'note' in extract_s(kwargs['line']).split()[-1] and len(extract_s(kwargs['line']).split())>1:
@@ -168,7 +169,7 @@ def i_company_index(**kwargs):#[group,company]
 def i_qtr_index(**kwargs):
     g_index =None
     c_index=None
-   
+    n_index= None
     if len(re.split('  +', kwargs['line']))>1:
         qtr1 = [word for word in re.split('  +',kwargs['line']) if kwargs['combination'][0] in word ]
         g_index = re.split('  +',kwargs['line']).index(qtr1[0])+1 if qtr1 else None
@@ -180,22 +181,47 @@ def i_qtr_index(**kwargs):
         qtr2 = '@@'.join(kwargs['line'].split(kwargs['combination'][1]))
         c_index = qtr2.index('@@')+1 if qtr2 else None
 
+    for l_num in range(kwargs['l_num'], kwargs['l_num'] + 5):
+        if len(kwargs['data']) > l_num:
+            line = kwargs['data'][l_num].lower();
+            print (line)
+            if "note" in line.lower():
+                if 'note' in extract_s(line).split()[0]:
+                    n_index= 1
+                elif 'note' in extract_s(line).split()[-1]:
+                    n_index=-1
+        else:
+            break;
+
     if g_index and c_index and kwargs['date_obj']:
+        start=1
         if g_index < c_index:
-            for i in range(1,len(kwargs['date_obj'])+1):
+            if n_index == g_index :
+                kwargs['ignore_index']['notes']=1
+                start =1
+            elif n_index==-1:
+                kwargs['ignore_index']['notes'] = -1
+                start=2
+            for i in range(start, len(kwargs['date_obj']) + 1):
                 key = 'c_y' + str(i)
-                c_in_dict ={key:-(int(i))}
+                c_in_dict = {key: -(int(i))}
                 kwargs['ignore_index'].update(**c_in_dict)
                 # kwargs['ignore_index'].append(-(int(i)))
         else:
-            for i in range(1,len(kwargs['date_obj'])+1):
+            if n_index == c_index :
+                kwargs['ignore_index']['notes'] = 1
+                start = 2
+            elif n_index==-1:
+                kwargs['ignore_index']['notes'] = -1
+                start = 1
+            for i in range(start, len(kwargs['date_obj']) + 1):
                 key = 'c_y' + str(i)
                 c_in_dict ={key:int(i)}
                 kwargs['ignore_index'].update(**c_in_dict)
 
     return kwargs['ignore_index']
 
-#code test for [group,company,notes] combinations
+#code tested for [group,company,notes] combinations
 def i_index(**kwargs):
     import copy
     ignore_index_line = copy.deepcopy(kwargs['l_num'])
@@ -232,7 +258,7 @@ def i_index(**kwargs):
                 if kwargs['date_obj']: break;
             elif len(index_comb)==2 and 'note' not in index_comb:
                 if kwargs['pdf_page']=='pnl' and kwargs['pdf_type']=='quarter':
-                    kwargs['ignore_index'] = i_qtr_index(combination = index_comb,line=line,ignore_index =kwargs['ignore_index'],date_obj=kwargs['date_obj'])
+                    kwargs['ignore_index'] = i_qtr_index(combination = index_comb,data=kwargs['data'],l_num=kwargs['l_num'],line=line,ignore_index =kwargs['ignore_index'],date_obj=kwargs['date_obj'])
                     # if kwargs['date_obj']:break;
                 else:
                     kwargs['ignore_index'] = i_company_index(line=line,ignore_index =kwargs['ignore_index'],date_obj=kwargs['date_obj'])

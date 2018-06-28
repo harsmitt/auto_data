@@ -5,7 +5,7 @@
 <thead>
 <tr>
     <td class="headcol" >
-        <div class="sheet_header">Balance Sheet</div>
+         <div class="sheet_header">{{p_type}}   <label>({{c_obj.company_name}})</label></div>
     </td>
         {%for date in date_list%}
             <th class="long">{{date|upper}}</th>
@@ -24,7 +24,11 @@
         {%else%}
             <tr class="sec_block">
 
-                <th class="headcol section"><div class="text main_section">{{sec}}</div></th>
+                <th class="headcol section"><div class="text main_section">{{sec}}</div>
+                    <div class="options_list">
+                            <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Section"  onclick="save_sec(this)" >
+                        </div>
+                </th>
                 {%for date in date_list%}
                     <td class="long section_td">0</td>
                 {%endfor%}
@@ -38,9 +42,11 @@
                         <th class="headcol subsection">
                             <div class="text sub_block">{{s}}</div>
                             <div class="options_list">
-                                <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/plus-sign.png" onclick="add_row(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/plus-sign.png"  title="Add Row" onclick="add_row(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete Checked Row" onclick="DeleteMultipleRow(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" title="Swap Checked Row"  onclick="movesec(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Checked Row"  onclick="SaveMultipleRow(this)" >
                             </div>
-
 
                         </th>
                         {%for date in date_list%}
@@ -65,10 +71,15 @@
 
                             <div class="text subsub_section">{{word}}</div>
                             <div class="options_list">
-                                 <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png" onclick="delete_row(this)" >
-
-                                <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" onclick="movesec(this);" >
-                                <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/save.png" onclick="SaveRow(this)" >
+                                <input style = "height: 15px;width: 13px;margin-left: 19px;"  type="checkbox" value="">
+                                 <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete Row" onclick="delete_row(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png"  title="Swap Row" onclick="movesec(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Edited Row"  onclick="SaveRow(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/add_icon.png"  title="Convert Row in Positive numbers"  onclick="positive(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/minus_icon.png"  title="Convert Row in Negative numbers" onclick="neg_ro(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/multiply_2.png"  title="Multiply"  onclick="multiply(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/divide_icon.png" title="Divide"  onclick="divide(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/percentage_icon.png"  title="Percentage" onclick="percentage(this);" >
                             </div>
 
                         </th>
@@ -85,9 +96,13 @@
                         <tr class="s2sec_block">
                             <th class="headcol s2sec">
                                 <div class="text sub_block">{{s2_o}}</div>
-<div class ="options_list">
-                                <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/plus-sign.png" onclick="add_row2(this)" >
-</div>
+                                    <div class ="options_list">
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/plus-sign.png"  title="Add row"  onclick="add_row2(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete checked row"  onclick="DeleteMultipleRow(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png"  title="Swap checked row"  onclick="movesec(this);" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save checked Row"  onclick="SaveMultipleRow(this)" >
+
+                                    </div>
                             </th>
                             {%for q_key,date in loop_key.items%}
                                 <td class="long subsection_td">0</td>
@@ -100,9 +115,15 @@
 				
                                     <div class="text subsub_section">{{hupp}}</div>
 			                        <div class="options_list">
-                                         <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png" onclick="delete_row2(this)" >
-                                        <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" onclick="move_s2sec(this);" >
-                                        <img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/save.png" onclick="SaveRow2(this)" >
+                                        <input style = "height: 15px;width: 13px;margin-left: 19px;"  type="checkbox" value="">
+                                         <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png" title="Delete Row" onclick="delete_row2(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" title="Swap Row"  onclick="move_s2sec(this);" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png" title="Save Edited Row" onclick="SaveRow2(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/add_icon.png" title="Convert Row in positive numbers" onclick="positive(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/minus_icon.png" title="Convert Row in Negative numbers"  onclick="neg_ro(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/multiply_2.png" title="Multiply"  onclick="multiply(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/divide_icon.png"  title="Divide" onclick="divide(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/percentage_icon.png" title="percentage"  onclick="percentage(this);" >
                                     </div>
                                 </th>
                                 {%for q_key,date in loop_key.items%}

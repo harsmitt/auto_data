@@ -36,8 +36,10 @@ def del_old_data(sec_objs):
 def update_qtr(data,c_id,req_type,action_type=None):
     c_obj = CompanyList.objects.filter(id =c_id).values_list('y_end',flat=True)
     all_objs = quarter_data.objects.filter(company_name_id=c_id,page_extraction=req_type)
-    sec_objs  = all_objs.filter(Q(section__item = list(data.keys())[0]),~Q(subsection=None))
+    # sec_objs  = all_objs.filter(Q(section__item= list(data.keys())[0]),~Q(subsection=None))
+    sec_objs  = all_objs.filter(section__item= list(data.keys())[0],subsection__item = list(data[list(data.keys())[0]].keys())[0])
     if action_type:del_old_data(sec_objs)
+    # del_old_data(sec_objs)
     date_objs = qtr_date_pnl()
     date_objs.update(year_date(c_obj[0]))
 
@@ -74,22 +76,28 @@ def save_data(data,c_id,req_type,action_type=None,p_type=None):
     for sec,sub_list in data.items():
         sub_data=OrderedDict()
         for subsec in sub_list:
-            for sub, item in subsec.items():
-                if type(item) != list:
-                    sub_data[sub]= sub_dict(item)
-                else:
-                    s2_data =OrderedDict()
-                    s2_list=[]
-                    for s2_obj in item:
-                        for s2_key,s2_ob in s2_obj.items():
-                            s2_data[s2_key] =sub_dict(s2_ob)
-                    s2_list.append(s2_data)
-                    sub_data[sub]=s2_list
+            if "update" in subsec:
+                subsec.pop('update')
+                for sub, item in subsec.items():
+                    if type(item) != list:
+                        sub_data[sub]= sub_dict(item)
+                        break;
+                    else:
+                        s2_data =OrderedDict()
+                        s2_list=[]
+                        for s2_obj in item:
+                            for s2_key,s2_ob in s2_obj.items():
+                                s2_data[s2_key] =sub_dict(s2_ob)
+                        s2_list.append(s2_data)
+                        sub_data[sub]=s2_list
+                        break;
+            else:
+                pass
 
         row_data[sec]=sub_data
     res = update_qtr(row_data,c_id,req_type=p_type,action_type=action_type)
     # res = delete_qtr(row_data,c_id,req_type = req_type)
-    data_list, date_list, loop_key = get_data(req_type=p_type,section_type=req_type, c_id=c_id)
+    data_list, date_list, loop_key = get_data(req_type=p_type,section_type=req_type, c_id=c_id,o_sec =list(row_data.keys())[0])
     return data_list, date_list, loop_key
 
 from django.shortcuts import render
@@ -125,6 +133,7 @@ def update_comp(request):
                             for d_key, d_val in val.items():
                                 if d_key == g_data['existing_sec'][0]:
                                     remove_item=i[key].pop(g_data['existing_sec'][0])
+                                    i['update']=True
                                     break;
                         elif key == g_data['subsection'][0] and 's2sec' in g_data:
                             for s2sec in val:
@@ -133,6 +142,7 @@ def update_comp(request):
                                         for s2_key, s2_val in s2_o.items():
                                             if s2_key == g_data['existing_sec'][0]:
                                                 remove_item =s2sec[s2].pop(g_data['existing_sec'][0])
+                                                i['update']=True
                                                 break;
                                 if remove_item:break;
                     if remove_item:break;
@@ -152,6 +162,7 @@ def update_comp(request):
                     for key, val in i.items():
                         if type(val) != list and key == g_data['item'][0]:
                             val.update({g_data['existing_sec'][0]: remove_item})
+                            i['update']=True
                             add_in_item =True
                             break;
                         elif type(val) == list  and 's2sec' in g_data:
@@ -159,6 +170,7 @@ def update_comp(request):
                                 for s2, s2_o in s2sec.items():
                                     if s2 == g_data['item'][0] and not s2_o:
                                         s2_o.update({g_data['existing_sec'][0]: remove_item})
+                                        i['update']=True
                                         add_in_item = True
                                         # remove_item =s2sec[s2].pop(g_data['existing_sec'][0])
                                         break;

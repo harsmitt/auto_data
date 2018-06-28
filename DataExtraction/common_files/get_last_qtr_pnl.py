@@ -14,7 +14,7 @@ def get_last_qtr_pnl(**kwargs):
         match_qtr = qtr.lower() if qtr.lower() in qtr_list else last_m if last_m.lower() in qtr_list \
             else next_m if next_m.lower() in qtr_list else ''
         if match_qtr:
-            q_key = (list(qtrs.keys())[list(qtrs.values()).index(str(match_qtr))])
+            q_key = (list(qtrs.keys())[list(qtrs.values()).index(str(match_qtr).lower())])
             if get_digit(q_key) >=4:
                 p_qtrs.append('q'+str(get_digit(q_key)-1))
                 p_qtrs.append('q' + str(get_digit(q_key) - 2))

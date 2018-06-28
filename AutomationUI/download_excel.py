@@ -32,10 +32,11 @@ other_mapping ={'Other Current Assets':70, 'Other Non-Current Assets':86, 'Other
 pnl_row_mapping = {'Revenue':14, 'Cost of Revenue': 19,'Other Operating Income': 25,
                    'Operating Expenses':29,'Non-Operating Income/(Expenses)':36,
                    'Income Tax Expense':45, 'Profit/(Loss) from Discontinued Operations':49,
-                   'Net Profit/(Loss) for the Year':53,'Depreciation & Dividend':57}
+                   'Minority Interest':53,'Depreciation & Dividend':57}
+
 
 def download_pdf(request):
-    wb = openpyxl.load_workbook('/home/administrator/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
+    wb = openpyxl.load_workbook('/home/administrator/Desktop/DataAutomation/Ditmt_template/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
     sheet = wb.get_sheet_by_name('BasicInfo')
     for i in range(1,18):
         sheet['C'+str(i)].value=''
@@ -86,11 +87,13 @@ def download_pdf(request):
     # wb.save(response)
     return response
 
+
 def get_val(obj):
     val=0
     if obj.description:
         for i in obj.description.split('##'):
-            val += int(get_digit(i, ui_num=True))
+            if get_digit(i, ui_num=True):
+                val += int(get_digit(i, ui_num=True))
     return val
 
 def fill_data(row,data_objs,sheet,sec_type=None):

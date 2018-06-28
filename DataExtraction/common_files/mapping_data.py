@@ -9,7 +9,7 @@ class MappingDict(object):
                     ('total current assets', 'non current assets', 'long term assets'): 'non current assets',
                     ('total current liabilities', 'long term liabilities',
                      'non current liabilities'): 'non current liabilities',
-                    ('total liabilities', 'shareholders equity','capital and reserves', 'equity','stockholders equity','total non current liabilities','total long term liabilities'): 'stockholders equity'}
+                    ('total liabilities', 'shareholders equity','capital and reserves', 'equity','stockholders equity','total non current liabilities','total long term liabilities','commitments and contingencies'): 'stockholders equity'}
 
 
     other_mapping_dict = {'current assets': {'other_asset':'Other Current Assets (not listed above)',
@@ -154,7 +154,8 @@ mapping_dict = MappingDict()
 
 toc =['table of content','index','content','page no']
 b_keywords = ['balance sheet','financial position','consolidated balance sheet','consolidated statement of financial position','consolidated statement of balance sheet']
-p_keywords = ['consolidated statement of income','consolidated statement of operation','consolidated statements of earnings','consolidated statement of comprehensive loss','statement of income','statement of operation']
+p_keywords = ['consolidated statement of income','consolidated statement of operation','consolidated statements of earnings','consolidated statement of comprehensive loss','consolidated statement of comprehensive income',
+              'statement of income','statement of operation']
 stop_words =  ['of', 'on', 'at', 'a', 'an']
 
 k_list = {'toc':toc,'bsheet':b_keywords,'pnl':p_keywords}
@@ -167,9 +168,8 @@ qtr_combinations=[('three months ended','six months ended'),('three months ended
                     ('twelve weeks ended','forty weeks months ended'),('twelve weeks ended','twenty eight weeks months ended'),
                     ('twelve weeks ended','twenty four weeks months ended'),('12 weeks ended','24 weeks months ended'),
                     ('twelve weeks ended','thirty six weeks months ended'),('12 weeks ended','36 weeks months ended'),
-                  ('three months ended',), ('3 months ended',), ('13 weeks ended',),('sixteen week ended ',),('16 week ended ',
-                    ('twelve weeks ended ',),('12 weeks ended ',)
-                                                                                                              )]
+                    ('three months ended',), ('3 months ended',), ('13 weeks ended',),('sixteen week ended ',),('16 week ended ',
+                    ('twelve weeks ended ',),('12 weeks ended ',),('note'))]
 
 i_list_comb = ['group', 'company', 'note']#]+qtr_combinations
 

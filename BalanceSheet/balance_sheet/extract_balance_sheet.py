@@ -29,27 +29,15 @@ def ExtractBalnceSheet(**kwargs):
                 if data_dict and data_dict[list(data_dict.keys())[-1]] == []:
                     data_dict[list(data_dict.keys())[-1]] = OrderedDict()
 
-                if all(word in line for word in ['total liabilities','equity']):
-                    break;
+                elif all(word in line.lower() for word in ['total liabilities','and'] ):
+                    d_keys = list(data_dict.keys())
+                    if all(key in d_keys for key in ['current assets', 'current liabilities', 'stockholders equity']):
+                        return data_dict
 
                 elif not 'page_2' in kwargs and (('continue' in line.lower() and len(kwargs['data'])-l_num<5 ) or (l_num+kwargs['date_line']+2 == len(kwargs['data'][kwargs['date_line']:]) and any(word in line for word in ['total assets' ,'total liabilities','continued','net current asset']))):
-
                     data = get_page_content(seprator='@@',page = kwargs['page'], path=kwargs['path'], file=kwargs['file'])
                     data_dict = ExtractBalnceSheet(page_2 = True,date_line =2,data_dict=data_dict,data=data,ignore_index=kwargs['ignore_index'],date_obj=kwargs['date_obj'])
                     return data_dict
-
-                # elif 'page_2' in kwargs and any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line.lower())[0]) in k):
-                #     last_key = list(data_dict.keys())[-1]
-                #     if data_dict[last_key] and len(list(data_dict[last_key].keys()))==1:
-                #         inn_key  = list(data_dict[last_key].keys())[-1]
-                #         if not data_dict[last_key][inn_key]:
-                #             del data_dict[last_key]
-                #             key_name = (next(v for k, v in mapping_dict.key_mapping_dict.items() if
-                #                              get_alpha(re.split('  +', line.lower())[0]) in k))
-                #             data_dict[key_name]==OrderedDict()
-                #     else:
-                #         pass
-
 
                 elif not 'page_2' in kwargs and data_dict and not all(keys in list(data_dict.keys()) for keys in ['current assets','current liabilities','stockholders equity'])\
                     and l_num+kwargs['date_line']+1 == len(kwargs['data']):
@@ -60,27 +48,30 @@ def ExtractBalnceSheet(**kwargs):
                                                    ignore_index=kwargs['ignore_index'], date_obj=kwargs['date_obj'])
                     return data_dict
 
-                elif not 'page_2' in kwargs and data_dict and l_num+kwargs['date_line']+1 == len(kwargs['data']) and\
-                    not all(word in key for key in list(data_dict.keys()) for word in ['total','equity']):
+                elif not 'page_2' in kwargs and data_dict and l_num+kwargs['date_line']+1 == len(kwargs['data']):
+                    d_keys= list(data_dict.keys())
+                    if not any(key for key in list(data_dict[d_keys[-1]].keys()) if all(word in key for word in ['total','equity'])):
 
-                    data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'],
-                                            file=kwargs['file'])
-                    data_dict = ExtractBalnceSheet(page_2=True, date_line=0, data_dict=data_dict, data=data,
+                        data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'],
+                                                file=kwargs['file'])
+                        data_dict = ExtractBalnceSheet(page_2=True, date_line=0, data_dict=data_dict, data=data,
                                                    ignore_index=kwargs['ignore_index'], date_obj=kwargs['date_obj'])
-                    return data_dict
+                        return data_dict
+                    else:
+                        pass
 
 
                 elif (len(re.split('  +',l_check)) < 2 and alpha_there(l_check)) or \
                         (len(re.split('  +',l_check)) == 2 and not num_there((re.split('  +',l_check)[-1]))) or\
                         (len(re.split('  +', l_check)) ==2 and num_there(line) and not alpha_there(line))\
                         or any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k):
-                    pass_list = ['LIABILITIES AND', ]
+                    # pass_list = ['LIABILITIES AND', ]
 
                     # Add main key in data dict
-                    if any(i.lower() in line.lower() for i in pass_list) and not num_there(line):
-                        pass;
+                    # if any(i.lower() in line.lower() for i in pass_list) and not num_there(line):
+                    #     pass;
 
-                    elif any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k):
+                    if any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k):
                         key_name = (next(v for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k))
                         if key_name in data_dict:
                             x = list(data_dict.keys())

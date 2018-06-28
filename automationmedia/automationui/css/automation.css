@@ -192,3 +192,7 @@ margin-left:19px;
     overflow-x: scroll;
 
 }
+
+th{
+overflow-y: auto;
+}

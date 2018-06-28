@@ -42,17 +42,11 @@ class BalanceSheetFormView(APIView):
         else:
             data_list,date_list,loop_key = get_data(req_type='bsheet',c_id=request.GET['c_id'],section_type='Balance Sheet')
         p_type = 'Balance Sheet'
+        c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
+        print (c_obj.company_name)
         return render(request, 'AutomationUI/bs_data.html', locals())
 
     def post(self, request, *args, **kwargs):
-        arg = self.args
-        data = dict(request.POST)
-        new_data =OrderedDict()
-
-        new_data['section']=remake_dict('section','sec_',data)
-        new_data['subsection'] = remake_dict('subsection','s1_',data)
-        new_data['s2section'] = remake_dict('s2section', 's2_', data)
-        gbc_data =CompanyBalanceSheetData.objects.filter(gbc_name_id=1)
         return Response({'status': 'success'})
 
 
@@ -88,6 +82,7 @@ def add_row(request):
                     for key, val in i.items():
                             if type(val) == OrderedDict and key == g_data['subsection'][0]:
                                 i[key].update(new_row)
+                                i['update']=True
                                 added_row = True
                                 break;
                             elif key == g_data['subsection'][0] and 's2sec' in g_data:
@@ -95,11 +90,12 @@ def add_row(request):
                                     for s2,s2_o in s2sec.items():
                                         if s2 == g_data['s2sec'][0]:
                                             s2sec[s2].update(new_row)
+                                            i['update'] = True
                                             added_row = True
                                             break;
-                else:
+                elif added_row:
                     break;
-        else:
+        elif added_row:
             break;
 
     data = [i for i in data_list if g_data['section'][0] in list(i.keys())]
@@ -131,7 +127,7 @@ def delete_row(request):
     deleted_row =False
 
     for data in data_list:
-        if g_data['section'] in list(data.keys()) and deleted_row:
+        if g_data['section'] in list(data.keys()) and not deleted_row:
             for i in data[g_data['section']]:
                 if not deleted_row:
                     for key, val in i.items():
@@ -139,6 +135,7 @@ def delete_row(request):
                             for d_key, d_val in val.items():
                                 if d_key == g_data['item']:
                                     i[key].pop(g_data['item'])
+                                    i['update'] = True
                                     deleted_row=True
                                     break;
                         elif key == g_data['subsection'] and 's2sec' in g_data:
@@ -146,12 +143,13 @@ def delete_row(request):
                                 for s2, s2_o in s2sec.items():
                                     if s2 == g_data['s2sec']:
                                         s2sec[s2].pop(g_data['item'])
+                                        i['update'] = True
                                         deleted_row = True
                                         break;
-                else:
+                elif deleted_row:
                     break;
 
-        else:
+        elif deleted_row:
             break;
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
     if data:
@@ -175,10 +173,9 @@ class PNLFormView(APIView):
     def get(self, request, *args, **kwargs):
 
         data=OrderedDict()
-        # section = Section.objects.filter(i_related ='Profit and Loss')
-        # subsection =SubSection.objects.filter(section__in =section)
-        # # gbc_data = CompanyPNLData.objects.filter(gbc_name_id=request.GET['c_id'])
-        # comp = list(subsection.filter(s2section=None).values_list('item',flat=True))
+        p_type=  'Profit and Loss'
+        c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
+        print (c_obj.company_name)
         # # if cache.has_key(request.GET['c_id']):
         # #     cache_dict = cache.get(request.GET['c_id'])
         #     if 'pnl' in cache_dict:
@@ -193,14 +190,6 @@ class PNLFormView(APIView):
         return render(request, 'AutomationUI/pnl.html', locals())
 
     def post(self, request, *args, **kwargs):
-        # arg = self.args
-        # data = dict(request.POST)
-        # new_data =OrderedDict()
-        #
-        # new_data['section']=remake_dict('section','sec_',data)
-        # new_data['subsection'] = remake_dict('subsection','s1_',data)
-        # new_data['s2section'] = remake_dict('s2section', 's2_', data)
-        # gbc_data =CompanyBalanceSheetData.objects.filter(gbc_name_id=1)
         return Response({'status': 'success'})
 
 

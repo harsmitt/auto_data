@@ -43,11 +43,11 @@ def scrap_pdf_page(**kwargs):
 
 
                     if any(word in line.lower() for word in
-                                          ['results of','supplementary financial data','summary of','overview of','summarizes','summarized as' 'comparison', 'change', 'percentage',
+                                          ['results of','supplementary financial data','summary of','overview of','summarizes','summarized as' 'comparison', 'change',
                                            'dollers','selected financial data']):
                         return balance_sheet_data,pnl_data
 
-                    if line and len([i for i in re.split('  +',line) if i]) < 6 and not ignore_index and \
+                    elif line and len([i for i in re.split('  +',line) if i]) < 6 and \
                             not (len([i for i in re.split('  +',line) if i])==1 and len([i for i in ignore_index_list if all(word in extract_s(line).split() for word in i)])==1 )\
                             and(len([i for i in ignore_index_list if all(word in extract_s(line).split() for word in i)])>=1\
                             or len([i for i in qtr_combinations if all(word in line.lower() for word in i)])>=1):
@@ -57,10 +57,6 @@ def scrap_pdf_page(**kwargs):
                                                                              date_obj=date_obj,date_line = date_line)
                         if date_obj: break;
 
-                        # if date_obj: break;
-
-
-                    ##todo need to ask about this this to priyanka
                     elif line and not date_obj and not ignore_index:
                         next_line = data[l_num + 1] if len(data) > l_num + 1 else ''
                         date_obj, date_line = check_date_obj(pdf_type=kwargs['pdf_type'], line=line,

@@ -13,7 +13,7 @@ def all_pages(**kwargs):
         pnl = False
 
         f_num= kwargs['f_num'] if 'f_num' in kwargs else 1
-        l_num = kwargs['l_num'] if 'f_num' in kwargs else (kwargs['pdf'].getNumPages() + 1)
+        l_num = kwargs['l_num'] if 'l_num' in kwargs else (kwargs['pdf'].getNumPages() + 1)
         notes_pages = kwargs['page_detail']['notes_section'] if 'notes_section' in kwargs['page_detail'] else 0
 
         for i in range(f_num,l_num):
@@ -78,15 +78,15 @@ def update_financial_statements(**kwargs):
             else:
                 res = all_pages(sector=kwargs['sector'], page_detail=page_detail, year_end=kwargs['year_end'],
                                 pdf=kwargs['pdf'], file=kwargs['f_obj'], c_name=kwargs['company_name'],
-                                path=kwargs['path'], pdf_type=kwargs['pdf_type'])
+                                path=kwargs['path'], pdf_type=kwargs['pdf_type'],override = kwargs['override'])
                 return res
 
         else:
             f_num = int(page_detail['statement_section']['statement'].split('-')[0])
-            l_num = int(page_detail['statement_section']['statement'].split('-')[1])
+            # l_num = int(page_detail['statement_section']['statement'].split('-')[1])
             res = all_pages(override = kwargs['override'],sector =kwargs['sector'],page_detail =page_detail,year_end=kwargs['year_end'],
                             pdf=kwargs['pdf'], file=kwargs['f_obj'], c_name=kwargs['company_name'],
-                            path=kwargs['path'],f_num =f_num,l_num=l_num,pdf_type=kwargs['pdf_type'])
+                            path=kwargs['path'],f_num =f_num,pdf_type=kwargs['pdf_type'])
             return res
 
         return bs_data
@@ -191,11 +191,9 @@ def test(**kwargs):
 #     from scrapy.crawler import CrawlerProcess
 #     from scrapy.settings import default_settings
 #
-#     # import pdb;pd?b.set_trace()
 #     # print (kwargs)
 #
 #     crawl(kwargs['c_name'],kwargs['c_ticker'],kwargs['year_end'])
-#     # import pdb;pdb.set_trace()
 #     reactor.run()
 #
 #
@@ -204,5 +202,4 @@ def test(**kwargs):
 #     # company_name = raw_input('Enter the company name : ')
 #     print ("Opening Browser")
 #     yield runner.crawl(WebsiteSpider,c_ticker,c_name,year_end)
-#     # import pdb;pdb.set_trace()
 #     reactor.stop()

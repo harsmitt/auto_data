@@ -129,7 +129,6 @@ def extract_notes(**kwargs):
         print ("no key for breakup")
 
 def get_data_dict(**kwargs):
-    # import pdb;pdb.set_trace()
 
     new_key_dict=OrderedDict()
     for line in kwargs['data']:

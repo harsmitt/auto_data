@@ -168,7 +168,7 @@ def get_pdf_quarter(**kwargs):
                             y_list.append(obj)
                     except:
                         pass
-        if (q_list and not y_list) or (y_list and not q_list):#>=1 and len(y_list)!=2 or len(q_list)!=2 and len(y_list)==2 :
+        if (q_list and not y_list) or (y_list and not q_list) or (len(q_list)==1 and len(y_list)==1):#>=1 and len(y_list)!=2 or len(q_list)!=2 and len(y_list)==2 :
             num =kwargs['l_num'] +1
             while num <= kwargs['l_num']+3:
                 if num_there(kwargs['data'][num]):

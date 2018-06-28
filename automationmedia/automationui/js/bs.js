@@ -106,7 +106,7 @@ function remove_row(elm){
 
 
 function add_row2(elm){
-    html = '<tr class="existing_block"><th class="headcol existing_sec"><div class="text sub_block" contenteditable="true">Item Name</div><div class="sub_block options_list"><img style ="widht:10px; height:10px;" src="/media/automationui/images/save.png" onclick="SaveRow2(this);">    <img style ="widht:10px; height:10px;" src="/media/automationui/images/delete-sign.png" onclick="remove_row(this);" ></div></th>';
+    html = '<tr class="existing_block"><th class="headcol existing_sec"><div class="text sub_block" contenteditable="true">Item Name</div><div class="sub_block options_list"><input style = "height: 15px;width: 13px;margin-left: 19px;"  type="checkbox" value=""><img style ="widht:10px; height:10px;" src="/media/automationui/images/save.png" onclick="SaveRow2(this);">    <img style ="widht:10px; height:10px;" src="/media/automationui/images/delete-sign.png" onclick="remove_row(this);" ></div></th>';
     len =$(elm).parent().parent().parent().find('td').length
     for (var i = 0; i <len; i++) {
         html+='<td class="long existing_td"  contenteditable="true">0</td>'
@@ -124,7 +124,7 @@ return false;
 }
 
 function add_row(elm){
-    html = '<tr class="existing_block"><th class="headcol existing_sec" ><div class="text sub_block" contenteditable="true">Item Name</div><div class="sub_block options_list"><img style ="widht:10px; height:10px;" src="/media/automationui/images/save.png" onclick="SaveRow(this);">    <img style ="widht:10px; height:10px;" src="/media/automationui/images/delete-sign.png" onclick="remove_row(this);"></div></th>';
+    html = '<tr class="existing_block"><th class="headcol existing_sec" ><div class="text sub_block" contenteditable="true">Item Name</div><div class="sub_block options_list"><input style = "height: 15px;width: 13px;margin-left: 19px;"  type="checkbox" value=""><img style ="widht:10px; height:10px;" src="/media/automationui/images/save.png" onclick="SaveRow(this);">    <img style ="widht:10px; height:10px;" src="/media/automationui/images/delete-sign.png" onclick="remove_row(this);"></div></th>';
     len =$(elm).parent().parent().parent().find('td').length
     for (var i = 0; i <len; i++) {
         html+='<td class="long existing_td"  contenteditable="true">0</td>'
@@ -140,7 +140,7 @@ function movesec(elm){
         type = 'balance-sheet'
     }
     else{type='pnl'}
-    html= '<select id="new_comp" style="width: 100px;" name="b_comp" onchange="change_comp(this);"><option value ="" selected>Select Head</option>'
+    html= '<select id="new_comp" style="width: 100px;" name="b_comp" onchange="swap_muliple(this);"><option value ="" selected>Select Head</option>'
     jQuery.ajax({
             type: 'GET',
             url: '/automation/section_list/',
@@ -680,6 +680,13 @@ function go_to_next(elm){
     $(".loader-back").show();
     company_id = elm.baseURI.split('?')[1].split('=')[1]
     window.location = '/automation/profit-loss/?c_id='+company_id;
+    $(".loader-back").hide()
+}
+
+function go_to_back(elm){
+    $(".loader-back").show();
+    company_id = elm.baseURI.split('?')[1].split('=')[1]
+    window.location = '/automation/balance-sheet/?c_id='+company_id;
     $(".loader-back").hide()
 }
 

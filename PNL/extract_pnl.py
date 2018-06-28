@@ -7,7 +7,7 @@ from collections import OrderedDict
 import copy
 import itertools
 
-pass_list = ['diluted','basic','per share']
+pass_list = ['diluted','basic','per share','statement of']
 index_list =['consolidated','balance sheets','operations','income','cash flow','comprehensive loss']
 spl_char=['\xe2\x80\x93','\xe2\x80\x99','\xe2\x80\x94']
 exceptional = ['current\n','deferred\n']

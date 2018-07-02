@@ -10,21 +10,47 @@ function save_sec(elm){
     var subsec_dict= {};
     var exist_data=[]
     sub_sec_name =''
+    var s2sec_dict = {}
+    s2_sec_name =''
     next_elm = $(elm).parent().parent().parent().next();
     var i=1;
     while (!$(next_elm).hasClass("sec_block")){
 
         if ($(next_elm).hasClass('sub_block'))
             {
-                if (exist_data && sub_sec_name){
+                if (exist_data && sub_sec_name && !(s2_sec_name)){
                     exist = JSON.stringify(exist_data)
                     subsec_dict[sub_sec_name].push(exist)
                     exist_data=[]
                     sub_sec_name=''
                 }
+                else if(s2_sec_name && sub_sec_name){
+                    exist = JSON.stringify(exist_data)
+                    s2sec_dict[s2_sec_name].push(exist)
+                    exist_data=[]
+                    s2_sec_name=''
+                    s2sec  = JSON.stringify(s2sec_dict)
+                    subsec_dict[sub_sec_name].push(s2sec)
+                    s2sec_dict={}
+                    sub_sec_name=''
+
+                }
                 sub_sec_name =$(next_elm).find('div.text').text();
                 subsec_dict[sub_sec_name]=[];
             }
+        else if($(next_elm).hasClass('s2sec_block'))
+        {
+            if (exist_data && s2_sec_name){
+                    exist = JSON.stringify(exist_data)
+                    s2sec_dict[s2_sec_name].push(exist)
+                    exist_data=[]
+                    s2_sec_name=''
+                }
+
+            s2_sec_name =$(next_elm).find('div.text').text();
+            s2sec_dict[s2_sec_name]=[];
+
+        }
         else if($(next_elm).hasClass('existing_block'))
             {
                 exist_sec_name = $(next_elm).find('div.text').text();
@@ -323,16 +349,17 @@ function multiply(elm)
     var text = prompt("Multiplication", "PLease enter number with you want to multiply your row.");
     if (text)
     {
-        if(Date.parse($(elm).closest('th').text().trim()))
+        sec_name =$(elm).parent().parent().parent().find('div.text').text()
+        index_col = $(elm).parent().parent().prevAll('td').length
+        if(Date.parse($($(elm).parent().parent().parent().parent().siblings().children().find('th')[index_col]).text().trim()))
             {
 //                  sec_name =''
-                sec_name =$($($(elm).parent().parent().prevAll('th').parent().parent().parent().children()[1]).children()[0]).find('div.text').text()
-                index_col = $(elm).parent().parent().prevAll('th').length
+
                 $('.existing_block').each(function(){
                      val_td= $(this).find('td');
-                     if ($(this).prevAll('.sub_block').prev('.sec_block').find('div.text').text() == sec_name)
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
                      {
-                        $(val_td[index_col]).html(eval(parseInt($(val_td[index_col]).text())) * parseInt(text))
+                        $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
                      }
 
 
@@ -342,7 +369,7 @@ function multiply(elm)
         else {
 
                 $(elm).parent().parent().parent().find('td').each(function() {
-                    $(this).html(eval(parseInt($(this).text())) * parseInt(text))
+                    $(this).html(eval(parseFloat($(this).text())) * parseFloat(text))
                     });
             }
 
@@ -363,15 +390,15 @@ function divide(elm)
     var text = prompt("Division", "PLease enter number with you want to divide your row.");
     if(text){
 
-        if(Date.parse($(elm).closest('th').text().trim()))
+        sec_name =$(elm).parent().parent().parent().find('div.text').text()
+        index_col = $(elm).parent().parent().prevAll('td').length
+        if(Date.parse($($(elm).parent().parent().parent().parent().siblings().children().find('th')[index_col]).text().trim()))
             {
-                sec_name =$($($(elm).parent().parent().prevAll('th').parent().parent().parent().children()[1]).children()[0]).find('div.text').text()
-                index_col = ($(elm).parent().parent().prevAll('th').length)
                 $('.existing_block').each(function(){
                      val_td= $(this).find('td');
-                     if ($(this).prevAll('.sub_block').prev('.sec_block').find('div.text').text() == sec_name)
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
                      {
-                        $(val_td[index_col]).html(eval(parseInt($(val_td[index_col]).text())) / parseInt(text))
+                        $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) / parseFloat(text))
                      }
 
                 });
@@ -379,7 +406,7 @@ function divide(elm)
             }
         else {
             $(elm).parent().parent().parent().find('td').each(function() {
-                $(this).html(eval(parseInt($(this).text())) / parseInt(text))
+                $(this).html(eval(parseFloat($(this).text())) / parseFloat(text))
                 });
             }
 
@@ -399,15 +426,15 @@ function percentage(elm)
     var text = prompt("Percentage", "Please enter number with you want to calculate with % your row.");
     if (text){
 
-         if(Date.parse($(elm).closest('th').text().trim()))
+        sec_name =$(elm).parent().parent().parent().find('div.text').text()
+        index_col = $(elm).parent().parent().prevAll('td').length
+        if(Date.parse($($(elm).parent().parent().parent().parent().siblings().children().find('th')[index_col]).text().trim()))
             {
-                sec_name =$($($(elm).parent().parent().prevAll('th').parent().parent().parent().children()[1]).children()[0]).find('div.text').text()
-                index_col = $(elm).parent().parent().prevAll('th').length
-                $('.existing_block').each(function(){
+            $('.existing_block').each(function(){
                      val_td= $(this).find('td');
-                     if ($(this).prevAll('.sub_block').prev('.sec_block').find('div.text').text() == sec_name)
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
                      {
-                        $(val_td[index_col]).html(eval(parseInt(($(val_td[index_col]).text())) * parseInt(text))/100)
+                        $(val_td[index_col]).html(eval(parseFloat(($(val_td[index_col]).text())) * parseFloat(text))/100)
                      }
 
 
@@ -416,7 +443,9 @@ function percentage(elm)
             }
          else {
                 $(elm).parent().parent().parent().find('td').each(function() {
-                $(this).html(eval(parseInt(($(this).text())) * parseInt(text))/100)
+
+                    $(this).html(eval(parseFloat(($(this).text())) * parseFloat(text))/100)
+
                 });
 
             }
@@ -451,7 +480,7 @@ function neg_ro(elm)
     }
     else{
         $(elm).parent().parent().parent().find('td').each(function() {
-            $(this).html(-(parseInt($(this).text())))
+            $(this).html(-(parseFloat($(this).text())))
             });
 
             if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')

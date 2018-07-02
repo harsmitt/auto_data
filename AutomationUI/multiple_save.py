@@ -207,9 +207,31 @@ def swap_multiple(request):
         return render(request, 'AutomationUI/bs_data.html', locals())
 
 
+def update_dict(data_list, new_row, section, subsec, added_row,s2section=None):
+    for data in data_list:
+        if section in list(data.keys()) and not added_row:
+            for i in data[section]:
+                if not added_row:
+                    for key, val in i.items():
+                        if type(val) == OrderedDict and key == subsec:
+                            i[key].update(new_row)
+                            i['update'] = True
+                            added_row = True
+                            break;
+                        elif key == subsec and s2section:
+                            for s2sec in val:
+                                for s2, s2_o in s2sec.items():
+                                    if s2 == s2section:
+                                        s2sec[s2].update(new_row)
+                                        i['update'] = True
+                                        added_row = True
+                                        break;
+                elif added_row:
+                    break;
+        elif added_row:
+            break;
 
 def update_section(request):
-    print (request.GET)
     n_data = json.loads(request.GET['new_data'])
     g_data = OrderedDict(request.GET)
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
@@ -228,34 +250,25 @@ def update_section(request):
     data = data_list
     for subsec , row_data in n_data.items():
         row_data = json.loads(row_data[0]) if row_data else []
-        for row in row_data:
-            row=json.loads(row)
-            added_row = False
-            new_row = OrderedDict()
-            new_row[row[0]] = OrderedDict(zip(list(loop_key.keys()), row[1:]))
-            s2section = subsec if  S2Section.objects.filter(subsection__item=subsec) else ''
-            for data in data_list:
-                if g_data['section'] in list(data.keys()) and not added_row:
-                    for i in data[g_data['section']]:
-                        if not added_row:
-                            for key, val in i.items():
-                                if type(val) == OrderedDict and key ==subsec:
-                                    i[key].update(new_row)
-                                    i['update'] = True
-                                    added_row = True
-                                    break;
-                                elif key == subsec and s2section:
-                                    for s2sec in val:
-                                        for s2, s2_o in s2sec.items():
-                                            if s2 == s2section:
-                                                s2sec[s2].update(new_row)
-                                                i['update'] = True
-                                                added_row = True
-                                                break;
-                        elif added_row:
-                            break;
-                elif added_row:
-                    break;
+
+        if row_data and type(row_data)==dict:
+            for s2sec,r1_data in row_data.items():
+                r_data =json.loads(r1_data[0])
+                added_row = False
+                for row in r_data:
+                    row = json.loads(row)
+                    new_row = OrderedDict()
+                    new_row[row[0]]=OrderedDict(zip(list(loop_key.keys()), row[1:]))
+                    update_dict(data_list, new_row, g_data['section'], subsec,added_row,s2sec)
+        elif type(row_data)!=dict:
+            for row in row_data:
+                row = json.loads(row)
+                added_row = False
+                new_row = OrderedDict()
+                new_row[row[0]] = OrderedDict(zip(list(loop_key.keys()), row[1:]))
+                # s2section = subsec if  S2Section.objects.filter(subsection__item=subsec) else ''
+                update_dict(data_list, new_row, g_data['section'], subsec,added_row)
+
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
     if data:
         data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, p_type=req_type,complete_sec = True,action_type="update")

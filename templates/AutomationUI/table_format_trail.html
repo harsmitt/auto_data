@@ -9,7 +9,7 @@
     </td>
         {%for date in date_list%}
             <th class="long">{{date|upper}}
-                <div class="option_list"><img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Calculate section Column"  onclick="calc_col(this);" ></div>
+
             </th>
         {%endfor%}
 </tr>
@@ -32,7 +32,10 @@
                         </div>
                 </th>
                 {%for date in date_list%}
-                    <td class="long section_td">0</td>
+                    <td class="long section_td">0
+                    <div class="option_list"><img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Calculate section Column"  onclick="calc_col(this);" ></div></td>
+
+
                 {%endfor%}
             </tr>
         {%endif%}

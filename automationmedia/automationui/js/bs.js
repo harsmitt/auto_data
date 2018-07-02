@@ -538,7 +538,11 @@ function existing_sum(val){
         {
             exist_td = $(next_elm).find('td');
             for (var p1 = 0; p1 <val_td.length; p1++) {
-               $(val_td[p1]).html(parseFloat($(val_td[p1]).text()) + parseFloat($(exist_td[p1]).text()));
+            html = parseFloat($(val_td[p1]).text()) + parseFloat($(exist_td[p1]).text())
+
+//               $(val_td[p1]).html(parseFloat($(val_td[p1]).text()) + parseFloat($(exist_td[p1]).text()));
+//               $(val_td[p1]).after('<div class="option_list"><img style ="widht:10px; height:10px;" src="/media/automationui/images/calc.png"  title="Calculate section Column"  onclick="calc_col(this);" ></div>')
+            $(val_td[p1]).html(html)
             }
             next_elm = next_elm.next();
 
@@ -564,7 +568,8 @@ function sub_sum(val){
             if ($(next_elm).hasClass('s2sec_block')){
                  for (var i = 0; i <val_td.length; i++)
                 {
-                   $(val_td[i]).html(parseFloat($(val_td[i]).text()) + parseFloat($(s2sec_td[i]).text()));
+                    html = parseFloat($(val_td[i]).text()) + parseFloat($(s2sec_td[i]).text())
+                   $(val_td[i]).html(html);
                 }
             }
 
@@ -689,7 +694,9 @@ function sec_sum(val){
                 sub_td = $(next_elm).find('td');
                  for (var i = 0; i <val_td.length; i++)
                 {
-                   $(val_td[i]).html(parseFloat($(val_td[i]).text()) + parseFloat($(sub_td[i]).text()));
+                    html = parseFloat($(val_td[i]).text()) + parseFloat($(sub_td[i]).text())
+                    html+='<div class="option_list"><img style ="widht:10px; height:10px;" src="/media/automationui/images/calc.png"  title="Calculate section Column"  onclick="calc_col(this);" ></div>'
+                   $(val_td[i]).html(html);
                 }
             }
 

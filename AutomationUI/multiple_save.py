@@ -169,14 +169,15 @@ def swap_multiple(request):
                     if remove_item: break;
         if remove_item and not add_in_item:
             for data in data_list:
-
                 if g_data['item'] in sub_list:
                     sub_obj = SubSection.objects.filter(item=g_data['item']).values('section__item', 'item')[0]
                     sec_name = sub_obj['section__item']
+                    s2section=''
                 else:
                     sub_obj = \
                     S2Section.objects.filter(item=g_data['item']).values('subsection__section__item', 'item')[0]
                     sec_name = sub_obj['subsection__section__item']
+                    s2section = sub_obj['item']
                 if sec_name in list(data.keys()):
                     for i in data[sec_name]:
                         for key, val in i.items():
@@ -185,7 +186,7 @@ def swap_multiple(request):
                                 i['update'] = True
                                 add_in_item = True
                                 break;
-                            elif type(val) == list and g_data['s2section']:
+                            elif type(val) == list and s2section:
                                 for s2sec in val:
                                     for s2, s2_o in s2sec.items():
                                         if s2 == g_data['item']:

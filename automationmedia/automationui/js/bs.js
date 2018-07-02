@@ -140,7 +140,7 @@ function movesec(elm){
         type = 'balance-sheet'
     }
     else{type='pnl'}
-    html= '<select id="new_comp" style="width: 100px;" name="b_comp" onchange="swap_muliple(this);"><option value ="" selected>Select Head</option>'
+    html= '<select id="new_comp" style="width: 100px;" name="b_comp" onchange="change_comp(this);"><option value ="" selected>Select Head</option>'
     jQuery.ajax({
             type: 'GET',
             url: '/automation/section_list/',

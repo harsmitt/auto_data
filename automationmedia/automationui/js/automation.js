@@ -262,7 +262,7 @@ function DeleteMultipleRow(elm)
 
 }
 
-function swap_muliple(elm)
+function swap_multiple(elm)
 {
     $(".loader-back").show();
     item = $(elm).val().trim()
@@ -513,4 +513,32 @@ html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/di
 html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/percentage_icon.png"  title="Percentage" onclick="percentage(this);" >'
 console.log($(elm))
 $(elm).replaceWith(html)
+}
+
+
+function movesecmultiple(elm){
+     if (elm.baseURI.split('?')[0].split('/')[4]=='balance-sheet')
+    {
+        type = 'balance-sheet'
+    }
+    else{type='pnl'}
+    html= '<select id="new_comp" style="width: 100px;" name="b_comp" onchange="swap_multiple(this);"><option value ="" selected>Select Head</option>'
+    jQuery.ajax({
+            type: 'GET',
+            url: '/automation/section_list/',
+            data: {'type':type},
+            contentType: "text/html; charset=utf-8",
+            success: function(data) {
+                val = data.split('##')
+                for (i=0;i<val.length;i++){
+                    html+='<option>'+val[i]+'</option>'
+                }
+               html+='</select>'
+               if ($(elm).next('select').length==0){
+	               $(elm).after(html)
+		}
+            }
+        });
+
+
 }

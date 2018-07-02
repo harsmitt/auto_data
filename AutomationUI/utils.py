@@ -152,11 +152,13 @@ def update_comp(request):
                 if remove_item: break;
     if remove_item and not add_in_item:
         for data in data_list:
+            s2sec =''
             if g_data['item'][0] in sub_list:
                 sub_obj = SubSection.objects.filter(item=g_data['item'][0]).values('section__item', 'item')[0]
                 sec_name= sub_obj['section__item']
             else:
                 sub_obj = S2Section.objects.filter(item=g_data['item'][0]).values('subsection__section__item', 'item')[0]
+                s2sec = sub_obj['item']
                 sec_name = sub_obj['subsection__section__item']
             if sec_name in list(data.keys()):
                 for i in data[sec_name]:
@@ -166,7 +168,7 @@ def update_comp(request):
                             i['update']=True
                             add_in_item =True
                             break;
-                        elif type(val) == list  and 's2sec' in g_data:
+                        elif type(val) == list  and s2sec:
                             for s2sec in val:
                                 for s2, s2_o in s2sec.items():
                                     if s2 == g_data['item'][0]:

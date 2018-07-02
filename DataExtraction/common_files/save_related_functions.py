@@ -151,6 +151,12 @@ def get_new_data(**kwargs):#data,c_name,t_pdf,year_end):
                             old_dict = dict(kwargs['data'][i])
                             if year in old_dict: del (old_dict[year])
                             kwargs['data'][i] = list(zip(list(old_dict.keys()), list(old_dict.values())))
+            elif y_key and str(y_key) in kwargs['override']:
+                get_y_obj = quarter_data.objects.filter(Q(company_name__company_name=kwargs['c_name']), Q(quarter_date=y_key),~Q(q1=0), Q(page_extraction=p_extraction))
+                for obj in get_y_obj:
+                    obj.q1 = 0
+                    obj.description=''
+                    obj.save()
 
         return kwargs['data']
 

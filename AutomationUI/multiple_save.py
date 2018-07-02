@@ -188,7 +188,7 @@ def swap_multiple(request):
                             elif type(val) == list and g_data['s2section']:
                                 for s2sec in val:
                                     for s2, s2_o in s2sec.items():
-                                        if s2 == g_data['item'] and not s2_o:
+                                        if s2 == g_data['item']:
                                             s2_o.update({item: remove_item})
                                             i['update'] = True
                                             add_in_item = True
@@ -233,6 +233,7 @@ def update_section(request):
             added_row = False
             new_row = OrderedDict()
             new_row[row[0]] = OrderedDict(zip(list(loop_key.keys()), row[1:]))
+            s2section = subsec if  S2Section.objects.filter(subsection__item=subsec) else ''
             for data in data_list:
                 if g_data['section'] in list(data.keys()) and not added_row:
                     for i in data[g_data['section']]:
@@ -243,10 +244,10 @@ def update_section(request):
                                     i['update'] = True
                                     added_row = True
                                     break;
-                                elif key == subsec and g_data['s2section']:
+                                elif key == subsec and s2section:
                                     for s2sec in val:
                                         for s2, s2_o in s2sec.items():
-                                            if s2 == g_data['s2section']:
+                                            if s2 == s2section:
                                                 s2sec[s2].update(new_row)
                                                 i['update'] = True
                                                 added_row = True
@@ -255,11 +256,11 @@ def update_section(request):
                             break;
                 elif added_row:
                     break;
-        data = [i for i in data_list if g_data['section'] in list(i.keys())]
-        if data:
-            data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, p_type=req_type)
-        else:
-            pass
+    data = [i for i in data_list if g_data['section'] in list(i.keys())]
+    if data:
+        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, p_type=req_type,complete_sec = True,action_type="update")
+    else:
+        pass
     # data = save_data(data, request.GET['c_id'],g_data['type'][0])
     if g_data['type'][0] == 'pnl':
         return render(request, 'AutomationUI/pnl.html', locals())

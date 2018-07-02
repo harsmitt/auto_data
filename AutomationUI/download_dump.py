@@ -110,8 +110,9 @@ def FillPNL(sheet,data,row,date_list,loop_key,total_form):
 def download_dump(request):
     wb = openpyxl.Workbook()
     ws1 =  wb.active
+    c_obj = CompanyList.objects.filter(id = request.GET['c_id'])
 
-    data_list, date_list, loop_key = get_data(req_type='bsheet', c_id=1, section_type='Balance Sheet')
+    data_list, date_list, loop_key = get_data(req_type='bsheet', c_id=c_obj.id, section_type='Balance Sheet')
     ch=66
     row=1
     ws1['A' + str(row)].value = "Balance Sheet"
@@ -129,7 +130,7 @@ def download_dump(request):
 
 #pnl
     ws2 = wb.create_sheet('PNL')
-    data_list, date_list, loop_key = get_data(req_type='pnl', c_id=1, section_type='Profit and Loss')
+    data_list, date_list, loop_key = get_data(req_type='pnl', c_id=c_obj.id, section_type='Profit and Loss')
     ch = 66
     row = 1
     ws2['A' + str(row)].value = "Profit Loss"
@@ -145,7 +146,7 @@ def download_dump(request):
 
     stream = save_virtual_workbook(wb)
     response = HttpResponse(stream, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % ("mahima_test")
+    response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % (c_obj.company_name)
     # wb.save(response)
     return response
 

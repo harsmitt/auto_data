@@ -8,7 +8,9 @@
          <div class="sheet_header">{{p_type}}   <label>({{c_obj.company_name}})</label></div>
     </td>
         {%for date in date_list%}
-            <th class="long">{{date|upper}}</th>
+            <th class="long">{{date|upper}}
+                <div class="option_list"><img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Calculate section Column"  onclick="calc_col(this);" ></div>
+            </th>
         {%endfor%}
 </tr>
 </thead>
@@ -75,11 +77,8 @@
                                  <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete Row" onclick="delete_row(this)" >
                                 <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png"  title="Swap Row" onclick="movesec(this);" >
                                 <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Edited Row"  onclick="SaveRow(this)" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/add_icon.png"  title="Convert Row in Positive numbers"  onclick="positive(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/minus_icon.png"  title="Convert Row in Negative numbers" onclick="neg_ro(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/multiply_2.png"  title="Multiply"  onclick="multiply(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/divide_icon.png" title="Divide"  onclick="divide(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/percentage_icon.png"  title="Percentage" onclick="percentage(this);" >
+                                <img style ="widht:10px; height:20px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Calculate Row"  onclick="calc(this);" >
+
                             </div>
 
                         </th>
@@ -119,11 +118,8 @@
                                          <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png" title="Delete Row" onclick="delete_row2(this)" >
                                         <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" title="Swap Row"  onclick="move_s2sec(this);" >
                                         <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png" title="Save Edited Row" onclick="SaveRow2(this)" >
-                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/add_icon.png" title="Convert Row in positive numbers" onclick="positive(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/minus_icon.png" title="Convert Row in Negative numbers"  onclick="neg_ro(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/multiply_2.png" title="Multiply"  onclick="multiply(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/divide_icon.png"  title="Divide" onclick="divide(this);" >
-                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/percentage_icon.png" title="percentage"  onclick="percentage(this);" >
+
+                                        <img style ="widht:10px; height:20px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Convert Row in Positive numbers"  onclick="calc(this);" >
                                     </div>
                                 </th>
                                 {%for q_key,date in loop_key.items%}

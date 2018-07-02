@@ -37,7 +37,7 @@ def update_qtr(data,c_id,req_type,action_type=None):
     c_obj = CompanyList.objects.filter(id =c_id).values_list('y_end',flat=True)
     all_objs = quarter_data.objects.filter(company_name_id=c_id,page_extraction=req_type)
     # sec_objs  = all_objs.filter(Q(section__item= list(data.keys())[0]),~Q(subsection=None))
-    sec_objs  = all_objs.filter(section__item= list(data.keys())[0],subsection__item = list(data[list(data.keys())[0]].keys())[0])
+    sec_objs  = all_objs.filter(section__item= list(data.keys())[0],subsection__item__in= list(data[list(data.keys())[0]]))
     if action_type:del_old_data(sec_objs)
     # del_old_data(sec_objs)
     date_objs = qtr_date_pnl()
@@ -71,13 +71,13 @@ def update_qtr(data,c_id,req_type,action_type=None):
         return True
 
 
-def save_data(data,c_id,req_type,action_type=None,p_type=None):
+def save_data(data,c_id,req_type,action_type=None,p_type=None,complete_sec=None):
     row_data=OrderedDict()
     for sec,sub_list in data.items():
         sub_data=OrderedDict()
         for subsec in sub_list:
-            if "update" in subsec:
-                subsec.pop('update')
+            if "update" in subsec or complete_sec:
+                if  "update" in subsec: subsec.pop('update')
                 for sub, item in subsec.items():
                     if type(item) != list:
                         sub_data[sub]= sub_dict(item)
@@ -97,6 +97,7 @@ def save_data(data,c_id,req_type,action_type=None,p_type=None):
         row_data[sec]=sub_data
     res = update_qtr(row_data,c_id,req_type=p_type,action_type=action_type)
     # res = delete_qtr(row_data,c_id,req_type = req_type)
+
     data_list, date_list, loop_key = get_data(req_type=p_type,section_type=req_type, c_id=c_id,o_sec =list(row_data.keys())[0])
     return data_list, date_list, loop_key
 
@@ -155,7 +156,7 @@ def update_comp(request):
                 sub_obj = SubSection.objects.filter(item=g_data['item'][0]).values('section__item', 'item')[0]
                 sec_name= sub_obj['section__item']
             else:
-                sub_obj = S2Section.objects.filter(item=g_data['item'][0],subsection__item=g_data['subsection'][0]).values('subsection__section__item', 'item')[0]
+                sub_obj = S2Section.objects.filter(item=g_data['item'][0]).values('subsection__section__item', 'item')[0]
                 sec_name = sub_obj['subsection__section__item']
             if sec_name in list(data.keys()):
                 for i in data[sec_name]:
@@ -168,7 +169,7 @@ def update_comp(request):
                         elif type(val) == list  and 's2sec' in g_data:
                             for s2sec in val:
                                 for s2, s2_o in s2sec.items():
-                                    if s2 == g_data['item'][0] and not s2_o:
+                                    if s2 == g_data['item'][0]:
                                         s2_o.update({g_data['existing_sec'][0]: remove_item})
                                         i['update']=True
                                         add_in_item = True

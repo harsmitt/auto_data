@@ -116,7 +116,7 @@ function SaveMultipleRow(elm)
 
     var exist_data=[]
     while (!$(next_elm).hasClass(check_class)){
-        if($(next_elm).hasClass('existing_block') && $(next_elm).find('input').is(":checked"))
+        if($(next_elm).hasClass('existing_block'))
             {
                 var exist_sec ={}
                 exist_sec_name = $(next_elm).find('div.text').text();
@@ -323,9 +323,28 @@ function multiply(elm)
     var text = prompt("Multiplication", "PLease enter number with you want to multiply your row.");
     if (text)
     {
-        $(elm).parent().parent().parent().find('td').each(function() {
-            $(this).html(eval(parseInt($(this).text()) * parseInt(text)))
-            });
+        if(Date.parse($(elm).closest('th').text().trim()))
+            {
+//                  sec_name =''
+                sec_name =$($($(elm).parent().parent().prevAll('th').parent().parent().parent().children()[1]).children()[0]).find('div.text').text()
+                index_col = $(elm).parent().parent().prevAll('th').length
+                $('.existing_block').each(function(){
+                     val_td= $(this).find('td');
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').find('div.text').text() == sec_name)
+                     {
+                        $(val_td[index_col]).html(eval(parseInt($(val_td[index_col]).text())) * parseInt(text))
+                     }
+
+
+                });
+
+            }
+        else {
+
+                $(elm).parent().parent().parent().find('td').each(function() {
+                    $(this).html(eval(parseInt($(this).text())) * parseInt(text))
+                    });
+            }
 
             if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
                 {
@@ -343,37 +362,73 @@ function divide(elm)
 {
     var text = prompt("Division", "PLease enter number with you want to divide your row.");
     if(text){
-        $(elm).parent().parent().parent().find('td').each(function() {
-            $(this).html(eval(parseInt($(this).text()) / parseInt(text)))
-            });
 
-            if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
-                {
-                    bs_total()
-                }
-            else
-                {
-                    pnl_total()
-                }
+        if(Date.parse($(elm).closest('th').text().trim()))
+            {
+                sec_name =$($($(elm).parent().parent().prevAll('th').parent().parent().parent().children()[1]).children()[0]).find('div.text').text()
+                index_col = ($(elm).parent().parent().prevAll('th').length)
+                $('.existing_block').each(function(){
+                     val_td= $(this).find('td');
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').find('div.text').text() == sec_name)
+                     {
+                        $(val_td[index_col]).html(eval(parseInt($(val_td[index_col]).text())) / parseInt(text))
+                     }
+
+                });
+
+            }
+        else {
+            $(elm).parent().parent().parent().find('td').each(function() {
+                $(this).html(eval(parseInt($(this).text())) / parseInt(text))
+                });
+            }
+
     }
+    if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
+        {
+            bs_total()
+        }
+    else
+        {
+            pnl_total()
+        }
 }
 
 function percentage(elm)
 {
     var text = prompt("Percentage", "Please enter number with you want to calculate with % your row.");
     if (text){
-        $(elm).parent().parent().parent().find('td').each(function() {
-            $(this).html(eval(parseInt(($(this).text()) * parseInt(text))/100))
-            });
 
-            if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
-                {
-                    bs_total()
-                }
-            else
-                {
-                    pnl_total()
-                }
+         if(Date.parse($(elm).closest('th').text().trim()))
+            {
+                sec_name =$($($(elm).parent().parent().prevAll('th').parent().parent().parent().children()[1]).children()[0]).find('div.text').text()
+                index_col = $(elm).parent().parent().prevAll('th').length
+                $('.existing_block').each(function(){
+                     val_td= $(this).find('td');
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').find('div.text').text() == sec_name)
+                     {
+                        $(val_td[index_col]).html(eval(parseInt(($(val_td[index_col]).text())) * parseInt(text))/100)
+                     }
+
+
+                });
+
+            }
+         else {
+                $(elm).parent().parent().parent().find('td').each(function() {
+                $(this).html(eval(parseInt(($(this).text())) * parseInt(text))/100)
+                });
+
+            }
+
+        if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
+            {
+                bs_total()
+            }
+        else
+            {
+                pnl_total()
+        }
     }
 
 }
@@ -382,36 +437,51 @@ function percentage(elm)
 
 function neg_ro(elm)
 {
-    $(elm).parent().parent().parent().find('td').each(function() {
-        $(this).html(-Math.abs(parseInt($(this).text())))
+    console.log($(elm))
+    if(Date.parse($(elm).closest('th').text().trim()))
+    {
+        index_col = $(elm).parent().parent().prevAll('th').length
+        $('.existing_block').each(function(){
+            val_td= $(this).find('td');
+             $(val_td[index_col]).html(-(parseFloat(0)))
+
+
         });
 
-        if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
-            {
-                bs_total()
-            }
-        else
-            {
-                pnl_total()
-            }
+    }
+    else{
+        $(elm).parent().parent().parent().find('td').each(function() {
+            $(this).html(-(parseInt($(this).text())))
+            });
+
+            if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
+                {
+                    bs_total()
+                }
+            else
+                {
+                    pnl_total()
+                }
+        }
 }
 
 
-function positive(elm)
-{
 
-    console.log($(elm))
+function calc(elm){
+html = '<img style ="widht:10px; height:15px;" src="/media/automationui/images/minus_icon.png"  title="interchange values sign" onclick="neg_ro(this);" >'
+html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/multiply_2.png"  title="Multiply"  onclick="multiply(this);" >'
+html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/divide_icon.png" title="Divide"  onclick="divide(this);" >'
+html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/percentage_icon.png"  title="Percentage" onclick="percentage(this);" >'
+console.log($(elm))
+$(elm).replaceWith(html)
+}
 
-    $(elm).parent().parent().parent().find('td').each(function() {
-        $(this).html(Math.abs(parseInt($(this).text())))
-        });
 
-        if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
-            {
-                bs_total()
-            }
-        else
-            {
-                pnl_total()
-            }
+function calc_col(elm){
+//html = '<img style ="widht:10px; height:15px;" src="/media/automationui/images/minus_icon.png"  title="interchange values sign" onclick="neg_ro(this);" >'
+html='<img style ="widht:10px; height:15px;" src="/media/automationui/images/multiply_2.png"  title="Multiply"  onclick="multiply(this);" >'
+html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/divide_icon.png" title="Divide"  onclick="divide(this);" >'
+html+='<img style ="widht:10px; height:15px;" src="/media/automationui/images/percentage_icon.png"  title="Percentage" onclick="percentage(this);" >'
+console.log($(elm))
+$(elm).replaceWith(html)
 }

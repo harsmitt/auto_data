@@ -579,6 +579,8 @@ function sub_sum(val){
 
 function total_sum()
 {
+
+    //total assets
     all_total = $('.total_block')
     val_td= $(all_total[0]).find('td');
 
@@ -596,6 +598,8 @@ function total_sum()
           }
 
     }
+
+    //total liabilities
     all_sec2 = $(all_total[0]).nextAll('.sec_block')
     val_td2= $(all_total[1]).find('td');
 
@@ -605,16 +609,42 @@ function total_sum()
 
     for (var j=0;j<all_sec2.length;j++)
     {
-      sec2_td = $(all_sec2[j]).find('td')
-      for (var j2 = 0; j2 <val_td2.length; j2++)
-              {
-                 $(val_td2[j2]).html(parseFloat($(val_td2[j2]).text()) + parseFloat($(sec2_td[j2]).text()));
-              }
+
+        if (!$(all_sec2[j]).prev().hasClass('total_block') || j==0){
+          sec2_td = $(all_sec2[j]).find('td')
+          for (var j2 = 0; j2 <val_td2.length; j2++)
+                  {
+                     $(val_td2[j2]).html(parseFloat($(val_td2[j2]).text()) + parseFloat($(sec2_td[j2]).text()));
+                  }
+        }
 
     }
 
-    all_total_sec = $(all_total[2]).prevAll('.total_block')
-    val_td3= $(all_total[2]).find('td');
+
+    //total liabilities and assets
+    all_sec3 = $(all_total[0]).nextAll('.sec_block')
+    val_td_1= $(all_total[2]).find('td');
+
+    for (var j1 = 0; j1 <val_td_1.length; j1++){
+     $(val_td_1[j1]).html(parseFloat(0))
+    }
+
+    for (var j=0;j<all_sec3.length;j++)
+    {
+
+        if (!$(j).prev().hasClass('total_block')){
+          sec_td1 = $(all_sec3[j]).find('td')
+          for (var j2 = 0; j2 <val_td_1.length; j2++)
+                  {
+                     $(val_td_1[j2]).html(parseFloat($(val_td_1[j2]).text()) + parseFloat($(sec_td1[j2]).text()));
+                  }
+        }
+
+    }
+
+
+    all_total_sec = $(all_total[3]).prevAll('.total_block')
+    val_td3= $(all_total[3]).find('td');
 
     for (var t1 = 0; t1 <val_td3.length; t1++){
      $(val_td3[t1]).html(parseFloat(0))
@@ -622,21 +652,21 @@ function total_sum()
 
     for (var t2=0;t2<all_total_sec.length;t2++)
     {
-      total_td = $(all_total_sec[t2]).find('td')
-      if (t2==1){
-          for (var t3 = 0; t3 <val_td2.length; t3++)
-                  {
-                     $(val_td3[t3]).html(parseFloat($(val_td3[t3]).text()) + parseFloat($(total_td[t3]).text()));
-                  }
-            }
-      else{
-            $(val_td3[0]).css('background-color', 'yellow');
-            for (var t3 = 0; t3 <val_td2.length; t3++)
-                  {
-                     $(val_td3[t3]).html(parseFloat($(val_td3[t3]).text()) - parseFloat($(total_td[t3]).text()));
-                     $(val_td3[t3]).css('background-color', 'yellow');
-                  }
-      }
+          total_td = $(all_total_sec[t2]).find('td')
+          if (t2==2){
+              for (var t3 = 0; t3 <val_td2.length; t3++)
+                      {
+                         $(val_td3[t3]).html(parseFloat($(val_td3[t3]).text()) + parseFloat($(total_td[t3]).text()));
+                      }
+                }
+          else if (t2==0){
+                $(val_td3[0]).css('background-color', 'yellow');
+                for (var t3 = 0; t3 <val_td2.length; t3++)
+                      {
+                         $(val_td3[t3]).html(parseFloat($(val_td3[t3]).text()) - parseFloat($(total_td[t3]).text()));
+                         $(val_td3[t3]).css('background-color', 'yellow');
+                      }
+          }
 
     }
 

@@ -9,6 +9,9 @@ def save_pnl(**kwargs):
         if kwargs['new_dict']:
             data = get_new_data(override = kwargs['override'],data = kwargs['data'], c_name=kwargs['c_name'], t_pdf=kwargs['pdf_type'],
                                 year_end=kwargs['year_end'],model=CompanyPNLData,p_type='pnl')
+
+            data = unit_conversion(data=data, unit=kwargs['unit'], c_name=kwargs['c_name'], t_pdf=kwargs['pdf_type'],date_obj=kwargs['date_obj'])
+
         print (data)
         for keyword in data:
             print (keyword)
@@ -84,29 +87,29 @@ def save_pnl(**kwargs):
 
 
 
-        if kwargs['subtract']:
-            subtract_val = subtarct_values(data = kwargs['data'], c_name=kwargs['c_name'], t_pdf=kwargs['pdf_type'],
-                                year_end=kwargs['year_end'],model=CompanyPNLData,p_type='pnl',subtract = kwargs['subtract'])
+        # if kwargs['subtract']:
+        #     subtract_val = subtarct_values(data = kwargs['data'], c_name=kwargs['c_name'], t_pdf=kwargs['pdf_type'],
+        #                         year_end=kwargs['year_end'],model=CompanyPNLData,p_type='pnl',subtract = kwargs['subtract'])
         return True
     except:
         import traceback
         print(traceback.format_exc())
         return False
-
-#for 9 months subtract q1, q2 from q3
-#for 6 months subtract q1 from q2
-
-def subtarct_values(**kwargs):
-    c_obj = CompanyList.objects.filter(company_name = kwargs['c_name'])
-    pnl_obj = CompanyPNLData.objects.filter(gbc_name_id= c_obj[0].id)
-    if pnl_obj:
-        for i in pnl_obj:
-            print(i)
-            if kwargs['subtract']=='q1,q2':
-                new_val = int(i.q3.q1) - int(i.q2.q1)- int(i.q1.q1)
-                q_obj = quarter_data.objects.filter(id=i.q3.id)
-            else:
-                new_val = int(i.q2.q1)-int(i.q1.q1)
-                q_obj = quarter_data.objects.filter(id=i.q2.id)
-            n_dict = {'q1': new_val}
-            q_obj.update(**n_dict)
+#
+# #for 9 months subtract q1, q2 from q3
+# #for 6 months subtract q1 from q2
+#
+# def subtarct_values(**kwargs):
+#     c_obj = CompanyList.objects.filter(company_name = kwargs['c_name'])
+#     pnl_obj = CompanyPNLData.objects.filter(gbc_name_id= c_obj[0].id)
+#     if pnl_obj:
+#         for i in pnl_obj:
+#             print(i)
+#             if kwargs['subtract']=='q1,q2':
+#                 new_val = int(i.q3.q1) - int(i.q2.q1)- int(i.q1.q1)
+#                 q_obj = quarter_data.objects.filter(id=i.q3.id)
+#             else:
+#                 new_val = int(i.q2.q1)-int(i.q1.q1)
+#                 q_obj = quarter_data.objects.filter(id=i.q2.id)
+#             n_dict = {'q1': new_val}
+#             q_obj.update(**n_dict)

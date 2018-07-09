@@ -5,11 +5,26 @@
 <thead>
 <tr>
     <td class="headcol" >
-         <div class="sheet_header">{{p_type}}   <label>({{c_obj.company_name}})</label></div>
+         <div class="sheet_header">{{p_type}}<label>({{c_obj.company_name}})</label></div>
     </td>
         {%for date in date_list%}
-            <th class="long">{{date|upper}}
+            <th class="long">
+                    {% if q2 in date and 'Profit' in p_type%}
+                        {{date|upper}}
+                        <div class="options_list">
+                            <a onclick="cal_q2(this)" style="color:Blue">Cal_q2</a>
+                        </div>
+                    {%else %}
+                        {%if q3 in date and 'Profit' in p_type %}
 
+                            {{date|upper}}
+                            <div class="options_list">
+                                <a onclick="cal_q2(this)" style="color:Blue">Cal_q3</a>
+                            </div>
+                        {%else%}
+                            {{date|upper}}
+                        {%endif%}
+                    {%endif%}
             </th>
         {%endfor%}
 </tr>

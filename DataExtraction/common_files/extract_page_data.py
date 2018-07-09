@@ -17,6 +17,7 @@ from DataExtraction.notes_section.get_notes import get_notes_data
 def scrap_pdf_page(**kwargs):
     try:
         balance_sheet_data = False
+        unit =''
         pnl_data = False
         subtract=''
         ignore_index =OrderedDict()
@@ -33,14 +34,19 @@ def scrap_pdf_page(**kwargs):
                 l_data = data[:20] if len(data)>20 else data
                 for l_num,line in enumerate(l_data):
                     from .mapping_data import ignore_index_list
-                    if line and kwargs['pdf_type']=='quarter' and kwargs['pdf_page']=='pnl':
-                        if len([i for i in qtr_combinations if all(word in line.lower() for word in i)])>=1:
-                            subtract = None
-                        elif any(word in line.lower() for word in ['9 months','nine months','39 weeks']):
-                            subtract ='q1,q2'
-                        elif any(word in line.lower() for word in ['6 months','six months','26 weeks']):
-                            subtract = 'q1'
+                    # if line and kwargs['pdf_type']=='quarter' and kwargs['pdf_page']=='pnl':
+                    #     if len([i for i in qtr_combinations if all(word in line.lower() for word in i)])>=1:
+                    #         subtract = None
+                    #     elif any(word in line.lower() for word in ['9 months','nine months','39 weeks']):
+                    #         subtract ='q1,q2'
+                    #     elif any(word in line.lower() for word in ['6 months','six months','26 weeks']):
+                    #         subtract = 'q1'
 
+                    if line and any(word in line.lower() for word in['millions','thousands']):
+                        print (line)
+                        x = [w1 for word in line.split() for w1 in ['millions', 'thousands'] if w1 in word]
+                        print (x)
+                        unit =x[0] if x else ''
 
                     if any(word in line.lower() for word in
                                           ['results of','supplementary financial data','summary of','overview of','summarizes','summarized as' 'comparison', 'change',
@@ -75,7 +81,8 @@ def scrap_pdf_page(**kwargs):
                         print (data_dict)
                         if data_dict and len(data_dict)>=3 and any(key in list(data_dict.keys()) for key in ['current assets','non current assets','current liablities','non burrent liabilities']):
                             try:
-                                data_dict = get_notes_data(date_obj=date_obj,year_end=kwargs['year_end'],pdf_type=kwargs['pdf_type'],data_dict=data_dict,
+                                data_dict = get_notes_data(date_obj=date_obj,year_end=kwargs['year_end'],
+                                                           pdf_type=kwargs['pdf_type'],data_dict=data_dict,
                                                        page=pdf_page+1, path=kwargs['path'],pdf_page=kwargs['pdf_page'],
                                                        file=kwargs['file'], notes_sec=kwargs['notes'])
                             except Exception as e:
@@ -85,15 +92,18 @@ def scrap_pdf_page(**kwargs):
                                 pass
 
                             img_path, c_name = Create_blank_sheet(year_end=kwargs['year_end'],c_name=kwargs['c_name'], path=kwargs['path'], page=pdf_page)
-                            status = save_bsheet(override = kwargs['override'],year_end=kwargs['year_end'],data=data_dict, img_path=img_path,
-                                                 file=kwargs['file'], page=i, c_name=c_name,new_dict=True,
-                                                 pdf_type = kwargs['pdf_type'],extraction='bsheet')
+                            status = save_bsheet(override = kwargs['override'],year_end=kwargs['year_end'],data=data_dict,
+                                                 img_path=img_path,
+                                                 file=kwargs['file'], page=i, c_name=c_name,new_dict=True,date_obj =date_obj,
+                                                 pdf_type = kwargs['pdf_type'],extraction='bsheet',unit=unit)
 
                             if status :
                                 balance_sheet_data =True
                                 return (balance_sheet_data,pnl_data)
 
                     elif not pnl_data and kwargs['pdf_page']=='pnl':
+                        date_obj =date_obj[:2]
+                        print (date_obj)
                         for pdf in range(pdf_page_next):
                             data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
 
@@ -112,8 +122,9 @@ def scrap_pdf_page(**kwargs):
 
                             img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],
                                                                   path=kwargs['path'], page=pdf_page)
-                            status = save_pnl(override = kwargs['override'],extraction='pnl',subtract=subtract,sector =kwargs['sector'],year_end=kwargs['year_end'],file=kwargs['file'],
-                                              data=data_dict, img_path=img_path,
+                            status = save_pnl(override = kwargs['override'],extraction='pnl',subtract=subtract,
+                                              sector =kwargs['sector'],year_end=kwargs['year_end'],file=kwargs['file'],
+                                              data=data_dict, img_path=img_path,unit=unit,date_obj=date_obj,
                                                page=i, c_name=c_name, new_dict=True, pdf_type=kwargs['pdf_type'])
                             if status:
                                 pnl_data =True

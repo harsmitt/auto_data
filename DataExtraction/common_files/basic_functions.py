@@ -23,7 +23,8 @@ def get_alpha(s,key=False,pnl=False,remove_space=False,remove_s = False):
     if not key:
         alpha_obj = (" ".join(re.findall("[a-zA-Z,]+", str1.lower().strip())))
     else:
-        alpha_obj = (" ".join(re.findall("[a-zA-Z,]+", str1.lower().strip()))).split(',')[0]
+        alpha_obj = (" ".join(re.findall("[a-zA-Z]+", str1.lower().strip())[:4]))
+        # alpha_obj = (" ".join(re.findall("[a-zA-Z,]+", str1.lower().strip()))).split(',')[0]
 
     if not remove_space and not remove_s:
         return alpha_obj
@@ -145,52 +146,3 @@ def qtr_date_pnl():
         key = 'q'+str(len(qtr_dict)+1)
         qtr_dict[key]= l_qtr+' '+str(current_year)
     return qtr_dict
-
-#
-# def qtr_date_pnl(year_end,p_type=None):
-#     date_time = datetime.now()-timedelta(days=45)
-#     month = date_time.month
-#     year = date_time.year
-#     year1 = year - 1
-#     if month<=3:
-#         qtr5 = 'december ' + str(year1)
-#         qtr4 ='september ' + str(year1)
-#         qtr3 = 'june ' + str(year1)
-#         qtr2 = 'march '+ str(year1)
-#         qtr1 ='december '+ str(year1-1)
-#         qtr8 = 'september ' + str(year1-1)
-#         qtr7 = 'june ' + str(year1-1)
-#         qtr6 = 'march ' + str(year1-1)
-#
-#     elif month>3 and month<=6:
-#         qtr5 = 'march '+ str(year)
-#         qtr4 = 'december ' + str(year1)
-#         qtr3 = 'september '+ str(year1)
-#         qtr2 = 'june ' + str(year1)
-#         qtr1 = 'march '+ str(year1)
-#         qtr8 = 'december ' + str(year1-1)
-#         qtr7 = 'september ' + str(year1-1)
-#         qtr6 = 'june ' + str(year1-1)
-#     elif month>6 and month<=9:
-#         qtr5 = 'june ' +  str(year)
-#         qtr4 = 'march '+ str(year)
-#         qtr3 = 'december ' + str(year1)
-#         qtr2 = 'september '+ str(year1)
-#         qtr1 = 'june ' +  str(year1)
-#         qtr8 = 'march ' + str(year1)
-#         qtr7 = 'december ' + str(year1-1)
-#         qtr6 = 'september ' + str(year1-1)
-#     elif month >9 and month<=12:
-#         qtr5 = 'september ' + str(year)
-#         qtr4 = 'june ' + str(year)
-#         qtr3 = 'march ' + str(year)
-#         qtr2 = 'december ' + str(year1)
-#         qtr1 = 'september ' + str(year1)
-#         qtr8 = 'june ' + str(year1)
-#         qtr7 = 'march ' + str(year1)
-#         qtr6 = 'december ' + str(year1-1)
-#     if p_type == 'pnl':
-#         qtr_dict={'q1':qtr1,'q2':qtr2,'q3':qtr3,'q4':qtr4,'q6':qtr6,'q7':qtr7,'q8':qtr8,'lrq':qtr5}
-#     else:
-#         qtr_dict = {'q1': qtr1, 'q2': qtr2, 'q3': qtr3, 'q4': qtr4,'lrq': qtr5}
-#     return qtr_dict

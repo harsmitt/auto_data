@@ -8,6 +8,7 @@ from AutomationUI.utils import update_comp
 from AutomationUI.download_excel import download_pdf
 from AutomationUI.download_dump import download_dump
 from AutomationUI.multiple_save import *
+from DataExtraction.common_files.calculate_pnl_qtr import *
 
 urlpatterns = [
     url(r'^company_list/$', CompanyListView.as_view(), name='CompanylistForm'),
@@ -23,6 +24,8 @@ urlpatterns = [
 
     url(r'^update_section/$', update_section, name='updatesection'),
 
+    url(r'^get_list/$', get_list, name='get_list'),
+    url(r'^cal_qtr_pnl/$', cal_qtr_pnl, name='cal_qtr_pnl'),
 
 
 

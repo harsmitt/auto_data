@@ -11,7 +11,6 @@ def all_pages(**kwargs):
     try:
         b_sheet = False
         pnl = False
-
         f_num= kwargs['f_num'] if 'f_num' in kwargs else 1
         l_num = kwargs['l_num'] if 'l_num' in kwargs else (kwargs['pdf'].getNumPages() + 1)
         notes_pages = kwargs['page_detail']['notes_section'] if 'notes_section' in kwargs['page_detail'] else 0
@@ -58,6 +57,7 @@ def update_financial_statements(**kwargs):
             if all(key in page_detail['statement_section'] for key in ['bsheet','pnl']):
                 for statement_key, p_num in page_detail['statement_section'].items():
                     if statement_key in ['bsheet','pnl']:
+                        import pdb;pdb.set_trace()
                         notes_pages = page_detail['notes_section'] if 'notes_section' in page_detail else 0
                         bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'],p_num=p_num,
                                                  path=kwargs['path'],override = kwargs['override'],
@@ -135,33 +135,45 @@ def get_data(**kwargs):
 
 
 def LoopPdfDir(**kwargs):
-    fix_path= '/home/administrator/different patterns/MahimaUSfiling/' if not kwargs['fix_path'] else kwargs['fix_path']
-    company_list = kwargs['company_list']
-    import os
-    for name in company_list:
-        path_list = [fix_path+name+'/Year/',fix_path+name+'/Quarter/']
-        for path in path_list:
-            if 'Year' in path:
-                year_list = y_sorting(os.listdir(path))
-                for year in year_list:
-                    new_path = path+str(year)+'.pdf'
-                    get_data(sector =kwargs['sector'],path=new_path,company_name=name, pdf_type='year', year_end=kwargs['year_end'])
-        else:
-            q_list = q_sorting(os.listdir(path))
-            for qtr in q_list:
-                new_path = path+qtr.replace(' ','_')+'.pdf'
-
-                get_data(sector =kwargs['sector'],path=new_path,company_name=name,pdf_type='quarter', year_end = kwargs['year_end'])
-            # from.common_files.get_last_qtr_pnl import get_last_qtr_pnl
-            # get_last_qtr_pnl(year_end = kwargs['year_end'],company_name=name)
-            # pass
+    new_path = '/home/administrator/Desktop/Round 2/Craft Brew/Annual Report 2015_Highlighted.pdf'  # path+str(year)+'.pdf'
+    get_data(sector="Oil and gas sector", path=new_path,override=[], company_name="mahima test", pdf_type='year', year_end="December")
+    # fix_path= '/home/administrator/different patterns/MahimaUSfiling/' if not kwargs['fix_path'] else kwargs['fix_path']
+    # company_list = kwargs['company_list']
+    # import os
+    # for name in company_list:
+    #     path_list = [fix_path+name+'/Year/',fix_path+name+'/Quarter/']
+    #     for path in path_list:
+    #         if 'Year' in path:
+    #             year_list = y_sorting(os.listdir(path))
+    #             for year in year_list:
+    #                 new_path = '/home/administrator/Desktop/Round 2/US Steel/AR/AR-2016.pdf'#path+str(year)+'.pdf'
+    #                 get_data(sector =kwargs['sector'],path=new_path,company_name=name, pdf_type='year', year_end=kwargs['year_end'])
+    #     else:
+    #         q_list = q_sorting(os.listdir(path))
+    #         for qtr in q_list:
+    #             new_path = path+qtr.replace(' ','_')+'.pdf'
+    #
+    #             get_data(sector =kwargs['sector'],path=new_path,company_name=name,pdf_type='quarter', year_end = kwargs['year_end'])
+    #         # from.common_files.get_last_qtr_pnl import get_last_qtr_pnl
+    #         # get_last_qtr_pnl(year_end = kwargs['year_end'],company_name=name)
+    #         # pass
 
 
 # LoopPdfDir()
 
 def pdf_detail(**kwargs):
     try:
-        result = get_data(path=kwargs['file'],company_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'], year_end=kwargs['year_end'],sector =kwargs['sector'],override=kwargs['override'])
+        if 'page_num' in kwargs and kwargs['page_num']:
+            file_object = open(kwargs['file'], "rb")
+            pdf = PyPDF2.PdfFileReader(file_object)
+            page_detail={}
+            result = all_pages(override=kwargs['override'], sector=kwargs['sector'], page_detail=page_detail,
+                            year_end=kwargs['year_end'],
+                            pdf=pdf, file=file_object, c_name=kwargs['c_name'],
+                            path=kwargs['file'], f_num=int(kwargs['page_num']), pdf_type=kwargs['pdf_type'])
+        else:
+            result = get_data(path=kwargs['file'],company_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'],
+                              year_end=kwargs['year_end'],sector =kwargs['sector'],override=kwargs['override'])
         return result
     except Exception as e:
         import traceback

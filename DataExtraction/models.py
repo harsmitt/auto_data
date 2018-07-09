@@ -68,6 +68,8 @@ class CompanyList(models.Model):
     y_end = models.CharField(max_length=200, choices=year_end, blank=True)
     c_ticker = models.CharField(max_length = 200,blank=True,null=True)
     country = models.CharField(max_length=50,choices = CountryList)
+    c_y_unit = models.CharField(max_length = 200,blank=True,null=True)
+    c_q_unit=models.CharField(max_length = 200,blank=True,null=True)
 
     def __str__(self):
         return str(self.company_name)

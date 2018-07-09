@@ -125,6 +125,9 @@ def get_description(obj,comp,val):
     return des
 
 def get_new_data(**kwargs):#data,c_name,t_pdf,year_end):
+    print (kwargs['override'])
+    override = [key.replace('_',' ') for key in kwargs['override']]
+    print ('________________________________________')
     p_extraction = 'bsheet' if kwargs['p_type'] != 'pnl' else 'pnl'
     try:
         data_list = list(kwargs['data'].values())
@@ -137,7 +140,9 @@ def get_new_data(**kwargs):#data,c_name,t_pdf,year_end):
         # year_list,val = map(list,zip(*d_val))
         for year in year_list:
             y_key = valid_yq_name(year,kwargs['year_end'],pdf_type = kwargs['t_pdf'],p_type = kwargs['p_type'])
-            if y_key and str(y_key) not in kwargs['override']:
+            print (y_key)
+            print ('+++++++++++++++++++++++++++++++++++++++')
+            if y_key and str(y_key) not in override:
                 # y1_key = y_key
                 year_exist = quarter_data.objects.filter(Q(company_name__company_name=kwargs['c_name']), Q(quarter_date=y_key),~Q(q1=0), Q(page_extraction=p_extraction))
                 if year_exist :
@@ -151,7 +156,7 @@ def get_new_data(**kwargs):#data,c_name,t_pdf,year_end):
                             old_dict = dict(kwargs['data'][i])
                             if year in old_dict: del (old_dict[year])
                             kwargs['data'][i] = list(zip(list(old_dict.keys()), list(old_dict.values())))
-            elif y_key and str(y_key) in kwargs['override']:
+            elif y_key and str(y_key) in override:
                 get_y_obj = quarter_data.objects.filter(Q(company_name__company_name=kwargs['c_name']), Q(quarter_date=y_key),~Q(q1=0), Q(page_extraction=p_extraction))
                 for obj in get_y_obj:
                     obj.q1 = 0
@@ -196,4 +201,57 @@ def redefined_data(**kwargs):
      #   print (traceback.format_exc())
       #  print("error hai redefined data me " + kwargs['c_name'])
        # return e
+
+
+def unit_conversion(**kwargs):
+    import pdb;pdb.set_trace()
+    print ("mahima")
+    c_obj = CompanyList.objects.filter(company_name= kwargs['c_name'])
+    if c_obj:
+        #todo year and quarter logic is same just need to implement
+        prev_unit = c_obj[0].c_y_unit.split('##') if c_obj[0].c_y_unit else ''
+        if prev_unit :
+            if prev_unit[1] == kwargs['unit']:
+                import pdb;pdb.set_trace()
+                return kwargs['data']
+            else:
+                if int(prev_unit[0]) > max(map(lambda x :int(x), kwargs['date_obj'])):
+                    import pdb;pdb.set_trace()
+                    print ("convert only data_dict into the stored unit")
+                    for k1,k2 in kwargs['data'].items():
+                        for p1,p2 in k2.items():
+                            date_obj, values = map(list, zip(*kwargs['data'][k1][p1]))
+                            if prev_unit =='millions':
+                                values = [int(val)/1000 for val in values]
+                                kwargs['data'][k1][p1] = list(zip(date_obj, values))
+                            else:
+                                values = [int(val) * 1000 for val in values]
+                                kwargs['data'][k1][p1] = list(zip(date_obj, values))
+                    print (kwargs['data'])
+                    return kwargs['data']
+
+
+                elif kwargs['t_pdf']=='year' and  int(prev_unit[0]) < max(map(lambda x :int(x), kwargs['date_obj'])):
+                    already_saved = quarter_data.objects.filter(Q(company_name_id=1), ~Q(q1=0)).values_list('quarter_date',
+                                                                                                flat=True).distinct()
+                    for saved_d in already_saved:
+                        total_objs= quarter_data.objects.filter(company_name_id =1,quarter_date=saved_d)
+                        for i in total_objs:
+                            if kwargs['unit']=='millions':
+                                i.update(**{'q1':int(i.q1)/1000})
+                                i.save()
+                            else:
+                                i.update(**{'q1': int(i.q1) * 1000})
+                                i.save()
+
+                    return kwargs['data']
+                    print("convert all stored data into the latest unit")
+
+        elif not prev_unit:
+            f_name = max(map(lambda x :int(x) ,kwargs['date_obj']))
+            unit_val = str(f_name) +'##'+ kwargs['unit']
+            c_obj.update(**{'c_y_unit':unit_val})
+            return kwargs['data']
+
+    print (c_obj)
 

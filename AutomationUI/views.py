@@ -55,8 +55,9 @@ def add_row(request):
     new_row=OrderedDict()
     g_data =dict(request.GET)
     r_type = 'Profit and Loss' if g_data['type'][0]=='pnl' else 'Balance Sheet'
+    c_obj = CompanyList.objects.filter(id=request.GET['c_id']).values_list('y_end', flat=True)
     date_objs =qtr_date_pnl()
-    date_objs.update(year_date('December'))
+    date_objs.update(c_obj[0])
     date_keys = list(date_objs.keys())
     req_type = 'pnl' if g_data['type'][0]=='pnl' else 'bsheet'
     if cache.has_key(request.GET['c_id']):
@@ -162,6 +163,21 @@ def delete_row(request):
         return render(request, 'AutomationUI/bs_data.html', locals())
     # return render(request, 'AutomationUI/bs_data.html', {'data': data})
 
+def get_qtrs(c_obj):
+    c_m= datetime.strptime(c_obj.y_end, '%B').month
+    if c_m in [11,12,1]:
+        q2 = 'june'
+        q3 ='september'
+    elif c_m in [2,3,4]:
+        q2 = 'september'
+        q3 ='december'
+    elif c_m in [5,6,7]:
+        q2 ='december'
+        q3= 'march'
+    else:
+        q2 ='march'
+        q3='june'
+    return q2,q3
 
 class PNLFormView(APIView):
     template_name = 'AutomationUI/pnl.html'
@@ -176,6 +192,8 @@ class PNLFormView(APIView):
         p_type=  'Profit and Loss'
         c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
         print (c_obj.company_name)
+        import pdb;pdb.set_trace()
+        q2,q3 = get_qtrs(c_obj)
         # # if cache.has_key(request.GET['c_id']):
         # #     cache_dict = cache.get(request.GET['c_id'])
         #     if 'pnl' in cache_dict:
@@ -191,6 +209,21 @@ class PNLFormView(APIView):
 
     def post(self, request, *args, **kwargs):
         return Response({'status': 'success'})
+
+
+def get_file_sorted(files,p_type):
+    try:
+        if p_type == 'year':
+            k_list = list(files.keys())
+            f_name = y_sorting(k_list)
+        else:
+            k_list = list(files.keys())
+            f_name = q_sorting(k_list)
+            f_name = [name.replace(' ','_') for name in f_name]
+        print (f_name)
+        return f_name
+    except Exception as e:
+        return e
 
 
 
@@ -210,33 +243,51 @@ class UploadPDfView(APIView):
         return render(request, 'AutomationUI/upload_pdf.html', locals())
 
     def post(self, request, *args, **kwargs):
-        from .upload_pdf import upload_pdf
-        from DataExtraction.store_data import pdf_detail
+
 
         if request.method == 'POST':
             sector_list = Sector.objects.all().values_list('sector_name', flat=True)
             c_year_end = list(year_end)
             p_type = list(pdf_type)
+            files= get_file_sorted(files= request.FILES,p_type=request.POST['pdf_type'])
+            import pdb;pdb.set_trace()
 
-            res,path= upload_pdf(file_1= request.FILES['file'],c_name = request.POST['company_name'], file_n = str(request.FILES['file']))
-            if res:
-                data_dict = copy.deepcopy(request.POST)
-                data_dict = dict(data_dict)
-                if not 'override' in data_dict:
-                    data_dict['override']=[]
-                result = pdf_detail(c_name = request.POST['company_name'],sector = request.POST['sector'],year_end = request.POST['year_end'],
-                           file = path,pdf_type =request.POST['pdf_type'],override = data_dict['override']
-                           )
-                if result:
-                    msg = "upload successfully"
-                else:
-                    msg = "error in uploading file"
-            else:
-                return HttpResponse("Failed")
+            from multiprocessing import Process,Queue,Pool
+            # pool =Pool(10)
+            for file_name in files:
+                print (file_name)
+                f_name= request.FILES[str(file_name)]
+                print (f_name)
+                p = Process(target = upload,args=(f_name,request.POST['company_name'],f_name.name,request.POST))
+                p.start()
+                p.join()
+
+            #     result = upload(f_name,request.POST['company_name'])
+            #
+            #     if result:
+            #         msg = "upload successfully"
+            #     else:
+            #         msg = "error in uploading file"
+            # else:
+            #     return HttpResponse("Failed")
+
             return render(request, 'AutomationUI/upload_pdf.html', locals())
 
 
-
+def upload(f_name,c_name,name,post_data):
+    from .upload_pdf import upload_pdf
+    from DataExtraction.store_data import pdf_detail
+    res, path = upload_pdf(file_1=f_name, c_name=c_name, file_n=str(name))
+    if res:
+        data_dict = copy.deepcopy(post_data)
+        data_dict = dict(data_dict)
+        if not 'override' in data_dict:
+            data_dict['override'] = []
+        result = pdf_detail(c_name=post_data['company_name'], sector=post_data['sector'],
+                            year_end=post_data['year_end'],
+                            file=path, pdf_type=post_data['pdf_type'],
+                            override=data_dict['override'],page_num=post_data['page_num']
+                            )
 class NewCompanyView(APIView):
     template_name = 'AutomationUI/bs_data.html'
     queryset = CompanyBalanceSheetData.objects

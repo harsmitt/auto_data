@@ -89,29 +89,35 @@
                     <div class="col-sm-6 ">
                         <h5><span>PDF Type : </span></h5>
                             <div class="input-div flt100">
-                                 <select name="pdf_type"  style="color:black" id="pdf_type">
+                                 <select name="pdf_type"  style="color:black" id="pdf_type" onchange="add_browse(this)">
                                     <option value=" " selected= "selected">Select Pdf Type</option>
                                     {% for p_t in p_type %}
-                                        <option value="{{p_t.0}}" >{{p_t.1}}</option>
+                                        <option value="{{p_t.0}}"  >{{p_t.1}}</option>
                                     {% endfor %}
                                  </select>
                             </div>
 					</div>
                         </div>
-                    <div class="row">
-
-					<div class="col-sm-6">
-                        <h5>
-                            <input  type="file" name="file">
-                        </h5>
-					</div>
-                    <div class="col-sm-6">
-                        <h5>
-
-                             <input style="color:black" type="submit" value="Extract Data">
-                        </h5>
+                    <div class="row" id="browse">
                     </div>
+                    <div class ="row">
+
+                        <div class="col-sm-6">
+                            <h5><span>Page Number: </span> </h5>
+                            <div class="input-div flt100">
+                                <input type="text" class="flt100" name="page_num" style="border:1px !important"  placeholder="enter specific page number" value="">
+                            </div>
                         </div>
+
+
+                        <div class="col-sm-6">
+                            <h5>
+
+                                 <input style="color:black" type="submit" value="Extract Data">
+                            </h5>
+                        </div>
+
+                    </div>
                 </form>
 			</div>
 

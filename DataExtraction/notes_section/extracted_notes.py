@@ -67,7 +67,7 @@ def extract_notes(**kwargs):
     notes_sec_start = False
     pdf_page_keys = copy.deepcopy(kwargs['pdf_page_keys'])
     if pdf_page_keys:
-        for notes in range(int(start) - 1, int(end)):
+        for notes in range(int(start), int(end)-5):
             date_obj = []
             data = get_page_content(seprator='@@', page=notes, path=kwargs['path'], file=kwargs['file'])
             if any('notes to' in ' '.join(data[:20]).lower() or ('note to' in line.lower()) and not 'see' in line.lower() for line in data) and not notes_sec_start:

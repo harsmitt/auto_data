@@ -70,8 +70,11 @@ def find_breakup_bsheet(**kwargs):
 
 def get_notes_data(**kwargs):
     try:
+        import pdb;pdb.set_trace()
         pdf_page_keys = find_breakup_bsheet(data_dict=kwargs['data_dict'])
-        page_detail = get_notes_pages(pdf_type = kwargs['pdf_type'],pdf_page = kwargs['pdf_page'],notes_sec=kwargs['notes_sec'],page= kwargs['page'],file=kwargs['file'])
+        page_detail = get_notes_pages(pdf_type = kwargs['pdf_type'],pdf_page = kwargs['pdf_page'],
+                                      notes_sec=kwargs['notes_sec'],page= kwargs['page'],
+                                      file=kwargs['file'])
         data_dict,pdf_page_keys = extract_notes(year_end=kwargs['year_end'],date_obj=kwargs['date_obj'],
                                   pdf_type = kwargs['pdf_type'],key = page_detail['notes'],
                                   data_dict = kwargs['data_dict'],path=kwargs['path'],

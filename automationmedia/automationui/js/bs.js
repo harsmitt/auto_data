@@ -385,7 +385,7 @@ function get_existing_date(elm){
                     for (var i = 0; i <val.length; i++)
                     {
                         if (val[i]!='This is a new company'){
-                            html+= '<li><input type="checkbox" name="override" style ="width:6% !important"value='+val[i]+'>'+ val[i]+'</li>'
+                            html+= '<li><input type="checkbox" name="override" style ="width:6% !important"value='+val[i].replace(' ','_')+'>'+ val[i]+'</li>'
 
                         }
 

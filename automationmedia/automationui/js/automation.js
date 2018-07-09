@@ -347,25 +347,32 @@ function swap_multiple(elm)
 function multiply(elm)
 {
     var text = prompt("Multiplication", "PLease enter number with you want to multiply your row.");
+    console.log(text)
     if (text)
     {
         sec_name =$(elm).parent().parent().parent().find('div.text').text()
         index_col = $(elm).parent().parent().prevAll('td').length
-        if(Date.parse($($(elm).parent().parent().parent().parent().siblings().children().find('th')[index_col]).text().trim()))
-            {
-//                  sec_name =''
+        date_str =$(($($(elm).parent().parent().parent().parent().siblings().children().find('th'))[index_col])).text().trim()
+        if (date_str.split(' ').length==2){
+            date_array = date_str.split(' ')
+            date_fo =  date_array.splice(1, 0, "20").join()
+            if(new Date(date_fo))
+                {
+    //                  sec_name =''
 
-                $('.existing_block').each(function(){
-                     val_td= $(this).find('td');
-                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
-                     {
-                        $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
-                     }
+                    $('.existing_block').each(function(){
+                         val_td= $(this).find('td');
+                         if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
+                         {
+                            console.log(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
+                            $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
+                         }
 
 
-                });
+                    });
 
             }
+         }
         else {
 
                 $(elm).parent().parent().parent().find('td').each(function() {
@@ -392,7 +399,11 @@ function divide(elm)
 
         sec_name =$(elm).parent().parent().parent().find('div.text').text()
         index_col = $(elm).parent().parent().prevAll('td').length
-        if(Date.parse($($(elm).parent().parent().parent().parent().siblings().children().find('th')[index_col]).text().trim()))
+        date_str =$(($($(elm).parent().parent().parent().parent().siblings().children().find('th'))[index_col])).text().trim()
+        if (date_str.split(' ').length==2){
+            date_array = date_str.split(' ')
+            date_fo =  date_array.splice(1, 0, "20").join()
+            if(new Date(date_fo))
             {
                 $('.existing_block').each(function(){
                      val_td= $(this).find('td');
@@ -404,6 +415,7 @@ function divide(elm)
                 });
 
             }
+        }
         else {
             $(elm).parent().parent().parent().find('td').each(function() {
                 $(this).html(eval(parseFloat($(this).text())) / parseFloat(text))
@@ -421,6 +433,40 @@ function divide(elm)
         }
 }
 
+
+
+function add_browse(elm)
+{
+    console.log($(elm))
+
+    jQuery.ajax({
+            type: 'GET',
+            url: '/automation/get_list/',
+            data: {"type":$(elm)[0].value},
+            contentType: "text/html; charset=utf-8",
+            success: function(data) {
+                console.log(data)
+                val = data.split('##')
+                html=""
+                for (var i = 1; i <val.length+1; i++)
+                    {
+                        if (i%4!=0){
+//                            html+= '<li><input type="checkbox" name="override" style ="width:6% !important"value='+val[i]+'>'+ val[i]+'</li>'
+                            html+="<div class='col-sm-3'><h5><span>"+val[i-1]+"</span></h5><div class='input-div flt100'><input type='file' style='color:white!important;margin:0px' name="+val[i-1].replace(' ','_')+" ></div></div>"
+                        }
+                        else{
+
+                            html+="<div class='col-sm-3'><h5><span>"+val[i-1]+"</span></h5><div class='input-div flt100'><input type='file' style='color:white!important;margin:0px' name="+val[i-1].replace(' ','_')+" ></div></div></div><div class='row'>"
+                        }
+
+                    }
+                    html+='</ul>'
+                     $('#browse').html(html)
+            }
+        });
+
+}
+
 function percentage(elm)
 {
     var text = prompt("Percentage", "Please enter number with you want to calculate with % your row.");
@@ -428,18 +474,24 @@ function percentage(elm)
 
         sec_name =$(elm).parent().parent().parent().find('div.text').text()
         index_col = $(elm).parent().parent().prevAll('td').length
-        if(Date.parse($($(elm).parent().parent().parent().parent().siblings().children().find('th')[index_col]).text().trim()))
-            {
-            $('.existing_block').each(function(){
-                     val_td= $(this).find('td');
-                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
-                     {
-                        $(val_td[index_col]).html(eval(parseFloat(($(val_td[index_col]).text())) * parseFloat(text))/100)
-                     }
+        date_str =$(($($(elm).parent().parent().parent().parent().siblings().children().find('th'))[index_col])).text().trim()
+        if (date_str.split(' ').length==2){
+            date_array = date_str.split(' ')
+            date_fo =  date_array.splice(1, 0, "20").join()
+            if(new Date(date_fo))
+
+                {
+                $('.existing_block').each(function(){
+                         val_td= $(this).find('td');
+                         if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
+                         {
+                            $(val_td[index_col]).html(eval(parseFloat(($(val_td[index_col]).text())) * parseFloat(text))/100)
+                         }
 
 
-                });
+                    });
 
+                }
             }
          else {
                 $(elm).parent().parent().parent().find('td').each(function() {
@@ -539,6 +591,31 @@ function movesecmultiple(elm){
 		}
             }
         });
+
+
+}
+
+
+
+function cal_q2(elm){
+$(".loader-back").show();
+    console.log($(elm))
+    company_id = elm.baseURI.split('?')[1].split('=')[1]
+    word_length = $(elm).parent().parent().text().trim().split('  ').length
+    cal_qtr = $(elm).parent().parent().text().trim().split('  ')[word_length-1].trim()
+
+    elm_name = $(elm).parent().parent().text().trim().split('  ')[0].trim()
+    jQuery.ajax({
+            type: 'GET',
+            url: '/automation/cal_qtr_pnl/',
+            data: {'c_id':company_id,'q_val':elm_name,'cal_qtr':cal_qtr},
+            contentType: "text/html; charset=utf-8",
+            success: function(data) {
+                console.log(data)
+
+                $(".loader-back").hide();
+            }
+    });
 
 
 }

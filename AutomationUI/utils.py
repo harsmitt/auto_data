@@ -202,3 +202,16 @@ def update_comp(request):
 #
 #
 #
+from django.http import HttpResponseRedirect, HttpResponse
+
+def get_list(request):
+    print (request.GET)
+    if request.GET['type']=="year":
+        year_list = list(year_date("December").values())
+        years = '##'.join(map(lambda y : str(y),year_list))
+        print (years)
+        return HttpResponse(years)
+    else:
+        q_list =list(qtr_date_pnl().values())
+        q_data = '##'.join(map(lambda y : str(y),q_list))
+        return HttpResponse(q_data)

@@ -26,27 +26,34 @@ def ExtractBalnceSheet(**kwargs):
                     break;
                 print (line)
                 l_check = line if line and line.strip()[-1].isalpha() else line and line.replace('-', '').strip()
-                if data_dict and data_dict[list(data_dict.keys())[-1]] == []:
+
+                if not kwargs['unit'] and line and any(word in line.lower() for word in ['millions', 'thousands']):
+                    print (line)
+                    x = [w1 for word in line.lower().split() for w1 in ['millions', 'thousands'] if w1 in word]
+                    print (x)
+                    kwargs['unit'] = x[0] if x else ''
+
+                elif data_dict and data_dict[list(data_dict.keys())[-1]] == []:
                     data_dict[list(data_dict.keys())[-1]] = OrderedDict()
 
                 elif all(word in line.lower() for word in ['total liabilities','and'] ):
                     d_keys = list(data_dict.keys())
                     if all(key in d_keys for key in ['current assets', 'current liabilities', 'stockholders equity']):
-                        return data_dict
+                        return data_dict,kwargs['unit']
 
                 elif not 'page_2' in kwargs and (('continue' in line.lower() and len(kwargs['data'])-l_num<5 ) or (l_num+kwargs['date_line']+2 == len(kwargs['data'][kwargs['date_line']:]) and any(word in line for word in ['total assets' ,'total liabilities','continued','net current asset']))):
                     data = get_page_content(seprator='@@',page = kwargs['page'], path=kwargs['path'], file=kwargs['file'])
-                    data_dict = ExtractBalnceSheet(page_2 = True,date_line =2,data_dict=data_dict,data=data,ignore_index=kwargs['ignore_index'],date_obj=kwargs['date_obj'])
-                    return data_dict
+                    data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2 = True,date_line =2,data_dict=data_dict,data=data,ignore_index=kwargs['ignore_index'],date_obj=kwargs['date_obj'])
+                    return data_dict,kwargs['unit']
 
                 elif not 'page_2' in kwargs and data_dict and not all(keys in list(data_dict.keys()) for keys in ['current assets','current liabilities','stockholders equity'])\
                     and l_num+kwargs['date_line']+1 == len(kwargs['data']):
 
                     data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'],
                                             file=kwargs['file'])
-                    data_dict = ExtractBalnceSheet(page_2 = True,date_line=0, data_dict=data_dict, data=data,
+                    data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2 = True,date_line=0, data_dict=data_dict, data=data,
                                                    ignore_index=kwargs['ignore_index'], date_obj=kwargs['date_obj'])
-                    return data_dict
+                    return data_dict,kwargs['unit']
 
                 elif not 'page_2' in kwargs and data_dict and l_num+kwargs['date_line']+1 == len(kwargs['data']):
                     d_keys= list(data_dict.keys())
@@ -54,9 +61,9 @@ def ExtractBalnceSheet(**kwargs):
 
                         data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'],
                                                 file=kwargs['file'])
-                        data_dict = ExtractBalnceSheet(page_2=True, date_line=0, data_dict=data_dict, data=data,
+                        data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2=True, date_line=0, data_dict=data_dict, data=data,
                                                    ignore_index=kwargs['ignore_index'], date_obj=kwargs['date_obj'])
-                        return data_dict
+                        return data_dict,kwargs['unit']
                     else:
                         pass
 
@@ -208,10 +215,10 @@ def ExtractBalnceSheet(**kwargs):
                 #     pass
             data_dict = remove_extra_keys(data_dict =data_dict)
 
-            return data_dict
+            return data_dict,kwargs['unit']
         else:
             data_dict = remove_extra_keys(data_dict=data_dict)
-            return data_dict
+            return data_dict,kwargs['unit']
 
     except Exception as e:
         return e

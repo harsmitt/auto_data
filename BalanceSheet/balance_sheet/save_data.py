@@ -14,10 +14,10 @@ def save_bsheet(**kwargs):
                                 t_pdf = kwargs['pdf_type'],year_end =kwargs['year_end'],
                                 model = CompanyBalanceSheetData,p_type = 'bsheet')
             print (data)
-            import pdb;pdb.set_trace()
 
             data = unit_conversion(data=data,unit= kwargs['unit'],file=kwargs['file']
                                    ,c_name=kwargs['c_name'], t_pdf = kwargs['pdf_type'],date_obj=kwargs['date_obj'])
+        print (data)
         key_list = list(data.keys())
 
         if 'current assets' not in data :#len(key_list)>5:

@@ -74,6 +74,20 @@ class CompanyList(models.Model):
     def __str__(self):
         return str(self.company_name)
 
+
+class DeleteRow(models.Model):
+    company_name = models.ForeignKey(CompanyList)
+    page_extraction = models.CharField(max_length=200, choices=pdf_extraction_page, blank=True)
+    section = models.ForeignKey(Section, blank=True, null=True)
+    subsection = models.ForeignKey(SubSection, blank=True, null=True)
+    s2section = models.ForeignKey(S2Section, blank=True, null=True)
+    quarter_date = models.CharField(max_length=200, blank=True, null=True)
+    q1 = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=1000, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.q1)
+
 class quarter_data(models.Model):
     company_name = models.ForeignKey(CompanyList)
     page_extraction = models.CharField(max_length=200, choices=pdf_extraction_page, blank=True)

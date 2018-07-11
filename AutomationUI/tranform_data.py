@@ -39,6 +39,39 @@ def get_date_list(c_id):
     return loop_key,date_list
 
 
+def get_delete_data(c_id=None):
+    loop_key, date_list = get_date_list(c_id)
+    sec_list = []
+    data_objs = DeleteRow.objects.filter(company_name=c_id)
+    sec = data_objs.values_list('section__item',flat=True).distinct()
+    for sec_obj in sec:
+        print ("delete row " + str(sec))
+        sec_d = OrderedDict()
+        subsec = data_objs.filter(section__item= sec_obj).values_list('subsection__item',flat=True).distinct()
+        sub_list = []
+        s2_list = []
+        for sub in subsec:
+            sub_d = OrderedDict()
+            s1_obj = data_objs.filter(section__item=sec_obj,subsection__item=sub)
+            s2objs = data_objs.filter(Q(section__item=sec_obj), Q(subsection__item=sub), ~Q(s2section=None))
+            if s2objs:
+                s2_sec = s2objs.filter(subsection__item=sub).values_list('s2section__item',flat=True).distinct()
+                for s2 in s2_sec:
+                    s2_d = OrderedDict()
+                    s2_obj = s2objs.filter(s2section__item=s2)
+                    s2_d[s2] = get_des(loop_key, s2_obj)
+                    s2_list.append(s2_d)
+                sub_d[sub] = s2_list
+            else:
+                sub_d[sub] = get_des(loop_key, s1_obj)
+            sub_list.append(sub_d)
+        print (sub_list)
+        sec_d[sec_obj] = sub_list
+        sec_list.append(sec_d)
+
+    print(sec_list)
+    return  sec_list,date_list,loop_key
+
 # @cache_page(60 * 15, key_prefix="site1")
 def get_data(req_type=None,c_id=None,section_type=None,o_sec = None):
     loop_key, date_list = get_date_list(c_id)
@@ -82,10 +115,6 @@ def get_data(req_type=None,c_id=None,section_type=None,o_sec = None):
         cache_data={req_type:data_list[0],'date_list':date_list,'loop_key':loop_key}
 
     cache.set(c_id,cache_data,20*20)
-    # cache.set(req_type,data_list[0],60*60)
-    # cache.set('date_list', date_list,60*60)
-
-    # cache.set('loop_key', loop_key,60*60)
     return data_list[0],date_list,loop_key
 
 

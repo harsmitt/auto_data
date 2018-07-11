@@ -352,27 +352,24 @@ function multiply(elm)
     {
         sec_name =$(elm).parent().parent().parent().find('div.text').text()
         index_col = $(elm).parent().parent().prevAll('td').length
-        date_str =$(($($(elm).parent().parent().parent().parent().siblings().children().find('th'))[index_col])).text().trim()
-        if (date_str.split(' ').length==2){
-            date_array = date_str.split(' ')
-            date_fo =  date_array.splice(1, 0, "20").join()
-            if(new Date(date_fo))
-                {
-    //                  sec_name =''
 
-                    $('.existing_block').each(function(){
-                         val_td= $(this).find('td');
-                         if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
-                         {
-                            console.log(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
-                            $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
-                         }
+        if ($($(elm).parent().parent().parent().find('td')[0]).hasClass('section_td'))
+            {
+//                  sec_name =''
+
+                $('.existing_block').each(function(){
+                     val_td= $(this).find('td');
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
+                     {
+                        console.log(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
+                        $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) * parseFloat(text))
+                     }
 
 
-                    });
+                });
 
-            }
-         }
+        }
+
         else {
 
                 $(elm).parent().parent().parent().find('td').each(function() {
@@ -399,38 +396,36 @@ function divide(elm)
 
         sec_name =$(elm).parent().parent().parent().find('div.text').text()
         index_col = $(elm).parent().parent().prevAll('td').length
-        date_str =$(($($(elm).parent().parent().parent().parent().siblings().children().find('th'))[index_col])).text().trim()
-        if (date_str.split(' ').length==2){
-            date_array = date_str.split(' ')
-            date_fo =  date_array.splice(1, 0, "20").join()
-            if(new Date(date_fo))
-            {
-                $('.existing_block').each(function(){
-                     val_td= $(this).find('td');
-                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
-                     {
-                        $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) / parseFloat(text))
-                     }
 
-                });
+        if ($($(elm).parent().parent().parent().find('td')[0]).hasClass('section_td'))
+        {
+            $('.existing_block').each(function(){
+                 val_td= $(this).find('td');
+                 if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
+                 {
+                    $(val_td[index_col]).html(eval(parseFloat($(val_td[index_col]).text())) / parseFloat(text))
+                 }
 
-            }
+            });
+
         }
+
         else {
             $(elm).parent().parent().parent().find('td').each(function() {
                 $(this).html(eval(parseFloat($(this).text())) / parseFloat(text))
                 });
             }
 
-    }
-    if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
-        {
-            bs_total()
-        }
-    else
-        {
-            pnl_total()
-        }
+
+        if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
+            {
+                bs_total()
+            }
+        else
+            {
+                pnl_total()
+            }
+            }
 }
 
 
@@ -474,24 +469,20 @@ function percentage(elm)
 
         sec_name =$(elm).parent().parent().parent().find('div.text').text()
         index_col = $(elm).parent().parent().prevAll('td').length
-        date_str =$(($($(elm).parent().parent().parent().parent().siblings().children().find('th'))[index_col])).text().trim()
-        if (date_str.split(' ').length==2){
-            date_array = date_str.split(' ')
-            date_fo =  date_array.splice(1, 0, "20").join()
-            if(new Date(date_fo))
 
-                {
-                $('.existing_block').each(function(){
-                         val_td= $(this).find('td');
-                         if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
-                         {
-                            $(val_td[index_col]).html(eval(parseFloat(($(val_td[index_col]).text())) * parseFloat(text))/100)
-                         }
+        if ($($(elm).parent().parent().parent().find('td')[0]).hasClass('section_td'))
+
+            {
+            $('.existing_block').each(function(){
+                     val_td= $(this).find('td');
+                     if ($(this).prevAll('.sub_block').prev('.sec_block').first().find('div.text').text() == sec_name)
+                     {
+                        $(val_td[index_col]).html(eval(parseFloat(($(val_td[index_col]).text())) * parseFloat(text))/100)
+                     }
 
 
-                    });
+                });
 
-                }
             }
          else {
                 $(elm).parent().parent().parent().find('td').each(function() {
@@ -616,6 +607,22 @@ $(".loader-back").show();
                 $(".loader-back").hide();
             }
     });
+
+
+}
+
+
+
+function deleted_rows(elm)
+{
+    company_id = elm.baseURI.split('?')[1].split('=')[1]
+    window.location = '/automation/deleted_row/?c_id='+company_id;
+
+}
+
+
+function undo(elm){
+
 
 
 }

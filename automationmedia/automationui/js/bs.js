@@ -197,7 +197,7 @@ function SaveRow(elm){
     {
         type = 'balance-sheet'
     }
-    else{type='pnl'}
+    else{type='balance-sheet'}
 
     if ($(elm).parent().parent().parent().prev().hasClass('sub_block'))
     {
@@ -235,6 +235,109 @@ function SaveRow(elm){
         //location.reload();
     }
 };
+
+function UndoRow(elm){
+    $(".loader-back").show();
+    item = $(elm).closest('th').text().trim();
+    var new_row=[]
+    company_id = elm.baseURI.split('?')[1].split('=')[1]
+
+    if ($(elm).parent().parent().parent().prev().hasClass('sub_block'))
+    {
+        subsection = $(elm).parent().parent().parent().prev('.sub_block').first().find('div.text').text().trim()
+    }
+    else
+    {
+        subsection = $(elm).parent().parent().parent().prevAll('.existing_block').prev('.sub_block').first().find('div.text').text().trim()
+    }
+
+    section = $(elm).parent().parent().parent().prevAll('.sub_block').prev('.sec_block').first().find('div.text').text().trim()
+    if ((['Liabilities','Assets','Equity'].indexOf(section.split(' ')[1]))>0)
+    {
+        type = 'balance-sheet'
+    }
+    else{type='pnl'}
+
+    $(elm).parent().parent().parent().find('td').each(function() {
+
+        new_row.push($(this).text());
+        });
+    //alert(new_row)
+    if (confirm('Are you sure you want to add: '+ item /*toTitleCase(item)*/  +' ?')) {
+        jQuery.ajax({
+            type: 'GET',
+            url: '/automation/add_row/',
+            data: {'type':type,'item':item,'c_id':company_id,'subsection':subsection,'action':'undo','section':section,'new_row':new_row},
+            contentType: "text/html; charset=utf-8",
+            success: function(data) {
+                setTimeout(function()
+                  {
+                    location.reload();  //Refresh page
+                  }, 1000);
+                  $(".loader-back").hide();
+            }
+        });   // Ajax Call
+    }
+    else{
+	$(".loader-back").hide();
+	//console.log('closed');
+        //location.reload();
+    }
+};
+
+
+function UndoRow2(elm){
+    $(".loader-back").show();
+    item = $(elm).closest('th').text().trim()
+    var new_row=[]
+    company_id = elm.baseURI.split('?')[1].split('=')[1]
+
+    if (($(elm).parent().parent().parent().prev().hasClass('s2section')))
+    {
+            s2section = $(elm).parent().parent().parent().prev('.s2section').first().find('div.text').text().trim()
+    }
+    else
+    {
+         s2section = $(elm).parent().parent().parent().prevAll('.existing_block').prev('.s2section').first().find('div.text').text().trim()
+    }
+    subsection = $(elm).parent().parent().parent().prevAll('.s2section').prev('.sub_block').first().find('div.text').text().trim()
+    section = $(elm).parent().parent().parent().prevAll('.sub_block').prev('.sec_block').first().find('div.text').text().trim()
+    if ((['Liabilities','Assets','Equity'].indexOf(section.split(' ')[1]))>0)
+
+    {
+        type = 'balance-sheet'
+    }
+    else
+    {type='pnl'}
+
+    $(elm).parent().parent().parent().find('td').each(function() {
+        new_row.push($(this).text());
+        });
+    alert(new_row)
+
+    if (confirm('Are you sure you want to add: '+ item/*toTitleCase(item)*/  +' ?')) {
+        jQuery.ajax({
+            type: 'GET',
+            url: '/automation/add_row/',
+            data: {'type':type,'item':item,'c_id':company_id,'s2sec':s2section,'action':'undo','subsection':subsection,'section':section,'new_row':new_row},
+            contentType: "text/html; charset=utf-8",
+            success: function(data) {
+                setTimeout(function()
+                  {
+                    location.reload();  //Refresh page
+                  }, 1000);
+                  $(".loader-back").hide();
+            }
+        });   // Ajax Call
+    }
+    else{
+	$(".loader-back").hide();
+//        location.reload();
+    }
+};
+
+
+
 
 function SaveRow2(elm){
     $(".loader-back").show();

@@ -57,7 +57,6 @@ def update_financial_statements(**kwargs):
             if all(key in page_detail['statement_section'] for key in ['bsheet','pnl']):
                 for statement_key, p_num in page_detail['statement_section'].items():
                     if statement_key in ['bsheet','pnl']:
-                        import pdb;pdb.set_trace()
                         notes_pages = page_detail['notes_section'] if 'notes_section' in page_detail else 0
                         bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'],p_num=p_num,
                                                  path=kwargs['path'],override = kwargs['override'],
@@ -135,8 +134,8 @@ def get_data(**kwargs):
 
 
 def LoopPdfDir(**kwargs):
-    new_path = '/home/administrator/Desktop/Round 2/Craft Brew/Annual Report 2015_Highlighted.pdf'  # path+str(year)+'.pdf'
-    get_data(sector="Oil and gas sector", path=new_path,override=[], company_name="mahima test", pdf_type='year', year_end="December")
+    new_path = '/home/mahima/Downloads/Automation Testing/www_sec_gov_Archives_edgar_data_745732_000074573218000019_ro.pdf'  # path+str(year)+'.pdf'
+    get_data(sector="Oil and gas sector", path=new_path,override=[], company_name="mahimatest", pdf_type='quarter', year_end="December")
     # fix_path= '/home/administrator/different patterns/MahimaUSfiling/' if not kwargs['fix_path'] else kwargs['fix_path']
     # company_list = kwargs['company_list']
     # import os

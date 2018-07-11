@@ -26,7 +26,6 @@ class WebsiteSpider(scrapy.Spider):
         # options = Options()
         # options.add_argument('--headless')
         # self.driver = webdriver.Firefox(executable_path="/usr/local/bin/geckodriver")
-        # import pdb;pdb.set_trace()
         # self.driver.maximize_window()
 
         print ("Opening Sec Website")
@@ -36,7 +35,6 @@ class WebsiteSpider(scrapy.Spider):
         self.url ='https://www.sec.gov'
     #This is initial process method.
     def start_requests(self):
-        # import pdb;pdb.set_trace()
         urls = 'https://www.sec.gov/'#self.url_list
         logging.info(">>>>>>>>>>>>>>Crawling starting<<<<<<<<<<<<<<<<<<<<")
         yield scrapy.Request(url=urls, callback=self.parse_url)
@@ -45,7 +43,6 @@ class WebsiteSpider(scrapy.Spider):
         # print ("we are in parse_url")
         # self.driver.get(self.url)
         # time.sleep(1)
-        # # import pdb;pdb.set_trace()
         # print ("Click on Filings to fetch Company PDF")
         # c_filings = [i for i in self.driver.find_elements_by_tag_name('a') if i.text == 'COMPANY FILINGS']
         # if c_filings :c_filings[0].click()
@@ -59,7 +56,6 @@ class WebsiteSpider(scrapy.Spider):
             yield scrapy.Request(url=i, callback=self.get_url,meta={'url': i,'old_url':self.url},dont_filter=True)
         # self.driver.close()
     def get_url(self,response):
-        # import pdb;pdb.set_trace()
         urls=[i for i in response.css('a::attr(href)').extract() if 'Archives' in i]
         count=0
         y1 = year_list()
@@ -75,7 +71,6 @@ class WebsiteSpider(scrapy.Spider):
 
     def get_html_url(self,response):
         pdf_url = [i for i in response.css('a::attr(href)').extract() if ('10-k' in i or '10k' in i or '10-q' in i or '10q'in i) and ('.htm' in i)]
-        # import pdb;pdb.set_trace()
         if pdf_url and 'http' not in pdf_url[0] and 'https' not in pdf_url[0]:
             url_8k = self.url + pdf_url[0]
             from bs4 import BeautifulSoup
@@ -113,7 +108,6 @@ class WebsiteSpider(scrapy.Spider):
 #
 # @defer.inlineCallbacks
 # def test():
-#     import pdb;pdb.set_trace()
 #     runner = CrawlerRunner()
 #     # reactor.run(installSignalHandlers=False)
 #     yield runner.crawl(WebsiteSpider, "APPLE INC")
@@ -128,7 +122,6 @@ class WebsiteSpider(scrapy.Spider):
 # process = CrawlerProcess({
 #         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 #     })
-#     import pdb;pdb.set_trace()
 #     company_name = raw_input('Enter the company name : ')
 #
 #     process.crawl(WebsiteSpider,company_name)

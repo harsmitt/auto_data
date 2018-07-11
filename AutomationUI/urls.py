@@ -16,10 +16,12 @@ urlpatterns = [
     url(r'^profit-loss/$', PNLFormView.as_view(), name='PNLFormViewform'),
     url(r'^ajax_update_component/$', update_comp, name='updatecomp'),
     url(r'^add_row/$', add_row, name='addrow'),
+    # url(r'^undo_row/$', undo_row, name='undorow'),
     url(r'^delete_row/$', delete_row, name='deleterow'),
     url(r'^delete_multiple/$', delete_multiple, name='deletemultiple'),
     url(r'^save_multiple/$', save_multiple, name='savemultiple'),
     url(r'^swap_multiple/$', swap_multiple, name='swapmultiple'),
+    url(r'^deleted_row/$', DeletedRowsFormView.as_view(), name='deleted_rows'),
 
 
     url(r'^update_section/$', update_section, name='updatesection'),

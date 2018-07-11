@@ -52,7 +52,7 @@ def get_digit(s,num=False,ui_num=False):
             digit = ("".join(re.findall("[0-9-]+.", s.lower().strip())))
         elif num==True:
             digit = ("".join(re.findall("[0-9]+", s.lower().strip())))
-        elif s in s in ['-','*','—','- -'] or not [i for i in s if ord(i)<128]:
+        elif s in s in ['-','*','—','- -','?'] or not [i for i in s if ord(i)<128]:
             return s
         else:
             if s[0]=='-':

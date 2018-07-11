@@ -24,7 +24,7 @@ sys.path.append(workspace)
 sys.path.append(project)
 
 # Add the path to 3rd party django application and to django itself.
-sys.path.append('/home/administartor')
+sys.path.append('/home/mahima')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'DataAutomation.settings'
 # import django.core.handlers.wsgi
 # application = django.core.handlers.wsgi.WSGIHandler()

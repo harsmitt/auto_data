@@ -63,7 +63,10 @@ def get_last_bs_qtr(**kwargs):
                     else next_m if next_m.lower() in qtr_list else ''
         if match_qtr :
             y_key = (list(year_dict.keys())[list(year_dict.values()).index(int(year))])
-            q_key = (list(qtr_dict.keys())[list(qtr_dict.values()).index(str(match_qtr))])  # Prints george
+            print (qtr_dict)
+            print (str(match_qtr).lower())
+
+            q_key = (list(qtr_dict.keys())[list(qtr_dict.values()).index(str(match_qtr).lower())])  # Prints george
             save_yending_qtr = copy_year_data(year_end =kwargs['year_end'],c_name =kwargs['c_name'],y_key = y_key,q_key = q_key)
         else:
             pass

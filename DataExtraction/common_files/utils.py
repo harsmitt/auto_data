@@ -144,7 +144,7 @@ def q_sorting(q_list):
         for loop in range(0,len(name_list)):
             for i,j in enumerate(name_list):
                 if len(name_list)>1 and len(name_list)!=(i+1):
-                    if datetime.strptime(name_list[i], '%B %Y') > datetime.strptime(name_list[i+1], '%B %Y'):
+                    if datetime.strptime(name_list[i], '%B %Y') < datetime.strptime(name_list[i+1], '%B %Y'):
                         temp= name_list[i]
                         name_list[i] =name_list[i+1]
                         name_list[i+1]=temp

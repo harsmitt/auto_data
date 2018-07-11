@@ -3,7 +3,7 @@ import pdfkit
 import os
 import errno
 from collections import OrderedDict
-DEFAULT_DATA_PATH='/home/administrator/DataAutomation/company_pdf/'
+DEFAULT_DATA_PATH='/home/mahima/DataAutomation/company_pdf/'
 
 # from fun import year_date,qtr_date
 

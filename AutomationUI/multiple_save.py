@@ -4,6 +4,7 @@ from collections import OrderedDict
 from .tranform_data import *
 from .utils import *
 from django.shortcuts import render
+from .views import add_delete_row
 
 def delete_multiple(request):
     g_data = OrderedDict(request.GET)
@@ -31,6 +32,10 @@ def delete_multiple(request):
                             if type(val) != list and key == g_data['subsection']:
                                 for d_key, d_val in val.items():
                                     if d_key == item:
+                                        res = add_delete_row(row=i[key], section=g_data['section'], item=item,
+                                                             subsection=g_data['subsection'], type=req_type, s2sec=None,
+                                                             c_id=request.GET['c_id'], loop_key=loop_key)
+
                                         i[key].pop(item)
                                         i['update'] = True
                                         deleted_row = True
@@ -39,6 +44,13 @@ def delete_multiple(request):
                                 for s2sec in val:
                                     for s2, s2_o in s2sec.items():
                                         if s2 == g_data['s2section']:
+                                            if not 'action' in request.GET:
+                                                res = add_delete_row(row=s2sec[s2], section=g_data['section'],
+                                                                     item = item,
+                                                                     subsection=g_data['subsection'], type=req_type,
+                                                                     s2sec=g_data['s2sec'],
+                                                                     c_id=request.GET['c_id'], loop_key=loop_key)
+
                                             s2sec[s2].pop(item)
                                             i['update'] = True
                                             deleted_row = True
@@ -49,8 +61,9 @@ def delete_multiple(request):
             elif deleted_row:
                 break;
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
+    action_type = 'undo' if 'action' in request.GET else 'delete'
     if data:
-        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, action_type='delete',
+        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, action_type=action_type,
                                                    p_type=req_type)
     else:
         pass
@@ -150,6 +163,9 @@ def swap_multiple(request):
                             if type(val) != list and key == g_data['subsection']:
                                 for d_key, d_val in val.items():
                                     if d_key == item:
+                                        res = add_delete_row(row=i[key], section=g_data['section'], item=item,
+                                                             subsection=g_data['subsection'], type=req_type, s2sec=None,
+                                                             c_id=request.GET['c_id'], loop_key=loop_key)
                                         remove_item = i[key].pop(item)
                                         i['update'] = True
                                         break;
@@ -159,6 +175,11 @@ def swap_multiple(request):
                                         if s2 == g_data['s2section']:
                                             for s2_key, s2_val in s2_o.items():
                                                 if s2_key == item:
+                                                    res = add_delete_row(row=i[key], section=g_data['section'],
+                                                                         item=item,
+                                                                         subsection=g_data['subsection'], type=req_type,
+                                                                         s2sec=None,
+                                                                         c_id=request.GET['c_id'], loop_key=loop_key)
                                                     remove_item = s2sec[s2].pop(item)
                                                     i['update'] = True
                                                     break;

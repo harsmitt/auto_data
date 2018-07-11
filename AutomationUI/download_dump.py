@@ -110,7 +110,7 @@ def FillPNL(sheet,data,row,date_list,loop_key,total_form):
 def download_dump(request):
     wb = openpyxl.Workbook()
     ws1 =  wb.active
-    c_obj = CompanyList.objects.filter(id = request.GET['c_id'])
+    c_obj = CompanyList.objects.get(id = request.GET['c_id'])
 
     data_list, date_list, loop_key = get_data(req_type='bsheet', c_id=c_obj.id, section_type='Balance Sheet')
     ch=66

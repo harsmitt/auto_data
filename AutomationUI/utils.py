@@ -4,7 +4,7 @@ from PNL.models import CompanyPNLData
 from collections import OrderedDict
 from DataExtraction.common_files.utils import *
 from DataExtraction.common_files.basic_functions import *
-from .tranform_data import get_data
+from .tranform_data import get_data,get_delete_data
 from django.db.models import Q
 from django.core.cache import cache
 
@@ -35,7 +35,10 @@ def del_old_data(sec_objs):
 
 def update_qtr(data,c_id,req_type,action_type=None):
     c_obj = CompanyList.objects.filter(id =c_id).values_list('y_end',flat=True)
-    all_objs = quarter_data.objects.filter(company_name_id=c_id,page_extraction=req_type)
+    if action_type !='undo':
+        all_objs = quarter_data.objects.filter(company_name_id=c_id,page_extraction=req_type)
+    else:
+        all_objs = DeleteRow.objects.filter(company_name_id=c_id, page_extraction=req_type)
     # sec_objs  = all_objs.filter(Q(section__item= list(data.keys())[0]),~Q(subsection=None))
     sec_objs  = all_objs.filter(section__item= list(data.keys())[0],subsection__item__in= list(data[list(data.keys())[0]]))
     if action_type:del_old_data(sec_objs)
@@ -97,8 +100,10 @@ def save_data(data,c_id,req_type,action_type=None,p_type=None,complete_sec=None)
         row_data[sec]=sub_data
     res = update_qtr(row_data,c_id,req_type=p_type,action_type=action_type)
     # res = delete_qtr(row_data,c_id,req_type = req_type)
-
-    data_list, date_list, loop_key = get_data(req_type=p_type,section_type=req_type, c_id=c_id,o_sec =list(row_data.keys())[0])
+    if action_type == 'undo':
+        data_list, date_list, loop_key = get_delete_data(c_id=c_id)
+    else:
+        data_list, date_list, loop_key = get_data(req_type=p_type,section_type=req_type, c_id=c_id,o_sec =list(row_data.keys())[0])
     return data_list, date_list, loop_key
 
 from django.shortcuts import render

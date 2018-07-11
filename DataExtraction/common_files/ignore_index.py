@@ -81,16 +81,17 @@ def i_notes_index(**kwargs):#[(notes,group,company),(group,notes),(company,notes
         return kwargs['ignore_index']
 
 
-    elif 'note' not in extract_s(kwargs['line']).split()[0] and \
+    elif not any(word in extract_s(kwargs['line']).split()[0] for word in ['notes','note']) and \
             (any(check_datetime(obj) for obj in extract_s(kwargs['line']).split()) or 'except share data' in kwargs['line'].lower()):
         n_index = re.split('  +',kwargs['line']).index(notes[0]) if len(re.split('  +',kwargs['line']))>1 \
                 else -1
-    elif 'note' in extract_s(kwargs['line']).split()[-1] and len(extract_s(kwargs['line']).split())>1:
+    elif any(word in extract_s(kwargs['line']).split()[-1] for word in ['notes','note']) and len(extract_s(kwargs['line']).split())>1:
         n_index= -1
     else:
         n_index = re.split('  +',kwargs['line']).index(notes[0])+1 if 'notes' in re.split('  +',kwargs['line']) else kwargs['ignore_index']
 
 #need to add keys
+
     if g_index and c_index and n_index:
         # notes will be the last column
         if g_index < c_index and c_index < n_index :
@@ -140,7 +141,7 @@ def i_notes_index(**kwargs):#[(notes,group,company),(group,notes),(company,notes
                 kwargs['ignore_index'].update(**c_in_dict)
             kwargs['ignore_index'].update(**{'notes':int(1)})
     else:
-        if n_index:
+        if n_index is not None:
             kwargs['ignore_index'].update(**{'notes':n_index})
 
     return kwargs['ignore_index']

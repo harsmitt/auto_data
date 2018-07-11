@@ -7,7 +7,7 @@ import errno
 import re
 from .utils import *
 
-DEFAULT_DATA_PATH = '/home/administrator/DataAutomation/images/'
+DEFAULT_DATA_PATH = '/home/mahima/DataAutomation/images/'
 
 
 def make_directory(company_name):

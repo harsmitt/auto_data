@@ -10,7 +10,7 @@ from DataExtraction.models import Sector
 from DataExtraction.choices import year_end,pdf_type
 from django.core.cache import cache
 
-from .tranform_data import get_data
+from .tranform_data import get_data,get_delete_data
 
 class CompanyListView(APIView):
     template_name = 'AutomationUI/index.html'
@@ -43,7 +43,8 @@ class BalanceSheetFormView(APIView):
             data_list,date_list,loop_key = get_data(req_type='bsheet',c_id=request.GET['c_id'],section_type='Balance Sheet')
         p_type = 'Balance Sheet'
         c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
-        print (c_obj.company_name)
+        unit = c_obj.c_y_unit.split('##')[1]
+        print (unit)
         return render(request, 'AutomationUI/bs_data.html', locals())
 
     def post(self, request, *args, **kwargs):
@@ -57,7 +58,7 @@ def add_row(request):
     r_type = 'Profit and Loss' if g_data['type'][0]=='pnl' else 'Balance Sheet'
     c_obj = CompanyList.objects.filter(id=request.GET['c_id']).values_list('y_end', flat=True)
     date_objs =qtr_date_pnl()
-    date_objs.update(c_obj[0])
+    date_objs.update(year_date(c_obj[0]))
     date_keys = list(date_objs.keys())
     req_type = 'pnl' if g_data['type'][0]=='pnl' else 'bsheet'
     if cache.has_key(request.GET['c_id']):
@@ -104,17 +105,72 @@ def add_row(request):
         data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'],req_type=r_type,p_type=req_type)
     else:
         pass
+    if 'action' in request.GET:
+        x = delete_row(request)
     # data = save_data(data, request.GET['c_id'],g_data['type'][0])
     if g_data['type'][0] == 'pnl':
         return render(request, 'AutomationUI/pnl.html', locals())
     else:
         return render(request, 'AutomationUI/bs_data.html', locals())
 
+
+
+def add_delete_row(**kwargs):
+    print (kwargs)
+    print ("add")
+    data=OrderedDict()
+    sec_obj = Section.objects.get(item = kwargs['section'])
+    data['section']=sec_obj
+    sub_obj = SubSection.objects.get(item=kwargs['subsection'])
+    data['subsection']=sub_obj
+    s2_obj = S2Section.objects.get(item=kwargs['s2sec']) if kwargs['s2sec'] else None
+    data['s2section'] = s2_obj
+    data['company_name_id'] = kwargs['c_id']
+    data['page_extraction'] = kwargs['type']
+    # data['quarter_date'] = kwargs['loop_key']
+    # data['description'] =
+    if type(kwargs['row'])==OrderedDict:
+        for loop1 , loop2 in kwargs['row'][kwargs['item']].items():
+            data['quarter_date'] = kwargs['loop_key'][loop1]
+            exist_obj = DeleteRow.objects.filter(quarter_date =  kwargs['loop_key'][loop1],
+                                                 section =sec_obj,subsection=sub_obj,s2section=s2_obj)
+            if exist_obj:
+                des = exist_obj[0].description +'##'+kwargs['item']+'('+str(loop2)+')'
+                dict1 = {'description':des}
+                x = exist_obj.update(**dict1)
+            else:
+                data['description']  =kwargs['item']+'('+str(loop2)+')'
+                x = DeleteRow.objects.create(**data)
+    else:
+        for s2 in kwargs['row']:
+            for  s2_k,s2_v in s2.items():
+                if kwargs['item'] in s2[s2_k]:
+                    for loop1, loop2 in s2[s2_k][kwargs['item']].items():
+                        data['quarter_date'] = kwargs['loop_key'][loop1]
+                        exist_obj = DeleteRow.objects.filter(quarter_date=kwargs['loop_key'][loop1],
+                                                             section=sec_obj, subsection=sub_obj, s2section=s2_obj)
+                        if exist_obj:
+                            des = exist_obj[0].description + '##' + kwargs['item'] + '(' + str(loop2) + ')'
+                            dict1 = {'description': des}
+                            x = exist_obj.update(**dict1)
+                        else:
+                            data['description'] = kwargs['item'] + '(' + str(loop2) + ')'
+                            x = DeleteRow.objects.create(**data)
+            else:
+                pass
+
+    if x : return True
+    else :return False
+
+    # data1 = {'section_id__item': 'Current_assets', 'company_name_id': 1, 'page_extraction': 'bsheet',
+    #          'subsection_id__item': 'Cash & Near Cash Items', 'quarter_date': '2016',
+    #          'description': 'cash and cash equivalents##755'}
+
 def delete_row(request):
     g_data = OrderedDict(request.GET)
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
     req_type = 'pnl' if g_data['type'] =='pnl' else 'bsheet'
-    if cache.has_key(request.GET['c_id']):
+    if cache.has_key(request.GET['c_id']) and not 'action' in request.GET:
         cache_dict = cache.get(request.GET['c_id'])
         if req_type in cache_dict:
             data_list = cache_dict[req_type]
@@ -122,11 +178,13 @@ def delete_row(request):
             loop_key = cache_dict['loop_key']
         else:
             data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
-    else:
+    elif not 'action' in request.GET:
         data_list, date_list, loop_key = get_data(req_type=req_type,section_type=r_type, c_id=request.GET['c_id'])
 
-    deleted_row =False
+    else:
+        data_list, date_list, loop_key = get_delete_data(c_id=request.GET['c_id'])
 
+    deleted_row =False
     for data in data_list:
         if g_data['section'] in list(data.keys()) and not deleted_row:
             for i in data[g_data['section']]:
@@ -135,14 +193,25 @@ def delete_row(request):
                         if type(val)!=list  and key == g_data['subsection'] :
                             for d_key, d_val in val.items():
                                 if d_key == g_data['item']:
+                                    if not 'action' in request.GET:
+                                        res= add_delete_row(row = i[key],section = g_data['section'],item=g_data['item'],
+                                                       subsection =g_data['subsection'],type= req_type,s2sec=None,
+                                                       c_id =request.GET['c_id'],loop_key=loop_key )
+
                                     i[key].pop(g_data['item'])
                                     i['update'] = True
                                     deleted_row=True
                                     break;
+
                         elif key == g_data['subsection'] and 's2sec' in g_data:
                             for s2sec in val:
                                 for s2, s2_o in s2sec.items():
                                     if s2 == g_data['s2sec']:
+                                        if not 'action' in request.GET:
+                                            res = add_delete_row(row=s2sec[s2], section=g_data['section'], item=g_data['item'],
+                                                             subsection=g_data['subsection'], type=req_type, s2sec=g_data['s2sec'],
+                                                             c_id=request.GET['c_id'], loop_key=loop_key)
+
                                         s2sec[s2].pop(g_data['item'])
                                         i['update'] = True
                                         deleted_row = True
@@ -153,8 +222,9 @@ def delete_row(request):
         elif deleted_row:
             break;
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
+    action_type = 'undo' if 'action' in request.GET else 'delete'
     if data:
-        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'],req_type=r_type,action_type='delete',p_type= req_type)
+        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'],req_type=r_type,action_type=action_type,p_type= req_type)
     else:
         pass
     if g_data['type']== 'pnl':
@@ -192,8 +262,8 @@ class PNLFormView(APIView):
         p_type=  'Profit and Loss'
         c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
         print (c_obj.company_name)
-        import pdb;pdb.set_trace()
         q2,q3 = get_qtrs(c_obj)
+        unit = c_obj.c_y_unit.split('##')[1]
         # # if cache.has_key(request.GET['c_id']):
         # #     cache_dict = cache.get(request.GET['c_id'])
         #     if 'pnl' in cache_dict:
@@ -250,8 +320,6 @@ class UploadPDfView(APIView):
             c_year_end = list(year_end)
             p_type = list(pdf_type)
             files= get_file_sorted(files= request.FILES,p_type=request.POST['pdf_type'])
-            import pdb;pdb.set_trace()
-
             from multiprocessing import Process,Queue,Pool
             # pool =Pool(10)
             for file_name in files:
@@ -323,7 +391,7 @@ class NewCompanyView(APIView):
                 import traceback
                 print (traceback.format_exc())
                 print (e)
-            res = LoopPdfDir(fix_path='/home/administrator/DataAutomation/company_pdf/',\
+            res = LoopPdfDir(fix_path='/home/mahima/DataAutomation/company_pdf/',\
                              company_list=[request.POST['company_name']],c_ticker = request.POST['company_ticker'],
                              sector = request.POST['sector'],year_end = request.POST['year_end']
                             )
@@ -379,3 +447,28 @@ def section_list(request):
     comp = '##'.join(list(subsection.filter(s2section=None).values_list('item', flat=True))) + '##'.join(list(
         s2sec.values_list('item', flat=True)))
     return HttpResponse(comp)
+
+
+# def DeletedRows(request):
+
+
+
+class DeletedRowsFormView(APIView):
+    template_name = 'AutomationUI/bs_data.html'
+    queryset = DeleteRow.objects
+
+    def dispatch(self, *args, **kwargs):
+        return super(DeletedRowsFormView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        print (request.GET)
+        delete_objs = DeleteRow.objects.filter(company_name_id=request.GET['c_id'])
+        data_list, date_list, loop_key = get_delete_data(c_id=request.GET['c_id'])
+        p_type = 'Balance Sheet'
+        c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
+        return render(request, 'AutomationUI/delete_rows.html', locals())
+        # return render(request, 'AutomationUI/delte.html', locals())
+
+    def post(self, request, *args, **kwargs):
+        return Response({'status': 'success'})
+

@@ -5,7 +5,7 @@ import pdfkit
 from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import CrawlSpider
 
-DEFAULT_DATA_PATH = '/home/administrator/Automation/fin_dict/company_pdf/Apple/Quarter/'
+DEFAULT_DATA_PATH = '/home/mahima/Automation/fin_dict/company_pdf/Apple/Quarter/'
 
 class WebsiteItem(scrapy.Item):
     url = scrapy.Field()

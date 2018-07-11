@@ -1,0 +1,157 @@
+{% extends 'AutomationUI/b_s1.html' %}
+{% load get_value %}
+{% load get_data %}
+
+
+
+<!--<script src="http://www.ittutorials.in/js/demo/numtoword.js" type="text/javascript"></script>-->
+
+{% block tabs %}
+<div class="container-fluid navbar" id="header2">
+        <nav id="nav"  class="pull-left">
+            <ul id="tab_name">
+                <li><a href="/automation/company_list/" >Company List</a></li>
+                <li><a href="/automation/upload_pdf/">Upload PDF</a></li>
+                <!--<li><a href="/automation/new_company/">New Company</a></li>-->
+                <li><a onclick="calculate_bs_qtr(this)" style="color:blue;text-decoration: underline;" >Calculate Balance Sheet last qtr</a></li>
+                <li><a onclick="go_to_next(this)" style="color:blue;text-decoration: underline;" >Go to PNL</a></li>
+                <li><a onclick="deleted_rows(this)" style="color:blue;text-decoration: underline;" >Deleted Rows</a></li>
+                <!--<li><a href="/automation/notification/" class="update-box">Update &amp; Notification {% if notice_count %}<span class="update-count">{{ notice_count }}</span>{% endif %}</a></li>-->
+            </ul>
+        </nav>
+    </div>
+
+    <!--{% include 'AutomationUI/table_format_trail.html' %}-->
+
+<div class ="container_bs">
+<table>
+<thead>
+<tr>
+    <td class="headcol" >
+         <div class="sheet_header">{{p_type}}<label>({{c_obj.company_name}})</label></div>
+    </td>
+        {%for date in date_list%}
+            <th class="long">
+                    {% if q2 in date and 'Profit' in p_type%}
+                        {{date|upper}}
+                        <div class="options_list">
+                            <a onclick="cal_q2(this)" style="color:Blue">Cal_q2</a>
+                        </div>
+                    {%else %}
+                        {%if q3 in date and 'Profit' in p_type %}
+
+                            {{date|upper}}
+                            <div class="options_list">
+                                <a onclick="cal_q2(this)" style="color:Blue">Cal_q3</a>
+                            </div>
+                        {%else%}
+                            {{date|upper}}
+                        {%endif%}
+                    {%endif%}
+            </th>
+        {%endfor%}
+</tr>
+</thead>
+{%for obj in data_list%}
+    {% for sec,sub in obj.items%}
+        {%if not sub%}
+            <tr class="total_block">
+                <th class="headcol section"><div class="text main_section">{{sec}}</div></th>
+                {%for date in date_list%}
+                    <td class="long section_td">0</td>
+                {%endfor%}
+            </tr>
+        {%else%}
+            <tr class="sec_block">
+
+                <th class="headcol section"><div class="text main_section">{{sec}}</div>
+                </th>
+                {%for date in date_list%}
+                <td class="long section_td">0</td>
+                {%endfor%}
+            </tr>
+        {%endif%}
+
+        {%for sub_l in sub%}
+            {%for s,s2 in sub_l.items%}
+                {%if s2|get_value%}
+                    <tr class="sub_block">
+                        <th class="headcol subsection">
+                            <div class="text sub_block">{{s}}</div>
+
+                        </th>
+                        {%for date in date_list%}
+                            <td class="long subsection_td">0</td>
+                        {%endfor%}
+
+                    </tr>
+                {%else%}
+                    <tr class="sub_block">
+                        <th class="headcol subsection">
+                            <div class="text sub_block" >{{s}}</div>
+                        </th>
+                        {%for date in date_list%}
+                            <td class="long subsection_id"  style="color: black;background-color:#228B22;">0</td>
+                        {%endfor%}
+
+                    </tr>
+                {%endif%}
+                {%for word , key in s2.items%}
+                    <tr class="existing_block">
+                        <th class="headcol existing_sec">
+
+                            <div class="text subsub_section">{{word}}</div>
+                            <div class="options_list">
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/undo.png" title="undo Row" onclick="UndoRow(this)" >
+                            </div></th>
+                        {%for q_key,date in loop_key.items%}
+                            <td class="long existing_td" onkeyup="change_sum(event,this)"  contenteditable='true'>{% get_data key q_key  %}</td>
+                        {%endfor%}
+                    </tr>
+                {%endfor%}
+                {%for s2obj in s2%}
+
+                    {%for s2_o,i in s2obj.items%}
+
+                        <tr class="s2section" >
+                            <th class="headcol s2sec">
+                                <div class="text sub_block">{{s2_o}}</div>
+
+                            </th>
+                            {%for q_key,date in loop_key.items%}
+                                <td class="long subsection_td">0</td>
+                            {%endfor%}
+                        </tr>
+
+                        {%for hupp , sun in i.items%}
+                            <tr class="existing_block">
+                                <th class="headcol existing_sec">
+
+                                    <div class="text subsub_section">{{hupp}}</div>
+                                    <div class="options_list">
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/undo.png" title="Undo Row" onclick="UndoRow2(this)" >
+
+                                    </div>
+
+                                </th>
+                                {%for q_key,date in loop_key.items%}
+                                    <td class="long existing_td" onkeyup="change_sum(event,this)" contenteditable='true'>{% get_data sun q_key  %}</td>
+                                {%endfor%}
+                            </tr>
+                        {%endfor%}
+
+                    {%endfor%}
+                {%endfor%}
+            {%endfor%}
+        {%endfor%}
+
+    {%endfor%}
+
+{%endfor%}
+
+    </table>
+</div>
+
+
+{% endblock tabs %}
+</div>

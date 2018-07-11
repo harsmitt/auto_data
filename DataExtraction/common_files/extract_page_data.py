@@ -34,6 +34,8 @@ def scrap_pdf_page(**kwargs):
                 l_data = data[:20] if len(data)>20 else data
                 for l_num,line in enumerate(l_data):
                     from .mapping_data import ignore_index_list
+                    print (line)
+                    print ("((()))))))))))))))")
                     # if line and kwargs['pdf_type']=='quarter' and kwargs['pdf_page']=='pnl':
                     #     if len([i for i in qtr_combinations if all(word in line.lower() for word in i)])>=1:
                     #         subtract = None
@@ -44,7 +46,7 @@ def scrap_pdf_page(**kwargs):
 
                     if line and any(word in line.lower() for word in['millions','thousands']):
                         print (line)
-                        x = [w1 for word in line.split() for w1 in ['millions', 'thousands'] if w1 in word]
+                        x = [w1 for word in line.lower().split() for w1 in ['millions', 'thousands'] if w1 in word]
                         print (x)
                         unit =x[0] if x else ''
 
@@ -76,7 +78,7 @@ def scrap_pdf_page(**kwargs):
                     if not balance_sheet_data and kwargs['pdf_page']=='bsheet':
                         for pdf in range(pdf_page_next):
                             data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
-                            data_dict = ExtractBalnceSheet(page= int(pdf_page)+1, path=kwargs['path'], file=kwargs['file'],date_line=date_line,data_dict=data_dict,data=data,ignore_index=ignore_index,date_obj=date_obj)
+                            data_dict,unit = ExtractBalnceSheet(page= int(pdf_page)+1, path=kwargs['path'], file=kwargs['file'],date_line=date_line,data_dict=data_dict,data=data,ignore_index=ignore_index,date_obj=date_obj,unit=unit)
                             pdf_page = int(pdf_page) + 1
                         print (data_dict)
                         if data_dict and len(data_dict)>=3 and any(key in list(data_dict.keys()) for key in ['current assets','non current assets','current liablities','non burrent liabilities']):
@@ -102,13 +104,12 @@ def scrap_pdf_page(**kwargs):
                                 return (balance_sheet_data,pnl_data)
 
                     elif not pnl_data and kwargs['pdf_page']=='pnl':
-                        date_obj =date_obj[:2]
                         print (date_obj)
                         for pdf in range(pdf_page_next):
                             data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
 
-                            data_dict = ExtractPNL(date_line=date_line,data_dict=data_dict, data=data,  ignore_index=ignore_index,
-                                                       date_obj=date_obj)
+                            data_dict,unit = ExtractPNL(date_line=date_line,data_dict=data_dict, data=data,  ignore_index=ignore_index,
+                                                       date_obj=date_obj,unit=unit)
                             pdf_page = int(pdf_page) + 1
                         print (data_dict)
                         if data_dict and (len(data_dict) > 5 or all(len(data_dict)>=2 and len(data_dict[x])>=2 for x in list(data_dict.keys()))):

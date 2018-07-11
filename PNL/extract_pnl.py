@@ -23,6 +23,8 @@ def ExtractPNL(**kwargs):
         for l_num, line in enumerate(kwargs['data'][kwargs['date_line']:]):
             line = line.replace('$', '  ')
             print (line)
+
+
             if l_num>10 and len(data_dict)<2 and data_dict:
                 d_keys =list(data_dict.keys())[-1]
                 if not data_dict[d_keys]:
@@ -30,16 +32,24 @@ def ExtractPNL(**kwargs):
             if data_dict and any(word in line.lower() for word in ['per share','comprehensive','per common share']):
                 break;
 
+            elif not kwargs['unit'] and line and any(word in line.lower() for word in ['millions', 'thousands']):
+                print (line)
+                x = [w1 for word in line.lower().split() for w1 in ['millions', 'thousands'] if w1 in word]
+                print (x)
+                kwargs['unit'] = x[0] if x else ''
+
             elif any((re.split('  +',ex.lower())[0]) ==  line.lower() for ex in exceptional):
                 values = re.split('  +', line)
                 if data_dict[list(data_dict.keys())[-1]] == {}:
                     new = list(
                         map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), values[1:]))))
-                    data_dict[list(data_dict.keys())[-1]] = list(zip(kwargs['date_obj'], new))
+
+                    data_dict[list(data_dict.keys())[-1]] = get_modigy_values(date_obj =kwargs['date_obj'],val=new)
+
                 else:
                     old_values = data_dict[list(data_dict.keys())[-1]]
                     cal_values = calculations(old_values, values[1:])
-                    data_dict[list(data_dict.keys())[-1]] = list(zip(kwargs['date_obj'], cal_values))
+                    data_dict[list(data_dict.keys())[-1]] = get_modigy_values(date_obj =kwargs['date_obj'],val=cal_values)#list(zip(kwargs['date_obj'][:-1], cal_values[:-1]))
 
             elif data_dict and any(val in line.lower() for val in pass_list):
                 pass
@@ -55,7 +65,7 @@ def ExtractPNL(**kwargs):
                                                                     ignore_index=kwargs['ignore_index'],
                                                                     data=kwargs['data'],date_obj = kwargs['date_obj'])
                     val = list(map(lambda x: str(get_digit(x)), values))
-                    dict1 = list(zip(kwargs['date_obj'], val))
+                    dict1 = get_modigy_values(date_obj =kwargs['date_obj'],val=val)#list(zip(kwargs['date_obj'], val))
                     for d1 in data_dict:
                         if data_dict[d1] in [[], {}] :
                             data_dict[d1] = dict1
@@ -84,7 +94,7 @@ def ExtractPNL(**kwargs):
                     values, last_notes_no = remove_ignore_index(values, last_notes_no, ignore_index=kwargs['ignore_index'],
                                                                 data=kwargs['data'],date_obj = kwargs['date_obj'])
                 new_values = list(filter(lambda num: num_there(num), values[1:]))
-                val = map(lambda x: str(get_digit(x)), new_values)
+                val = list(map(lambda x: str(get_digit(x)), new_values))
                 if any('%' in i for i in new_values):
                     return False
 
@@ -94,21 +104,33 @@ def ExtractPNL(**kwargs):
                         last_key = list(data_dict.keys())[-1]
                         sub_dict = False if key_name.split('total')[-1] in last_key else True
                         if not 'total' in key_name.lower() or sub_dict:
-                            data_dict[list(data_dict.keys())[-1]][key_name] = list(zip(kwargs['date_obj'], val))
+                            data_dict[list(data_dict.keys())[-1]][key_name] = get_modigy_values(date_obj =kwargs['date_obj'],val=val)# list(zip(kwargs['date_obj'], val))
                         else:
-                            data_dict[key_name] = list(zip(kwargs['date_obj'], val))
+                            data_dict[key_name] = get_modigy_values(date_obj =kwargs['date_obj'],val=val)#list(zip(kwargs['date_obj'], val))
 
                     else:
-                        data_dict[key_name] = list(zip(kwargs['date_obj'], val))
+                        data_dict[key_name] = get_modigy_values(date_obj =kwargs['date_obj'],val=val)#list(zip(kwargs['date_obj'], val))
 
                 else:
                     pass
 
         data_dict= remove_extra_keys(data_dict =data_dict)
-        return data_dict
+        return data_dict,kwargs['unit']
 
     except Exception as e:
         import traceback
         print (traceback.format_exc())
         print (kwargs['data'])
         return e
+
+def get_modigy_values(**kwargs):
+    if len(kwargs['date_obj']) == 3:
+        if all(kwargs['date_obj'][i] >= kwargs['date_obj'][i + 1] for i in range(len(kwargs['date_obj']) - 1)):
+
+            modify_val = list(zip(kwargs['date_obj'][:-1], kwargs['val'][:-1]))
+        else:
+            modify_val= list(zip(kwargs['date_obj'][1:], kwargs['val'][1:]))
+    else:
+        modify_val = list(zip(kwargs['date_obj'], kwargs['val']))
+
+    return modify_val

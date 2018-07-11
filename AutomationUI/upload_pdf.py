@@ -1,7 +1,7 @@
 from DataExtraction.store_data import pdf_detail
 import os
 
-Default_path='/home/administrator/Desktop/uploads/'
+Default_path='/home/mahima/Desktop/uploads/'
 
 def upload_pdf(file_1,c_name, file_n):
     try:

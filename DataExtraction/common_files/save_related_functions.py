@@ -204,29 +204,47 @@ def redefined_data(**kwargs):
 
 
 def unit_conversion(**kwargs):
-    import pdb;pdb.set_trace()
     print ("mahima")
     c_obj = CompanyList.objects.filter(company_name= kwargs['c_name'])
     if c_obj:
         #todo year and quarter logic is same just need to implement
         prev_unit = c_obj[0].c_y_unit.split('##') if c_obj[0].c_y_unit else ''
         if prev_unit :
+            print ('**************************************************')
+            print("_____________________________________________-")
+            print(prev_unit)
+            print(kwargs['unit'])
+            print ('**************************************************')
+            print("_____________________________________________-")
             if prev_unit[1] == kwargs['unit']:
-                import pdb;pdb.set_trace()
                 return kwargs['data']
             else:
-                if int(prev_unit[0]) > max(map(lambda x :int(x), kwargs['date_obj'])):
-                    import pdb;pdb.set_trace()
+                if kwargs['t_pdf']!='year' or int(prev_unit[0]) > max(map(lambda x :int(x.split()[-1]), kwargs['date_obj'])):
                     print ("convert only data_dict into the stored unit")
                     for k1,k2 in kwargs['data'].items():
-                        for p1,p2 in k2.items():
-                            date_obj, values = map(list, zip(*kwargs['data'][k1][p1]))
-                            if prev_unit =='millions':
-                                values = [int(val)/1000 for val in values]
-                                kwargs['data'][k1][p1] = list(zip(date_obj, values))
-                            else:
-                                values = [int(val) * 1000 for val in values]
-                                kwargs['data'][k1][p1] = list(zip(date_obj, values))
+                        if type(k2)==OrderedDict:
+                            for p1,p2 in k2.items():
+                                if kwargs['data'][k1][p1]:
+                                    date_obj, values = map(list, zip(*kwargs['data'][k1][p1]))
+                                    if prev_unit == 'millions':
+                                        values = list(map(lambda x: str(get_digit(x)), values))
+                                        val = [int(val) / 1000 if val.isdigit() else 0 for val in values]
+                                        kwargs['data'][k1][p1] = list(zip(date_obj, val))
+                                    else:
+                                        values = list(map(lambda x: str(get_digit(x)), values))
+                                        val = [int(val) * 1000 if val.isdigit() else 0 for val in values]
+                                        kwargs['data'][k1][p1]  = list(zip(date_obj, val))
+                        else:
+                            if kwargs['data'][k1]:
+                                date_obj, values = map(list, zip(*kwargs['data'][k1]))
+                                if prev_unit =='millions':
+                                    values = list(map(lambda x: str(get_digit(x)), values))
+                                    val = [int(val)/1000 if val.isdigit() else 0 for val in values]
+                                    kwargs['data'][k1] = list(zip(date_obj, val))
+                                else:
+                                    values = list(map(lambda x: str(get_digit(x)), values))
+                                    val = [int(val) * 1000 if val.isdigit() else 0 for val in values ]
+                                    kwargs['data'][k1]= list(zip(date_obj, val))
                     print (kwargs['data'])
                     return kwargs['data']
 
@@ -248,10 +266,11 @@ def unit_conversion(**kwargs):
                     print("convert all stored data into the latest unit")
 
         elif not prev_unit:
-            f_name = max(map(lambda x :int(x) ,kwargs['date_obj']))
+            f_name = max(map(lambda x :int(x.split()[-1]) ,kwargs['date_obj']))
             unit_val = str(f_name) +'##'+ kwargs['unit']
             c_obj.update(**{'c_y_unit':unit_val})
             return kwargs['data']
 
     print (c_obj)
+    return kwargs['data']
 

@@ -48,7 +48,8 @@ function change_comp(elm){
         }
     else{
 //        location.reload();
-    $(".loader-back").hide();
+        elm.selectedIndex =0 ;
+        $(".loader-back").hide();
 
     }
 };
@@ -94,6 +95,7 @@ function move_s2section(elm){
     }
     else{
 //        location.reload();
+    elm.selectedIndex =0 ;
     $(".loader-back").hide();
     }
 };
@@ -197,7 +199,7 @@ function SaveRow(elm){
     {
         type = 'balance-sheet'
     }
-    else{type='balance-sheet'}
+    else{type='pnl'}
 
     if ($(elm).parent().parent().parent().prev().hasClass('sub_block'))
     {
@@ -616,6 +618,7 @@ function total_sum_pnl(){
 }
 
 $(document).ready(function(){
+    $('input:checkbox').removeAttr('checked');
     if ($(location).attr('href').split('?')[0].split('/')[4]=='balance-sheet')
     {
         bs_total()

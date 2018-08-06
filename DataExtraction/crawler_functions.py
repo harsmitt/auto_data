@@ -4,7 +4,7 @@ import os
 import errno
 from collections import OrderedDict
 from DataExtraction.common_files.basic_functions import *
-DEFAULT_DATA_PATH='/home/mahima/DataAutomation/company_pdf/'
+DEFAULT_DATA_PATH='/home/administrator/DataAutomation/company_pdf/'
 
 # from fun import year_date,qtr_date
 #
@@ -77,7 +77,7 @@ def save_qtr(date_obj,cname,ftype,link=None,file_type =None,file_name=None):
     make_directory(cname,ftype)
     path = os.path.join(DEFAULT_DATA_PATH, cname,ftype)
     pdf_name = '_'.join(pdf_qtr)
-    date_1 = list(qtr_date_pnl().values())
+    date_1 = list(qtr_date('December').values())
     if any(i for i in date_1 if ' '.join(pdf_qtr).lower() in i):
         name = path + '/'+pdf_name + '.pdf'
         if not file_type:

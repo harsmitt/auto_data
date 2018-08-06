@@ -14,23 +14,22 @@ def ExtractBalnceSheet(**kwargs):
         res = False
         last_notes_no=0
         data_dict = copy.deepcopy(kwargs['data_dict'])
+
         if not 'page_2' in kwargs:
             data_dict , res = check_pattern(data = kwargs['data'][kwargs['date_line']:],data_dict = data_dict,
-                                        ignore_index=kwargs['ignore_index'],date_obj = kwargs['date_obj'])
+                                        ignore_index=kwargs['ignore_index'],date_obj = kwargs['date_obj'],mapping_dict=mapping_dict)
         if not res:
             for l_num, line in enumerate(kwargs['data'][kwargs['date_line']:]):
+                l_num = l_num+kwargs['date_line']
 
-                if l_num > 10 and len(data_dict) < 2 and data_dict :
+                if l_num > 15 and len(data_dict) < 2 and data_dict :
                    d_keys =list(data_dict.keys())[-1]
                    if not any(key in d_keys for key in  ['current assets','current liabilities','stockholders equity']):
                     break;
-                print (line)
                 l_check = line if line and line.strip()[-1].isalpha() else line and line.replace('-', '').strip()
 
                 if not kwargs['unit'] and line and any(word in line.lower() for word in ['millions', 'thousands']):
-                    print (line)
                     x = [w1 for word in line.lower().split() for w1 in ['millions', 'thousands'] if w1 in word]
-                    print (x)
                     kwargs['unit'] = x[0] if x else ''
 
                 elif data_dict and data_dict[list(data_dict.keys())[-1]] == []:
@@ -41,21 +40,34 @@ def ExtractBalnceSheet(**kwargs):
                     if all(key in d_keys for key in ['current assets', 'current liabilities', 'stockholders equity']):
                         return data_dict,kwargs['unit']
 
-                elif not 'page_2' in kwargs and (('continue' in line.lower() and len(kwargs['data'])-l_num<5 ) or (l_num+kwargs['date_line']+2 == len(kwargs['data'][kwargs['date_line']:]) and any(word in line for word in ['total assets' ,'total liabilities','continued','net current asset']))):
+                elif not 'page_2' in kwargs and (('continue' in line.lower() and len(kwargs['data'])-l_num<5 ) or (l_num+2 == len(kwargs['data'][kwargs['date_line']:]) and any(word in line for word in ['total assets' ,'total liabilities','continued','net current asset']))):
                     data = get_page_content(seprator='@@',page = kwargs['page'], path=kwargs['path'], file=kwargs['file'])
-                    data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2 = True,date_line =2,data_dict=data_dict,data=data,ignore_index=kwargs['ignore_index'],date_obj=kwargs['date_obj'])
+                    data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2 = True,date_line =0,data_dict=data_dict,data=data,ignore_index=kwargs['ignore_index'],date_obj=kwargs['date_obj'])
                     return data_dict,kwargs['unit']
 
                 elif not 'page_2' in kwargs and data_dict and not all(keys in list(data_dict.keys()) for keys in ['current assets','current liabilities','stockholders equity'])\
-                    and l_num+kwargs['date_line']+1 == len(kwargs['data']):
+                    and l_num+1 == len(kwargs['data']):
 
                     data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'],
                                             file=kwargs['file'])
-                    data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2 = True,date_line=0, data_dict=data_dict, data=data,
+
+                    #sometime next page is blank.
+                    if len(data)>5:
+                        data_dict,kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'],page_2 = True,date_line=0, data_dict=data_dict, data=data,
                                                    ignore_index=kwargs['ignore_index'], date_obj=kwargs['date_obj'])
+                    else:
+                        next_data = get_page_content(seprator='@@', page=kwargs['page']+1, path=kwargs['path'],
+                                                file=kwargs['file'])
+                        data = data+next_data
+                        data_dict, kwargs['unit'] = ExtractBalnceSheet(unit=kwargs['unit'], page_2=True, date_line=0,
+                                                                       data_dict=data_dict, data=data,
+                                                                       ignore_index=kwargs['ignore_index'],
+                                                                       date_obj=kwargs['date_obj'])
+
+
                     return data_dict,kwargs['unit']
 
-                elif not 'page_2' in kwargs and data_dict and l_num+kwargs['date_line']+1 == len(kwargs['data']):
+                elif not 'page_2' in kwargs and data_dict and l_num+1 == len(kwargs['data']):
                     d_keys= list(data_dict.keys())
                     if not any(key for key in list(data_dict[d_keys[-1]].keys()) if all(word in key for word in ['total','equity'])):
 
@@ -68,9 +80,9 @@ def ExtractBalnceSheet(**kwargs):
                         pass
 
 
-                elif (len(re.split('  +',l_check)) < 2 and alpha_there(l_check)) or \
+                elif (len(re.split('  +',l_check)) < 2) or \
                         (len(re.split('  +',l_check)) == 2 and not num_there((re.split('  +',l_check)[-1]))) or\
-                        (len(re.split('  +', l_check)) ==2 and num_there(line) and not alpha_there(line))\
+                        (len(re.split('  +', l_check)) ==2)\
                         or any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k):
                     # pass_list = ['LIABILITIES AND', ]
 
@@ -111,6 +123,11 @@ def ExtractBalnceSheet(**kwargs):
 
                         elif num_there(line) and not alpha_there(line):
                             values = list(filter(lambda name: num_there(name), line.split()))
+                            if len(values) < (len(kwargs['date_obj'])+len(kwargs['ignore_index'])):
+                                new_line = line
+                                for n_line in range(1,(len(kwargs['date_obj'])+len(kwargs['ignore_index']))-len(values)+1):
+                                    new_line = line +'        '+ kwargs['data'][l_num+n_line]
+                                values = list(filter(lambda name: num_there(name), new_line.split()))
                             if kwargs['ignore_index']:
                                 values, last_notes_no = remove_ignore_index(values, last_notes_no,
                                                                             ignore_index=kwargs['ignore_index'],
@@ -146,8 +163,12 @@ def ExtractBalnceSheet(**kwargs):
                     pattern = re.compile('[(|)-]')
                     key_name = get_alpha(values[0],key=True)
 
-                    if any('%' in i for i in values[1:]):
-                        return False
+                    if any('%' in i for i in values[1:]) and data_dict:
+                        d_keys = list(data_dict.keys())[-1]
+                        if not any(key in d_keys for key in
+                                   ['current assets', 'current liabilities', 'stockholders equity']):
+
+                            return False
 
                     if key_name in ['assets','liabilities']:
                         line = kwargs['data'][l_num-1]+' '+line
@@ -221,7 +242,7 @@ def ExtractBalnceSheet(**kwargs):
             return data_dict,kwargs['unit']
 
     except Exception as e:
-        return e
+        return data_dict, kwargs['unit']
 
 
 def remove_ignore_index(values,last_notes_no,**kwargs):
@@ -259,7 +280,7 @@ def check_pattern(**kwargs):
         elif any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +', line)[0]) in k):
             return kwargs['data_dict'] , False
     # else:
-    data_dict = without_sections(data = kwargs['data'],data_dict = kwargs['data_dict']
+    data_dict = without_sections(data = kwargs['data'],data_dict = kwargs['data_dict'],mapping_dict=mapping_dict
                                  ,ignore_index=kwargs['ignore_index'],date_obj = kwargs['date_obj'])
     return data_dict,True
 

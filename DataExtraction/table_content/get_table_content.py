@@ -3,14 +3,6 @@ from DataExtraction.common_files.utils import *
 from .statements_page import *
 from .utils import *
 
-# index_list =['balance sheets','operations','income','notes','balance sheet']
-financial_statement =['financial statements and supplementary data',
-                      'financial content','financial reporting']##'Consolidated financial statements',
-#
-# bs_keywords =  ['balance sheet','financial position']
-# pl_keywords =  ['income','operations','comprehensive loss']
-# notes_keywords = ['notes']
-
 
 def get_page_num(l_num,**kwargs):
     line = kwargs['data'][l_num]

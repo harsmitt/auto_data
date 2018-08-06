@@ -7,7 +7,7 @@ import errno
 import re
 from .utils import *
 
-DEFAULT_DATA_PATH = '/home/mahima/DataAutomation/images/'
+DEFAULT_DATA_PATH = '/home/administrator/DataAutomation/images/'
 
 
 def make_directory(company_name):
@@ -80,7 +80,7 @@ def add_quarter(path, page, qtr_dict,c_obj,subsection,section,s2section):
 
 def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=None,pdf_page = None):
     try:
-        qtr_dict = qtr_date_pnl()
+        qtr_dict = qtr_date(year_end=year_end)
         year_dict = year_date(year_end)
         qtr_dict.update(year_dict)
         q_dict = {}
@@ -105,15 +105,17 @@ def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=No
     except Exception as e:
         return e
 
-def Create_blank_sheet(c_name, path, page,year_end):
+def Create_blank_sheet(c_name, path, page,year_end,dit_name):
     try:
-        c_obj = CompanyList.objects.filter(company_name__icontains=c_name)
+        c_obj = CompanyList.objects.filter(company_name = c_name,ditname__dit_name=dit_name)
         if not c_obj:
-            c_dict = {'company_name': c_name,'ditname_id':214,'y_end':year_end}
+            dit_id = SectorDit.objects.get(dit_name=dit_name)
+            c_dict = {'company_name': c_name,'ditname_id':dit_id.id,'y_end':year_end}
             c_obj = CompanyList(**c_dict)
             c_obj.save()
         else:
             c_obj = c_obj[0]
+
         sec_obj = Section.objects.filter(i_related='Balance Sheet')
 
         img_path = save_image(path, page, c_name)
@@ -136,11 +138,12 @@ def Create_blank_sheet(c_name, path, page,year_end):
     except Exception as e:
         return e
 
-def Create_pnl(c_name,path,page,year_end):
+def Create_pnl(c_name,path,page,year_end,dit_name):
     try:
-        c_obj = CompanyList.objects.filter(company_name__icontains=c_name)
+        c_obj = CompanyList.objects.filter(company_name = c_name,ditname__dit_name=dit_name)
         if not c_obj:
-            c_dict = {'company_name': c_name,'ditname_id':214,'y_end':year_end}
+            dit_id = SectorDit.objects.get(dit_name=dit_name)
+            c_dict = {'company_name': c_name,'ditname_id':dit_id.id,'y_end':year_end}
             c_obj = CompanyList(**c_dict)
             c_obj.save()
         else:

@@ -14,7 +14,6 @@ def save_bsheet(**kwargs):
                                 t_pdf = kwargs['pdf_type'],year_end =kwargs['year_end'],
                                 model = CompanyBalanceSheetData,p_type = 'bsheet')
             print (data)
-
             data = unit_conversion(data=data,unit= kwargs['unit'],file=kwargs['file']
                                    ,c_name=kwargs['c_name'], t_pdf = kwargs['pdf_type'],date_obj=kwargs['date_obj'])
         print (data)
@@ -50,8 +49,8 @@ def save_bsheet(**kwargs):
 
 def save_comp(**kwargs):
     for comp in kwargs['data']:
-
-        print(comp)
+        print (comp)
+        import pdb;pdb.set_trace()
         if all(word in comp.lower() for word in ['total' , 'discontinued']) or 'total' not in comp.lower():
             obj_save = match_with_db(extraction=kwargs['extraction'], year_end=kwargs['year_end'],
                                      pdf_obj=comp,

@@ -73,11 +73,13 @@ def i_notes_index(**kwargs):#[(notes,group,company),(group,notes),(company,notes
     num_list = [i for i in re.split('  +',kwargs['line']) if num_there(i)]
     if notes and \
             len(list(filter(lambda x: str(get_digit(x)), num_list))) == len(kwargs['date_obj']) \
-            and any(num_there(x) for x in  re.split('  +',kwargs['line'])[1:]) \
-            and not all(check_datetime(obj) for obj in list(filter(lambda x: str(get_digit(x)), re.split('  +',kwargs['line'])))):
+            and not any(get_alpha(x) for x in  re.split('  +',kwargs['line'])[1:]) \
+            and (not all(check_datetime(obj) for obj in list(filter(lambda x: str(get_digit(x)), re.split('  +',kwargs['line'])))))\
+            :
+
 
         return kwargs['ignore_index']
-    elif notes and 'statement' in kwargs['line']:
+    elif notes and any( word in kwargs['line']for word in ['statement','receivable']):
         return kwargs['ignore_index']
 
 
@@ -88,7 +90,9 @@ def i_notes_index(**kwargs):#[(notes,group,company),(group,notes),(company,notes
     elif any(word in extract_s(kwargs['line']).split()[-1] for word in ['notes','note']) and len(extract_s(kwargs['line']).split())>1:
         n_index= -1
     else:
-        n_index = re.split('  +',kwargs['line']).index(notes[0])+1 if 'notes' in re.split('  +',kwargs['line']) else kwargs['ignore_index']
+        if any(word in re.split('  +',kwargs['line']) for word in ['notes','note']) :
+            n_index = re.split('  +',kwargs['line']).index(notes[0])+1
+        else: kwargs['ignore_index']
 
 #need to add keys
 
@@ -185,7 +189,6 @@ def i_qtr_index(**kwargs):
     for l_num in range(kwargs['l_num'], kwargs['l_num'] + 5):
         if len(kwargs['data']) > l_num:
             line = kwargs['data'][l_num].lower();
-            print (line)
             if "note" in line.lower():
                 if 'note' in extract_s(line).split()[0]:
                     n_index= 1

@@ -1,7 +1,6 @@
 import requests
 import os
 from bs4 import BeautifulSoup
-import logging
 import sys
 import datetime
 from DataExtraction.common_files.basic_functions import *
@@ -13,7 +12,6 @@ url_list =[c_url+'&type=10-k',c_url+'&type=10-q']
 def get_html_page(**kwargs):
     for url in url_list:
         url = url %(kwargs['c_tik'])
-        print (url)
         r = requests.get(url)
         data = r.text
         soup = BeautifulSoup(data)

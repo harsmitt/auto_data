@@ -10,7 +10,7 @@ def get_notes_pages(**kwargs):
     try:
         notes_section_dict=OrderedDict()
         pdf = PyPDF2.PdfFileReader(kwargs['file'])
-        end = (pdf.getNumPages() + 1)
+        end = (pdf.getNumPages() + 1)-5
         if kwargs['pdf_type'] =='year':
             if kwargs['notes_sec'] :
                 if len(list(kwargs['notes_sec'].keys()))==2:
@@ -20,7 +20,7 @@ def get_notes_pages(**kwargs):
                             l_num = kwargs['notes_sec'][key].split('-')[-1]
                         else:
                             if key == 'discussion':
-                                l_num = kwargs['page']
+                                l_num = kwargs['page']-5
                             else:
                                 l_num = end
                         notes_section_dict[key] = OrderedDict({'f_num':f_num,'l_num':l_num})
@@ -30,24 +30,24 @@ def get_notes_pages(**kwargs):
                         if len(kwargs['notes_sec']['discussion'].split('-'))==2:
                             l_num = kwargs['notes_sec']['discussion'].split('-')[-1]
                         else:
-                             l_num = kwargs['page']
+                             l_num = kwargs['page']-5
                         notes_section_dict['discussion'] = OrderedDict({'f_num': f_num, 'l_num': l_num})
-                        notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page'], 'l_num': end})
+                        notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page']+5, 'l_num': end})
                     else:
                         f_num = kwargs['notes_sec']['notes'].split('-')[0]
                         if len(kwargs['notes_sec']['discussion'].split('-')) == 2:
                             l_num = kwargs['notes_sec']['notes'].split('-')[-1]
                         else:
                             l_num = end
-                        notes_section_dict['discussion'] = OrderedDict({'f_num': 1, 'l_num': kwargs['page']})
+                        notes_section_dict['discussion'] = OrderedDict({'f_num': 1, 'l_num': kwargs['page']-5})
                         notes_section_dict['notes'] = OrderedDict({'f_num': f_num, 'l_num': l_num})
 
             else:
-                notes_section_dict['discussion'] = OrderedDict({'f_num':1,'l_num':kwargs['page']})
-                notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page'], 'l_num': end})
+                notes_section_dict['discussion'] = OrderedDict({'f_num':1,'l_num':kwargs['page']-5})
+                notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page']+5, 'l_num': end})
 
         elif kwargs['pdf_type'] == 'quarter':
-            notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page'], 'l_num': end})
+            notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page']+3, 'l_num': end})
 
         return notes_section_dict
     except:

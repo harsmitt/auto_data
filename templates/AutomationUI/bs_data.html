@@ -6,44 +6,43 @@
 {% block tabs %}
 <div class="container-fluid top-bar" id="header1">
         <div class="col-sm-4">
-					<a href="#">
-						<img src="{{MEDIA_URL}}automationui/images/logo.png" alt="">
-					</a>
-				</div>
+                <a href="#">
+                        <img src="{{MEDIA_URL}}automationui/images/logo.png" alt="">
+                </a>
+        </div>
         <div class="col-md-8 col-sm-8">
             <div class="progress-wrap">
                 <span id="progress_data"></span>
-                <!--<strong style="color:Red">Type</strong>-->
-                <!--<strong style="color:Red;margin-left:20px">Company Name</strong>-->
-                <!--<strong style="color:Red;margin-left:20px">Unit</strong>-->
-                <!--&lt;!&ndash;<div class="progress">&ndash;&gt;-->
-                    <!--&lt;!&ndash;<div class="progress-bar" id="progress_div" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="">&ndash;&gt;-->
-                    <!--</div>-->
+
+
                 </div>
                 <div class="pull-right user">
                     <strong>{{p_type}}</strong>
                     <strong style="margin-left:10px">{{c_obj.company_name}}</strong>
                     <strong style="margin-left:10px">{{unit}}</strong>
-                        <!--<div class="white-box open-action-user">-->
-                            <!--<ul>-->
-                                <!--<li><a href="/college-data-capture/change_password/">Change password</a></li>-->
-                                <!--<li><a href="/college-data-capture/logout/" class="btn-signout text-left">Sign out</a></li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
+                     <strong class="arrow_box"><span class="sprite user-icon"></span>{{request.user.username}}</strong>
+                        <div class="white-box open-action-user">
+                            <ul>
+                                <li><a href="/automation/change_password/">Change password</a></li>
+                                <li><a href="/automation/logout/" class="btn-signout text-left">Sign out</a></li>
+                            </ul>
+                        </div>
                 </div>
             </div>
         </div>
     </div>
 
+
 <div class="container-fluid navbar" id="header2">
         <nav id="nav"  class="pull-left">
             <ul id="tab_name">
-                <li><a href="/automation/company_list/" >Company List</a></li>
+                <li><a href="/automation/get_dit_list/">DIT List</a></li>
                 <li><a href="/automation/upload_pdf/">Upload PDF</a></li>
                 <!--<li><a href="/automation/new_company/">New Company</a></li>-->
                 <li><a onclick="calculate_bs_qtr(this)" style="color:blue;text-decoration: underline;" >Calculate Balance Sheet last qtr</a></li>
                 <li><a onclick="go_to_next(this)" style="color:blue;text-decoration: underline;" >Go to PNL</a></li>
                 <li><a onclick="deleted_rows(this)" style="color:blue;text-decoration: underline;" >Deleted Rows</a></li>
+                <li><a onclick="complete_save(this)" style="color:blue;text-decoration: underline;" >Complete Save</a></li>
                 <!--<li><a href="/automation/notification/" class="update-box">Update &amp; Notification {% if notice_count %}<span class="update-count">{{ notice_count }}</span>{% endif %}</a></li>-->
             </ul>
         </nav>

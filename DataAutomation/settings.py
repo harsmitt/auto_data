@@ -26,9 +26,9 @@ ROOT_BASE_URL = '127.0.0.1:8000'
 SECRET_KEY = '$wuu-o(i=0)k8ivd0)1u4_y+^@&=f-ypp#9d0hi6if*1md6djl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['10.10.0.84']
+ALLOWED_HOSTS = ['10.10.0.84','127.0.0.1','10.10.0.110']
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'automationmedia').replace('\\', '/')
 MEDIA_URL = '/media/'
@@ -57,8 +57,9 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'vw3c5-2c7dgqkkl@0myc7e@_h8-2=ehyra4v_e3me*f_m9%vrb'
-
-
+ADMINS = (
+    ('automation', 'mahima.garg@televisory.com'),
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -74,9 +75,19 @@ INSTALLED_APPS = [
     # 'DataExtraction',
     'BalanceSheet',
     'PNL',
+    'Login',
     # 'DataExtraction',
 
 ]
+
+
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+
 
 
 # CACHE_MIDDLEWARE_ALIAS =

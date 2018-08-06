@@ -6,12 +6,24 @@ from .mapping_data import k_list,stop_words
 from collections import OrderedDict
 # from BalanceSheet.models import *
 
-index_list =['balance sheet','operations','income','cash flow','notes','balance sheets']
-financial_statement =['financial statements and supplementary data','exhibits and financial statement']
 
+
+'''
+This function converts pdf page in text format. 
+we are using pdftotext and conversion will be perform in  horizontal way.
+removing unnecessary spacing, special chars,tabs,blank lines,decode etc.
+
+Input:  page,path
+
+output: return text format data or an exception
+'''
 def get_page_content(seprator=' ',**kwargs):
 
     try:
+        # logger1.info("Entering in get_page_content")
+        # logger1.info(kwargs)
+
+
         pdfData = kwargs['file'].read()
         tf = tempfile.NamedTemporaryFile()
         tf.write(pdfData)
@@ -32,83 +44,149 @@ def get_page_content(seprator=' ',**kwargs):
 
         return data
     except Exception as e:
+        # logger1.error("error in get_page_content %s" %e )
+        import traceback
+        # logger1.error(traceback.format_exc())
         return e
 
 def check_content(**kwargs):
-    k_words = [get_alpha(i.lower(),remove_space=True,remove_s=True) for i in k_list[kwargs['p_type']]]
-    data =  kwargs['data'][:20] if type(kwargs['data'])==list else [kwargs['data']]
-    for l_num,line in enumerate(data):
-        if get_alpha(line.lower(),remove_s=True) in k_list[kwargs['p_type']] and not 'check_statement' in kwargs :
-            return True
-        elif get_alpha(line.lower(),remove_space=True,remove_s=True) in k_words and not 'check_statement' in kwargs :
-            return True
-        else:
-            # ' '.join([word for word in i.lower().split() if word not in stop_words ])
-            for i in k_list[kwargs['p_type']] :
-                if (all((loop in get_alpha(line,remove_space=True,remove_s=True)) or (loop in get_alpha(line,remove_space=True))\
-                       for loop in [word for word in i.lower().split() if word not in stop_words ])) or \
-                   (all((loop in get_alpha(' '.join(data), remove_space=True, remove_s=True)) or (loop in get_alpha(' '.join(data), remove_space=True)) \
-                         for loop in [word for word in i.lower().split() if word not in stop_words])):
-                    return True
-    return False
+    try:
+        # logger1.info("Entering in check_content")
+        k_words = [get_alpha(i.lower(),remove_space=True,remove_s=True) for i in k_list[kwargs['p_type']]]
+        data =  kwargs['data'] if type(kwargs['data'])==list else [kwargs['data']]
+        for l_num,line in enumerate(data):
+            if get_alpha(line.lower(),remove_s=True) in k_list[kwargs['p_type']] and not 'check_statement' in kwargs :
+                return True
+            elif get_alpha(line.lower(),remove_space=True,remove_s=True) in k_words and not 'check_statement' in kwargs :
+                return True
+            else:
+                # ' '.join([word for word in i.lower().split() if word not in stop_words ])
+                for i in k_list[kwargs['p_type']] :
+                    if (all((loop in get_alpha(line,remove_space=True,remove_s=True)) or (loop in get_alpha(line,remove_space=True))\
+                           for loop in [word for word in i.lower().split() if word not in stop_words ])) or \
+                       (all((loop in get_alpha(' '.join(data), remove_space=True, remove_s=True)) or (loop in get_alpha(' '.join(data), remove_space=True)) \
+                             for loop in [word for word in i.lower().split() if word not in stop_words])):
+                        return True
+        return False
+    except Exception as e:
+        import traceback
+        # logger1.error("error in check_content %s " % e)
+        # logger1.error(traceback.format_exc())
+        return e
 
+
+# def get_key_words_list(k_name):
+#     import itertools
+#     l_key = len(k_name.split())
+#     ignore_stop_word = ' '.join([word for word in get_alpha(k_name,remove_s=True).split() if word not in stop_words])
+#     len_key = len(ignore_stop_word.split())
+#     k_name_list = list(itertools.permutations(k_name.split(),l_key ))+list(itertools.permutations(ignore_stop_word.split(), len_key))
+#     k_name_list = [' '.join(word) for word in k_name_list]
+#     return k_name_list
+
+'''
+We need this function when we are iterating the complete pdf.
+In this function we are getting the keyword lists for match_re.
+and try to match those keywords one by one with our patterns.
+e.g for bsheet  we have these ['balance sheet','financial position',
+                        'consolidated balance sheet',
+                        'consolidated statement of financial position',
+                    'consolidated statement of balance sheet'] keywords
+                    
+match keywords with regex 
+1.removing s from the lines and then join the lines back. 
+    if it is true then another condition will be check if the next 5
+    lines are in tabular format only then it will retunr tru 
+2. removing all s and space from the line then try to match with keywords 
+    
+
+Input: page, path, f_obj(file object), match_re='bsheet'
+
+Output :Return True/False
+'''
 def match_re_list(**kwargs):
     try:
+        # logger1.info("Entering in match_re_list")
+
         from .all_regex import check_1,check_2
         data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'], file=kwargs['f_obj'])
         keywords_list = k_list[kwargs['match_re']]
         for keys in keywords_list:
             re_1 = re.compile(check_1, re.I)
-            r2 = check_2 %(keys)
-            r3 = check_2 %(get_alpha(keys,remove_space=True))
+            r2 = check_2 % (keys)
+            r3 = check_2 % (get_alpha(keys, remove_space=True))
             re_2 = re.compile(r2, re.I)
             re_3 = re.compile(r3, re.I)
-            if (re_1.search(extract_s(' '.join(data[:20]))) and re_2.search(extract_s(' '.join(data[:20])))) or\
-                re_2.search(extract_s(' '.join(data[:20]))):
+            if [line for line in data if all (word in extract_s(line).split() for word in keys.split() )] or \
+                (re_1.search(extract_s(' '.join(data))) and re_2.search(extract_s(' '.join(data)))) or \
+                   re_2.search(extract_s(' '.join(data))) :
+                prev_line = [num for num, line in enumerate(data) if re_2.search(extract_s(line))]
+                prev_l_num = prev_line[-1] if prev_line else 0
 
-                res = check_in_re(data=data,r_1=re_1,r_2 = re_2)
+                res = check_in_re(data=data[prev_l_num:], r_1=re_1, r_2=re_2)
+                if not res or prev_l_num > 20:
+                    next_data = get_page_content(seprator='@@', page=int(kwargs['page']) + 1, path=kwargs['path'],
+                                                 file=kwargs['f_obj'])
+                    res = check_in_re(data=next_data[:10], r_1=re_1, r_2=re_2)
+                    if res: data = data[prev_l_num - 1:] + next_data
                 return data, res
+            elif re_1.search(get_alpha(' '.join(data), remove_space=True)) and re_3.search(
+                    get_alpha(' '.join(data), remove_space=True)):
 
-                # x = [i for i in data[:20] if get_digit(i.split()[-1],num=True) and  not check_datetime(i.split()[-1])]
-                # if len(x)>5:
-                #     return data,True
-            elif re_1.search(get_alpha(' '.join(data[:20]),remove_space=True)) and re_3.search(get_alpha(' '.join(data[:20]),remove_space=True)):
-                # res = check_in_re(data=data[:20])
-                # return data, res
-                # x = [i for i in data[:20] if get_digit(i) and check_datetime(i)]
-                # if len(x) > 5:
-                #     return data, True
                 return data,True
+
 
         return data,False
     except Exception as e:
+        import traceback
+        # logger1.error("error in match_re_list %s" %e)
+        # logger1.error(traceback.format_exc())
         return e
 
+'''
+inner function for match_re_list it will check the next minimum 5 lines should be in tabuler format 
+
+'''
 def check_in_re(**kwargs):
+    try:
+        # logger1.info("Entering in check_in_re")
+        if any(word in (' '.join(kwargs['data']).lower()) for word in ['supplementary financial data','summary of','summarized as','overview of','comparison between','financial summary','financial comparison']):
+            return False
 
-    if any(word in (' '.join(kwargs['data']).lower()) for word in ['supplementary financial data','summary of','summarized as','overview of','comparison between','financial summary','financial comparison']):
-        return False
+        x = [i for i in kwargs['data'] if num_there(i.split()[-1]) and not check_datetime(i.split()[-1],pdf_type = True)]
+        if len(x) > 5:
+            return True
 
-    x = [i for i in kwargs['data'] if num_there(i.split()[-1]) and not check_datetime(i.split()[-1],pdf_type = True)]
-    if len(x) > 5:
-        return True
+
+    except Exception as e:
+        import traceback
+        # logger1.error("error in check in re %s " %e)
+        # logger1.error(traceback.format_exc())
+        return e
+
 
 import copy
 def remove_extra_keys(**kwargs):
-    data_dict = copy.deepcopy(kwargs['data_dict'])
-    for i, j in data_dict.items():
-        if type(j)==OrderedDict:
-            for inn,inn_d in j.items():
-                if not inn_d:
-                    del data_dict[i][inn]
-        elif not j:
-            del data_dict[i]
-    return data_dict
+    try:
+        data_dict = copy.deepcopy(kwargs['data_dict'])
+        for i, j in data_dict.items():
+            if type(j)==OrderedDict:
+                for inn,inn_d in j.items():
+                    if not inn_d:
+                        del data_dict[i][inn]
+            elif not j:
+                del data_dict[i]
+        return data_dict
+    except Exception as e:
+        import traceback
+        # logger1.error("error in remove_extra_keys %s " %e)
+        # logger1.error(traceback.format_exc())
+        return e
 
 def valid_yq_name(date_obj,y_end,pdf_type=None,p_type=None,):
     try:
-        val=''
-        date_dict = year_date(year_end=y_end) if pdf_type =='year' else qtr_date_pnl()
+        # logger1.info("Entering in valid_yq_name")
+        date_dict = year_date(year_end=y_end) if pdf_type =='year' else qtr_date(year_end=y_end)
         for key,val in date_dict.items():
             if pdf_type=='year':
                 if int(date_obj) == int(val):
@@ -121,11 +199,15 @@ def valid_yq_name(date_obj,y_end,pdf_type=None,p_type=None,):
                     return val
 
     except Exception as e:
+        import traceback
+        # logger1.debug("error in valid_yq_name %s" %e)
+        # logger1.debug(traceback.format_exc())
         return e
 
-
+#sort the years list in descending order to get always latest data of the year.
 def y_sorting(year_list):
     try:
+        # logger1.info("Entering in Y_sorting")
         list1= [int(i.split('.')[0]) for i in year_list]
         for loop1 in range(0,len(list1)):
             for i,j in enumerate(list1):
@@ -136,10 +218,15 @@ def y_sorting(year_list):
                         list1[i+1]=temp
         return list1
     except Exception as e:
+        import traceback
+        # logger1.error("error in y_sorting %s" % e)
+        # logger1.error(traceback.format_exc())
         return e
 
+#sort the qtrs in descending order to get always latest data of qtr.
 def q_sorting(q_list):
     try:
+        # logger1.info("Entering in q_sorting")
         name_list = [i.split('.pdf')[0].replace('_',' ') for i in q_list]
         for loop in range(0,len(name_list)):
             for i,j in enumerate(name_list):
@@ -150,13 +237,16 @@ def q_sorting(q_list):
                         name_list[i+1]=temp
         return name_list
     except Exception as e:
+        import traceback
+        # logger1.error("error in q_sorting %s" % e)
+        # logger1.error(traceback.format_exc())
         return e
 
-
+#get qtr_dates mention in pdf page.
 def get_pdf_quarter(**kwargs):
     try:
         q_list, y_list = [], []
-        qtr_list = qtr_date_pnl().values()
+        qtr_list = qtr_date(kwargs['year_end']).values()
         for obj in kwargs['word_list']:
             if check_datetime(obj):
                 try:
@@ -170,7 +260,7 @@ def get_pdf_quarter(**kwargs):
                         pass
         if (q_list and not y_list) or (y_list and not q_list) or (len(q_list)==1 and len(y_list)==1):#>=1 and len(y_list)!=2 or len(q_list)!=2 and len(y_list)==2 :
             num =kwargs['l_num'] +1
-            while num <= kwargs['l_num']+3:
+            while num <= kwargs['l_num']+5:
                 if num_there(kwargs['data'][num]):
                     for obj in kwargs['data'][num].split():
                         try:
@@ -194,10 +284,13 @@ def get_pdf_quarter(**kwargs):
 
         if len(q_list)==len(y_list):#(len(q_list)>=1 and len(q_list)<=2 and len(y_list)==2) or (len(y_list)>=1 and len(y_list)<=2 and len(q_list)==2) :
 
-            # if len(q_list)==1 and len(y_list)==2:
-            #     q_list=q_list*2
-            # elif len(y_list)==1 and len(q_list)==2:
-            #     y_list=y_list*2
+            if len(q_list) == 2:
+                if kwargs['year_end'].lower() in q_list:
+                    yend_index = q_list.index(kwargs['year_end'].lower())
+                    if max(y_list) == y_list[yend_index]:
+                        y_list.append(max(y_list))
+                        del y_list[yend_index]
+
             for i in list(zip(q_list, y_list)):
                 q_date =' '.join(i)
                 last_month, next_month = next_last_month(q_date)
@@ -223,15 +316,25 @@ def calculations(old,new):
 def get_date(**kwargs):
     try:
         for d_obj in kwargs['word_list']:
-            d_obj = d_obj.replace(',','').split('/')
-            for obj in d_obj:
-                if check_datetime(obj,pdf_type = 'year'):
-                    if kwargs['pdf_type']=='year':
-                        year_list =year_date(year_end=kwargs['year_end']).values()
-                        if obj not in kwargs['date_obj']:
-                            kwargs['date_obj'].append(obj)
-                    else:
-                        pass
+            d_obj = d_obj.replace(',','').replace('*','').split('/')
+            for objs in d_obj:
+                list_obj = objs.split('.')
+                for obj in list_obj:
+                    if check_datetime(obj,pdf_type = 'year'):
+                        if kwargs['pdf_type']=='year':
+                            year_list =year_date(year_end=kwargs['year_end']).values()
+                            if obj not in kwargs['date_obj']:
+                                kwargs['date_obj'].append(obj)
+                        else:
+                            pass
+        if kwargs['date_obj']:
+            date_o = list(map(lambda x: int(x) ,kwargs['date_obj']))
+            range_o = list(range(min(date_o), max(date_o) + 1))
+            if sorted(date_o)==range_o:
+                return kwargs['date_obj']
+            else:
+                kwargs['date_obj']=[]
+                return kwargs['date_obj']
 
 
         return kwargs['date_obj']

@@ -2,10 +2,10 @@ from .basic_functions import *
 from DataExtraction.models import *
 
 def get_last_qtr_pnl(**kwargs):
-    date_objs = qtr_date_pnl()
+    date_objs = qtr_date(kwargs['year_end'])
     date_objs.update(year_date(kwargs['year_end']))
     years = year_date(kwargs['year_end'])
-    qtrs = qtr_date_pnl()
+    qtrs = qtr_date(kwargs['year_end'])
     qtr_list = list(qtrs.values())
     for year in years:
         p_qtrs = []
@@ -50,10 +50,10 @@ def update_last_qtr(**kwargs):
 
 
 def get_last_bs_qtr(**kwargs):
-    qtr_dict = qtr_date_pnl()
+    qtr_dict = qtr_date(kwargs['year_end'])
     year_dict= year_date(kwargs['year_end'])
-    date_objs = qtr_date_pnl()
-    qtr_list = list(qtr_date_pnl().values())
+    date_objs = qtr_date(kwargs['year_end'])
+    qtr_list = list(qtr_date(kwargs['year_end']).values())
     date_objs.update(year_date(kwargs['year_end']))
     year_list= list(year_date(kwargs['year_end']).values())
     for year in year_list:
@@ -63,8 +63,6 @@ def get_last_bs_qtr(**kwargs):
                     else next_m if next_m.lower() in qtr_list else ''
         if match_qtr :
             y_key = (list(year_dict.keys())[list(year_dict.values()).index(int(year))])
-            print (qtr_dict)
-            print (str(match_qtr).lower())
 
             q_key = (list(qtr_dict.keys())[list(qtr_dict.values()).index(str(match_qtr).lower())])  # Prints george
             save_yending_qtr = copy_year_data(year_end =kwargs['year_end'],c_name =kwargs['c_name'],y_key = y_key,q_key = q_key)
@@ -72,7 +70,7 @@ def get_last_bs_qtr(**kwargs):
             pass
 
 def copy_year_data(**kwargs):
-    date_objs = qtr_date_pnl()
+    date_objs = qtr_date(kwargs['year_end'])
     date_objs.update(year_date(kwargs['year_end']))
     y_objs = quarter_data.objects.filter(company_name__company_name=kwargs['c_name'],page_extraction='bsheet',quarter_date = date_objs[kwargs['y_key']])
     q_objs = quarter_data.objects.filter(company_name__company_name=kwargs['c_name'],page_extraction='bsheet',quarter_date = date_objs[kwargs['q_key']])

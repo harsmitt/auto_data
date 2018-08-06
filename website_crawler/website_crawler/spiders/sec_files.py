@@ -2,7 +2,6 @@ import scrapy
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from twisted.internet import reactor,defer
-import logging
 import time
 from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import CrawlSpider
@@ -33,7 +32,6 @@ class WebsiteSpider(scrapy.Spider):
     #This is initial process method.
     def start_requests(self):
         urls = 'https://www.sec.gov/'
-        logging.info(">>>>>>>>>>>>>>Crawling starting<<<<<<<<<<<<<<<<<<<<")
         yield scrapy.Request(url=urls, callback=self.parse_url)
 
     def parse_url(self, response):

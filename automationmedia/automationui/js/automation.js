@@ -76,13 +76,14 @@ function save_sec(elm){
             break;
         }
     }
-    data = JSON.stringify(subsec_dict)
+    data1 = JSON.stringify(subsec_dict)
+    datadict = {'type':type,'section':sec_name,'c_id':company_id,'new_data':data1}
     if (confirm('Are you sure you want to update: '+ sec_name /*toTitleCase(item)*/  +' ?')) {
         jQuery.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/automation/update_section/',
-            data: {'type':type,'section':sec_name,'c_id':company_id,'new_data':data},
-            contentType: "text/html; charset=utf-8",
+            data: datadict,
+            dataTypes: "text",
             success: function(data) {
                 setTimeout(function()
                   {
@@ -336,6 +337,7 @@ function swap_multiple(elm)
         });   // Ajax Call
     }
     else{
+        elm.selectedIndex =0 ;
 	    $(".loader-back").hide();
 	//console.log('closed');
         //location.reload();
@@ -612,7 +614,6 @@ $(".loader-back").show();
 }
 
 
-
 function deleted_rows(elm)
 {
     company_id = elm.baseURI.split('?')[1].split('=')[1]
@@ -621,8 +622,6 @@ function deleted_rows(elm)
 }
 
 
-function undo(elm){
 
 
 
-}

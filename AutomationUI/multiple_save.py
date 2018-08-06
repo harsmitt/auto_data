@@ -5,7 +5,10 @@ from .tranform_data import *
 from .utils import *
 from django.shortcuts import render
 from .views import add_delete_row
+from django.views.decorators.csrf import csrf_exempt
 
+
+@csrf_exempt
 def delete_multiple(request):
     g_data = OrderedDict(request.GET)
     d_data = json.loads(request.GET['delete_data'])
@@ -48,7 +51,7 @@ def delete_multiple(request):
                                                 res = add_delete_row(row=s2sec[s2], section=g_data['section'],
                                                                      item = item,
                                                                      subsection=g_data['subsection'], type=req_type,
-                                                                     s2sec=g_data['s2sec'],
+                                                                     s2sec=g_data['s2section'],
                                                                      c_id=request.GET['c_id'], loop_key=loop_key)
 
                                             s2sec[s2].pop(item)
@@ -73,7 +76,7 @@ def delete_multiple(request):
         return render(request, 'AutomationUI/bs_data.html', locals())
 
 
-
+@csrf_exempt
 def save_multiple(request):
     n_data = json.loads(request.GET['new_data'])
     g_data = OrderedDict(request.GET)
@@ -129,7 +132,7 @@ def save_multiple(request):
         return render(request, 'AutomationUI/bs_data.html', locals())
 
 
-
+@csrf_exempt
 def swap_multiple(request):
     g_data = OrderedDict(request.GET)
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
@@ -163,9 +166,6 @@ def swap_multiple(request):
                             if type(val) != list and key == g_data['subsection']:
                                 for d_key, d_val in val.items():
                                     if d_key == item:
-                                        res = add_delete_row(row=i[key], section=g_data['section'], item=item,
-                                                             subsection=g_data['subsection'], type=req_type, s2sec=None,
-                                                             c_id=request.GET['c_id'], loop_key=loop_key)
                                         remove_item = i[key].pop(item)
                                         i['update'] = True
                                         break;
@@ -175,11 +175,6 @@ def swap_multiple(request):
                                         if s2 == g_data['s2section']:
                                             for s2_key, s2_val in s2_o.items():
                                                 if s2_key == item:
-                                                    res = add_delete_row(row=i[key], section=g_data['section'],
-                                                                         item=item,
-                                                                         subsection=g_data['subsection'], type=req_type,
-                                                                         s2sec=None,
-                                                                         c_id=request.GET['c_id'], loop_key=loop_key)
                                                     remove_item = s2sec[s2].pop(item)
                                                     i['update'] = True
                                                     break;
@@ -228,7 +223,7 @@ def swap_multiple(request):
     else:
         return render(request, 'AutomationUI/bs_data.html', locals())
 
-
+@csrf_exempt
 def update_dict(data_list, new_row, section, subsec, added_row,s2section=None):
     for data in data_list:
         if section in list(data.keys()) and not added_row:
@@ -253,22 +248,23 @@ def update_dict(data_list, new_row, section, subsec, added_row,s2section=None):
         elif added_row:
             break;
 
+@csrf_exempt
 def update_section(request):
-    n_data = json.loads(request.GET['new_data'])
-    g_data = OrderedDict(request.GET)
+    n_data = json.loads(request.POST['new_data'])
+    g_data = OrderedDict(request.POST)
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
 
     req_type = 'pnl' if g_data['type'] == 'pnl' else 'bsheet'
-    if cache.has_key(request.GET['c_id']):
-        cache_dict = cache.get(request.GET['c_id'])
+    if cache.has_key(request.POST['c_id']):
+        cache_dict = cache.get(request.POST['c_id'])
         if req_type in cache_dict:
             data_list = cache_dict[req_type]
             date_list = cache_dict['date_list']
             loop_key = cache_dict['loop_key']
         else:
-            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     else:
-        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     data = data_list
     for subsec , row_data in n_data.items():
         row_data = json.loads(row_data[0]) if row_data else []
@@ -293,7 +289,7 @@ def update_section(request):
 
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
     if data:
-        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, p_type=req_type,complete_sec = True,action_type="update")
+        data_list, date_list, loop_key = save_data(data[0], request.POST['c_id'], req_type=r_type, p_type=req_type,complete_sec = True,action_type="update")
     else:
         pass
     # data = save_data(data, request.GET['c_id'],g_data['type'][0])

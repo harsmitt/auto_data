@@ -9,8 +9,21 @@ from AutomationUI.download_excel import download_pdf
 from AutomationUI.download_dump import download_dump
 from AutomationUI.multiple_save import *
 from DataExtraction.common_files.calculate_pnl_qtr import *
+from AutomationUI.login import *
 
 urlpatterns = [
+
+    #login URl
+    url(r'^login/$', user_login, name='uilogin'),
+    url(r'^logout/$', logout_view, name='uilogout'),
+
+    url(r'^get_dit_list/$', get_dit_list, name='get_dit_list'),
+    url(r'^dit_list/$', dit_list, name='dit_list'),
+    url(r'^change_password/$', change_password,name='change_password'),
+
+
+
+
     url(r'^company_list/$', CompanyListView.as_view(), name='CompanylistForm'),
     url(r'^balance-sheet/$', BalanceSheetFormView.as_view(), name='balancesheetform'),
     url(r'^profit-loss/$', PNLFormView.as_view(), name='PNLFormViewform'),
@@ -22,6 +35,8 @@ urlpatterns = [
     url(r'^save_multiple/$', save_multiple, name='savemultiple'),
     url(r'^swap_multiple/$', swap_multiple, name='swapmultiple'),
     url(r'^deleted_row/$', DeletedRowsFormView.as_view(), name='deleted_rows'),
+
+
 
 
     url(r'^update_section/$', update_section, name='updatesection'),

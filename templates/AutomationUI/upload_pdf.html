@@ -15,7 +15,7 @@
 				<div class="col-sm-8">
 					<ul>
 						<li>
-							<a href="/automation/company_list/">Company List</a>
+							<a href="/automation/get_dit_list/">DIT List</a>
 						</li>
 
 					</ul>
@@ -53,24 +53,40 @@
                         <div class="input-div flt100">
                         <input type="text" class="flt100" name="company_name" style="border:1px !important" onblur="get_existing_date(this)" value="">
 					    </div>
-                        </div>
+                    </div>
 
                     <div class="col-sm-6" id="li_div" style="color:white;display:none" >
                             <div style="margin-top:31px;" class="flt100" id="check1"></div>
                     </div>
 
-                    <div class="col-sm-6">
-                        <h5><span>Sector : </span></h5>
-                        <div class="input-div flt100">
-                            <select name="sector" style="color:black" id="sector">
-                                    <option value=" " selected= "selected">Select Sector</option>
-                                    {% for sector in sector_list %}
-                                        <option value="{{sector}}" >{{sector}}</option>
-                                    {% endfor %}
-                                </select>
-                        </div>
-					</div>
-                        </div>
+                    <!--<div class="col-sm-6">-->
+                        <!--<h5><span>Sector : </span></h5>-->
+                        <!--<div class="input-div flt100">-->
+                            <!--<select name="sector" style="color:black" id="sector" onchange="get_dit_list(this)">-->
+                                    <!--<option value=" " selected= "selected">Select Sector</option>-->
+                                    <!--{% for sector in sector_list %}-->
+                                        <!--<option value="{{sector}}" >{{sector}}</option>-->
+                                    <!--{% endfor %}-->
+                                <!--</select>-->
+                        <!--</div>-->
+					<!--</div>-->
+
+                        <div class="col-sm-6">
+                            <h5><span>Dit : </span></h5>
+                            <div class="input-div flt100">
+                                <select name="dit_name" style="color:black" id="dit">
+                                        <option value=" " selected= "selected">Select DIT</option>
+
+                                    {% for dit in all_dit%}
+                                        <option value="{{dit.dit_name}}" >{{dit.dit_name}}</option>
+                                    {%endfor%}
+                                    </select>
+                            </div>
+					    </div>
+
+                    </div>
+
+
 
                     <div class="row">
 
@@ -103,18 +119,39 @@
                     <div class ="row">
 
                         <div class="col-sm-6">
-                            <h5><span>Page Number: </span> </h5>
+                            <h5><span>Balance Sheet Page Number : </span> </h5>
                             <div class="input-div flt100">
-                                <input type="text" class="flt100" name="page_num" style="border:1px !important"  placeholder="enter specific page number" value="">
+                                <input type="text" class="flt100" name="bs_pnum" style="border:1px !important"  placeholder="enter specific page number" value="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5><span>PNL Page Number : </span> </h5>
+                            <div class="input-div flt100">
+                                <input type="text" class="flt100" name="pnl_pnum" style="border:1px !important"  placeholder="enter specific page number" value="">
                             </div>
                         </div>
 
+                         </div>
+                    <div class ="row">
 
                         <div class="col-sm-6">
                             <h5>
 
                                  <input style="color:black" type="submit" value="Extract Data">
                             </h5>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <h5>
+                                {%for res in status %}
+                                    {%for key,val in res.items%}
+
+                                         <li><span >{{key}} :</span> <span style="color:Red">{{val}}</span></li>
+
+                                    {%endfor%}
+                                {%endfor%}
+                            </h5>
+
                         </div>
 
                     </div>

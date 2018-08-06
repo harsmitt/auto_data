@@ -117,3 +117,59 @@ header li a:hover{color:#009ce6;}
   height: 50px; 
 }
 .footer{padding-top: 12px;background: #fff;}
+
+
+
+.selectdiv {
+	background: #fff url("../images/dropdown.png") no-repeat scroll right center;
+	border: 1px solid #d3d3d3;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 13px;
+	height: 48px;
+	line-height: 25px;
+	padding-right: 30px;
+	position: relative;
+	width: 100%;
+	color: #333;
+}
+.selectdiv div {
+	z-index: -1;
+	border: 1px solid #000;
+	height: 35px;
+	overflow: hidden;
+	padding: 10px 0 0 10px;
+	cursor: pointer;
+	text-align: left;
+	opacity: 1;
+}
+.selectboxdiv {
+	height: 48px;
+	min-height: 48px;
+	left: 0px;
+	margin-top: 0;
+	position: absolute;
+	width: 100%;
+	z-index: 0;
+	cursor: pointer;
+	background-color:white;
+	border: 1px solid #d3d3d3;
+}
+.selectboxdiv option {
+	padding: 10px 5px;
+}
+
+.login_list li {
+	margin-bottom: 15px;
+	position: relative;
+}
+.login_list li:last-child {
+	margin-bottom: 0;
+}
+
+.white-box {
+	background-color: #fff;
+	padding: 15px;
+	margin: 15px 0;
+}
+

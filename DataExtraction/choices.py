@@ -33,3 +33,13 @@ pdf_type = (
             ('year','year'),
             ('quarter','quarter'),
             )
+
+
+User_role =(
+
+    ('Maker','Maker'),
+    ('Lead','Lead'),
+    ('Approver','Approver'),
+
+
+)

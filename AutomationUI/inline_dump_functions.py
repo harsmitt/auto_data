@@ -77,7 +77,6 @@ def subsec_write(**kwargs):
                         chr(ch) + str(end_col)) + ')'
                 else:
                     kwargs['sheet'][chr(ch) + str(f_row)].value = 0
-                    print (kwargs['sheet'][chr(ch) + str(f_row)].value)
                 kwargs['sheet'][chr(ch) + str(f_row)].fill = format_excel.my_y1
                 kwargs['sheet'][chr(ch) + str(f_row)].border = format_excel.thin_border
 
@@ -94,13 +93,11 @@ def subsec_write(**kwargs):
             s2_total=kwargs['row_no']
             kwargs['row_no'] += 1
             for s2_sec in kwargs['data'][s_key]:
-                print (s2_sec)
                 for s2_k, s2_val in s2_sec.items():
                     s2_col.append(kwargs['row_no'])
                     s2start_col = ''
                     s2end_col = ''
                     s2f_row = kwargs['row_no']
-                    print (s2_k)
                     kwargs['sheet'] = set_allign(sheet=kwargs['sheet'], row_no=kwargs['row_no'], value=s2_k,
                                                  allign=format_excel.alignment2)
                     ch = 66
@@ -129,12 +126,10 @@ def subsec_write(**kwargs):
 
                         ch += 1
                 ch = 66
-                print (s2_col)
                 for d1 in kwargs['date_list']:
                     str1 = ''
                     for r1 in s2_col:
                         str1 += (chr(ch) + str(r1)) + ','
-                    print (str1)
                     kwargs['sheet'][chr(ch) + str(s2_total)].value = '=SUM(' + str1 + ')'
                     kwargs['sheet'][chr(ch) + str(s2_total)].fill = format_excel.my_g1
                     kwargs['sheet'][chr(ch) + str(s2_total)].border = format_excel.thin_border
@@ -149,7 +144,6 @@ def subsec_write(**kwargs):
 def pdf_key_write(**kwargs):
     for p_key1, p_val in kwargs['data'].items():
         # add pdf_key
-        print (kwargs['data'])
         kwargs['sheet'] = set_allign(sheet=kwargs['sheet'], row_no=kwargs['row_no'], value=p_key1,
                                      allign=format_excel.alignment2, color=format_excel.my_r1)
 

@@ -2,8 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-from .choices import year_end,Comp_type,CountryList,pdf_extraction_page
+from .choices import year_end,Comp_type,CountryList,pdf_extraction_page,User_role
 from django.contrib.auth.models import User
+from Login.models import Team_Sector
 
 class Sector(models.Model):
     sector_name = models.CharField(max_length =1000)
@@ -17,6 +18,7 @@ class SectorDit(models.Model):
     copy_Sector = models.BooleanField(default=True)
     dit_name = models.CharField(max_length =1000)
     dit_code = models.CharField(max_length =200)
+    team_sector = models.ForeignKey(Team_Sector, blank=True,null=True)
 
     def __str__(self):
         return str(self.dit_name)
@@ -102,6 +104,8 @@ class quarter_data(models.Model):
 
     def __str__(self):
         return str(self.q1)
+
+
 
 
 

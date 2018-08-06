@@ -1,12 +1,11 @@
 from rest_framework.views import APIView, Response
-from BalanceSheet.models import CompanyBalanceSheetData
-from PNL.models import CompanyPNLData
 from .forms import *
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 import json
 from .utils import *
-from DataExtraction.models import Sector
+from DataExtraction.models import *
+from Login.models import *
 from DataExtraction.choices import year_end,pdf_type
 from django.core.cache import cache
 
@@ -19,8 +18,11 @@ class CompanyListView(APIView):
         return super(CompanyListView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        data=CompanyList.objects.all().values()
-        return render(request, 'AutomationUI/index.html', locals())
+        if request.user.username:
+            data=CompanyList.objects.filter(ditname_id = request.GET['dit_id']).values()
+            return render(request, 'AutomationUI/index.html', locals())
+        else:
+            return render(request, 'AutomationUI/login.html', locals())
 
 class BalanceSheetFormView(APIView):
     template_name = 'AutomationUI/bs_data.html'
@@ -30,22 +32,14 @@ class BalanceSheetFormView(APIView):
         return super(BalanceSheetFormView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        if cache.has_key(request.GET['c_id']):
-            cache_dict = cache.get(request.GET['c_id'])
-            if 'bsheet' in cache_dict:
-                data_list = cache_dict['bsheet']
-                date_list = cache_dict['date_list']
-                loop_key = cache_dict['loop_key']
-            else:
-                data_list, date_list, loop_key = get_data(req_type='bsheet', c_id=request.GET['c_id'],
-                                                          section_type='Balance Sheet')
-        else:
+        if request.user.username:
             data_list,date_list,loop_key = get_data(req_type='bsheet',c_id=request.GET['c_id'],section_type='Balance Sheet')
-        p_type = 'Balance Sheet'
-        c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
-        unit = c_obj.c_y_unit.split('##')[1]
-        print (unit)
-        return render(request, 'AutomationUI/bs_data.html', locals())
+            p_type = 'Balance Sheet'
+            c_obj = CompanyList.objects.get(id=request.GET['c_id'])
+            unit = c_obj.c_y_unit.split('##')[1]
+            return render(request, 'AutomationUI/bs_data.html', locals())
+        else:
+            return render(request, 'AutomationUI/login.html', locals())
 
     def post(self, request, *args, **kwargs):
         return Response({'status': 'success'})
@@ -57,7 +51,7 @@ def add_row(request):
     g_data =dict(request.GET)
     r_type = 'Profit and Loss' if g_data['type'][0]=='pnl' else 'Balance Sheet'
     c_obj = CompanyList.objects.filter(id=request.GET['c_id']).values_list('y_end', flat=True)
-    date_objs =qtr_date_pnl()
+    date_objs = qtr_date(c_obj[0])
     date_objs.update(year_date(c_obj[0]))
     date_keys = list(date_objs.keys())
     req_type = 'pnl' if g_data['type'][0]=='pnl' else 'bsheet'
@@ -102,7 +96,7 @@ def add_row(request):
 
     data = [i for i in data_list if g_data['section'][0] in list(i.keys())]
     if data:
-        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'],req_type=r_type,p_type=req_type)
+        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'],req_type=r_type,p_type=req_type,action_type='save')
     else:
         pass
     if 'action' in request.GET:
@@ -116,8 +110,6 @@ def add_row(request):
 
 
 def add_delete_row(**kwargs):
-    print (kwargs)
-    print ("add")
     data=OrderedDict()
     sec_obj = Section.objects.get(item = kwargs['section'])
     data['section']=sec_obj
@@ -161,10 +153,6 @@ def add_delete_row(**kwargs):
 
     if x : return True
     else :return False
-
-    # data1 = {'section_id__item': 'Current_assets', 'company_name_id': 1, 'page_extraction': 'bsheet',
-    #          'subsection_id__item': 'Cash & Near Cash Items', 'quarter_date': '2016',
-    #          'description': 'cash and cash equivalents##755'}
 
 def delete_row(request):
     g_data = OrderedDict(request.GET)
@@ -257,26 +245,17 @@ class PNLFormView(APIView):
         return super(PNLFormView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        if request.user.username:
 
-        data=OrderedDict()
-        p_type=  'Profit and Loss'
-        c_obj = CompanyList.objects.filter(id=request.GET['c_id'])[0]
-        print (c_obj.company_name)
-        q2,q3 = get_qtrs(c_obj)
-        unit = c_obj.c_y_unit.split('##')[1]
-        # # if cache.has_key(request.GET['c_id']):
-        # #     cache_dict = cache.get(request.GET['c_id'])
-        #     if 'pnl' in cache_dict:
-        #         data_list = cache_dict['pnl']
-        #         date_list = cache_dict['date_list']
-        #         loop_key = cache_dict['loop_key']
-        #     else:
-        #         data_list, date_list, loop_key = get_data(req_type='pnl', section_type='Profit and Loss',
-        #                                                   c_id=request.GET['c_id'])
-        # else:
-        data_list, date_list, loop_key = get_data(req_type='pnl',section_type = 'Profit and Loss', c_id=request.GET['c_id'])
-        return render(request, 'AutomationUI/pnl.html', locals())
-
+            data=OrderedDict()
+            p_type=  'Profit and Loss'
+            c_obj = CompanyList.objects.get(id=request.GET['c_id'])
+            q2,q3 = get_qtrs(c_obj)
+            unit = c_obj.c_y_unit.split('##')[1]
+            data_list, date_list, loop_key = get_data(req_type='pnl',section_type = 'Profit and Loss', c_id=request.GET['c_id'])
+            return render(request, 'AutomationUI/pnl.html', locals())
+        else:
+            return render(request, 'AutomationUI/login.html', locals())
     def post(self, request, *args, **kwargs):
         return Response({'status': 'success'})
 
@@ -290,13 +269,12 @@ def get_file_sorted(files,p_type):
             k_list = list(files.keys())
             f_name = q_sorting(k_list)
             f_name = [name.replace(' ','_') for name in f_name]
-        print (f_name)
         return f_name
     except Exception as e:
         return e
 
 
-
+##Save uploaded pdf in a folder and start processing it one by one.
 class UploadPDfView(APIView):
     template_name = 'AutomationUI/bs_data.html'
     queryset = CompanyBalanceSheetData.objects
@@ -305,39 +283,51 @@ class UploadPDfView(APIView):
         return super(UploadPDfView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        msg="Upload a File"
-        sector_list = Sector.objects.all().values_list('sector_name',flat=True)
-        c_year_end = list(year_end)
-        p_type = list(pdf_type)
+        if request.user.username:
+            msg="Upload a File"
+            status =''
+            # sector_list = Sector.objects.all().values_list('sector_name',flat=True)
 
-        return render(request, 'AutomationUI/upload_pdf.html', locals())
+            c_year_end = list(year_end)
+            user_obj = TeamList.objects.filter(t_user__username=request.user.username).values_list(
+                'team_name__team_name', flat=True)
+            sectors = Team_Sector.objects.filter(team__team_name__in=user_obj).values_list('sector_description', flat=True)
+            all_dit = SectorDit.objects.filter(team_sector__sector_description__in=sectors)
+            p_type = list(pdf_type)
+
+            return render(request, 'AutomationUI/upload_pdf.html', locals())
+        else:
+            return render(request, 'AutomationUI/login.html', locals())
 
     def post(self, request, *args, **kwargs):
 
-
         if request.method == 'POST':
-            sector_list = Sector.objects.all().values_list('sector_name', flat=True)
+            # sector_list = Sector.objects.all().values_list('sector_name', flat=True)
+            status =[]
+            c_year_end = list(year_end)
+            user_obj = TeamList.objects.filter(t_user__username=request.user.username).values_list(
+                'team_name__team_name', flat=True)
+            sectors = Team_Sector.objects.filter(team__team_name__in=user_obj).values_list('sector_description',
+                                                                                           flat=True)
+            all_dit = SectorDit.objects.filter(team_sector__sector_description__in=sectors)
             c_year_end = list(year_end)
             p_type = list(pdf_type)
             files= get_file_sorted(files= request.FILES,p_type=request.POST['pdf_type'])
-            from multiprocessing import Process,Queue,Pool
-            # pool =Pool(10)
+            # import multiprocessing
+            # from multiprocessing import Process,Queue,Pool
+            # # pool =Pool(10)
+            # manager = multiprocessing.Manager()
+            # return_dict = manager.dict()
+            # jobs=[]
             for file_name in files:
-                print (file_name)
                 f_name= request.FILES[str(file_name)]
-                print (f_name)
-                p = Process(target = upload,args=(f_name,request.POST['company_name'],f_name.name,request.POST))
-                p.start()
-                p.join()
-
-            #     result = upload(f_name,request.POST['company_name'])
-            #
-            #     if result:
-            #         msg = "upload successfully"
-            #     else:
-            #         msg = "error in uploading file"
-            # else:
-            #     return HttpResponse("Failed")
+                result = upload(f_name,request.POST['company_name'],f_name.name,request.POST)
+                status.append(result)
+                # p = Process(target = upload,args=(f_name,request.POST['company_name'],f_name.name,request.POST))
+                # p.start()
+                # p.join()
+                # print ('upload view')
+                # print (return_dict.values())
 
             return render(request, 'AutomationUI/upload_pdf.html', locals())
 
@@ -345,17 +335,36 @@ class UploadPDfView(APIView):
 def upload(f_name,c_name,name,post_data):
     from .upload_pdf import upload_pdf
     from DataExtraction.store_data import pdf_detail
+    #function save pdf into uploads folder
     res, path = upload_pdf(file_1=f_name, c_name=c_name, file_n=str(name))
     if res:
         data_dict = copy.deepcopy(post_data)
         data_dict = dict(data_dict)
+        sector_name= SectorDit.objects.get(dit_name= post_data['dit_name'])
         if not 'override' in data_dict:
             data_dict['override'] = []
-        result = pdf_detail(c_name=post_data['company_name'], sector=post_data['sector'],
-                            year_end=post_data['year_end'],
-                            file=path, pdf_type=post_data['pdf_type'],
-                            override=data_dict['override'],page_num=post_data['page_num']
+        page_num = OrderedDict({'bs_num':post_data['bs_pnum'],'pnl_num':post_data['pnl_pnum']})
+
+        # calling this function to extract the pdf
+        file_status = OrderedDict()
+
+        result = pdf_detail(c_name=post_data['company_name'], sector=sector_name.sector.sector_name,
+                            year_end=post_data['year_end'],dit_name= post_data['dit_name'],
+                            file=path, pdf_type=post_data['pdf_type'],page_num=page_num,
+                            override=data_dict['override']
                             )
+        if len(result)==2:
+            msg = "Uploaded"
+        elif len(result) ==1:
+            if 'pnl'in result:
+                msg="Balance sheet not extracted"
+            else:
+                msg="pnl not extracted"
+        else:
+            msg="Error in File Uploading"
+        file_status[name]=msg
+        return file_status
+
 class NewCompanyView(APIView):
     template_name = 'AutomationUI/bs_data.html'
     queryset = CompanyBalanceSheetData.objects
@@ -378,9 +387,6 @@ class NewCompanyView(APIView):
             sector_list = Sector.objects.all().values_list('sector_name', flat=True)
             c_year_end = list(year_end)
             p_type = list(pdf_type)
-
-            # res,path= upload_pdf(request.FILES['file'], str(request.FILES['file']))
-            # if res:
             try:
                 res = test(c_name = request.POST['company_name'],
                        year_end = request.POST['year_end'],c_ticker = request.POST['company_ticker']
@@ -390,8 +396,7 @@ class NewCompanyView(APIView):
             except Exception as e:
                 import traceback
                 print (traceback.format_exc())
-                print (e)
-            res = LoopPdfDir(fix_path='/home/mahima/DataAutomation/company_pdf/',\
+            res = LoopPdfDir(fix_path='/home/administrator/DataAutomation/company_pdf/',\
                              company_list=[request.POST['company_name']],c_ticker = request.POST['company_ticker'],
                              sector = request.POST['sector'],year_end = request.POST['year_end']
                             )
@@ -426,14 +431,12 @@ def bs_last_qtr(request):
 
 
 def get_existing_date(request):
-    print ("hello")
     from django.db.models import Q
     c_obj = CompanyList.objects.filter(company_name=request.GET['c_name'])
     if c_obj:
         q_date = list(quarter_data.objects.filter(Q(company_name=c_obj), ~Q(q1=0)).values_list('quarter_date',
                                                                                           flat=True).distinct())
         q_date = '##'.join(q_date)
-        print (q_date)
         return HttpResponse(q_date)
     else:
         return HttpResponse("This is a new company")
@@ -442,10 +445,14 @@ def get_existing_date(request):
 def section_list(request):
     r_type = "Balance Sheet" if request.GET['type'] =='balance-sheet' else 'Profit and Loss'
     section = Section.objects.filter(i_related=r_type)
-    subsection = SubSection.objects.filter(section__in=section)
-    s2sec = S2Section.objects.filter(subsection__in=subsection)
-    comp = '##'.join(list(subsection.filter(s2section=None).values_list('item', flat=True))) + '##'.join(list(
+    comp=''
+    for ind , sec in enumerate(section):
+        subsection = SubSection.objects.filter(section=sec)
+        s2sec = S2Section.objects.filter(subsection__in=subsection)
+        comp += '##'.join(list(subsection.filter(s2section=None).values_list('item', flat=True)))+'##' + '##'.join(list(
         s2sec.values_list('item', flat=True)))
+        if ind+1 < len(section):
+            comp+='##'
     return HttpResponse(comp)
 
 
@@ -461,7 +468,6 @@ class DeletedRowsFormView(APIView):
         return super(DeletedRowsFormView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        print (request.GET)
         delete_objs = DeleteRow.objects.filter(company_name_id=request.GET['c_id'])
         data_list, date_list, loop_key = get_delete_data(c_id=request.GET['c_id'])
         p_type = 'Balance Sheet'
@@ -471,4 +477,3 @@ class DeletedRowsFormView(APIView):
 
     def post(self, request, *args, **kwargs):
         return Response({'status': 'success'})
-

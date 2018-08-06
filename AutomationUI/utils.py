@@ -39,11 +39,9 @@ def update_qtr(data,c_id,req_type,action_type=None):
         all_objs = quarter_data.objects.filter(company_name_id=c_id,page_extraction=req_type)
     else:
         all_objs = DeleteRow.objects.filter(company_name_id=c_id, page_extraction=req_type)
-    # sec_objs  = all_objs.filter(Q(section__item= list(data.keys())[0]),~Q(subsection=None))
     sec_objs  = all_objs.filter(section__item= list(data.keys())[0],subsection__item__in= list(data[list(data.keys())[0]]))
-    if action_type:del_old_data(sec_objs)
-    # del_old_data(sec_objs)
-    date_objs = qtr_date_pnl()
+    if action_type and action_type!='swapping':del_old_data(sec_objs)
+    date_objs = qtr_date(c_obj[0])
     date_objs.update(year_date(c_obj[0]))
 
     for key,obj in data.items():
@@ -210,13 +208,11 @@ def update_comp(request):
 from django.http import HttpResponseRedirect, HttpResponse
 
 def get_list(request):
-    print (request.GET)
     if request.GET['type']=="year":
         year_list = list(year_date("December").values())
         years = '##'.join(map(lambda y : str(y),year_list))
-        print (years)
         return HttpResponse(years)
     else:
-        q_list =list(qtr_date_pnl().values())
+        q_list =list(qtr_date("December").values())
         q_data = '##'.join(map(lambda y : str(y),q_list))
         return HttpResponse(q_data)

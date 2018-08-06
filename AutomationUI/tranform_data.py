@@ -31,7 +31,7 @@ def get_date_list(c_id):
         loop_key = cache_dict['loop_key']
     else:
         c_obj = CompanyList.objects.filter(id=c_id)
-        qtr_dict = qtr_date_pnl()
+        qtr_dict = qtr_date(str(c_obj[0].y_end))
         year_dict = year_date(str(c_obj[0].y_end))
         date_list = list(qtr_dict.values()) + list(year_dict.values())
         loop_key = qtr_dict
@@ -69,7 +69,6 @@ def get_delete_data(c_id=None):
         sec_d[sec_obj] = sub_list
         sec_list.append(sec_d)
 
-    print(sec_list)
     return  sec_list,date_list,loop_key
 
 # @cache_page(60 * 15, key_prefix="site1")

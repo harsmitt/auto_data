@@ -4,7 +4,7 @@ from .save_related_functions import *
 
 
 def match_all_synonym_words(**kwargs):
-    match_with = ''.join([word for word in  get_alpha(kwargs['match_with'],remove_s=True).split() if word not in stop_words])
+    match_with = ''.join([word for word in  get_alpha(kwargs['match_with'],key=True,remove_s=True).split() if word not in stop_words])
     pdf_word = ''.join([word for word in get_alpha(kwargs['pdf_obj'], remove_s=True).split() if word not in stop_words])
     import itertools
     i_list = list(itertools.permutations(match_with.split(),len(match_with.split())))
@@ -55,10 +55,11 @@ def match_synonym(**kwargs):
 
 
 def match_breakdown_words(**kwargs):
-    match_with = ''.join([word for word in get_alpha(kwargs['match_with'], remove_s=True).split() if word not in stop_words])
-    pdf_word = ''.join([word for word in get_alpha(kwargs['pdf_obj'], remove_s=True).split() if word not in stop_words])
+    match_with = ' '.join([word for word in get_alpha(kwargs['match_with'], key=True,remove_s=True).split() if word not in stop_words])
+    pdf_word = ' '.join([word for word in get_alpha(kwargs['pdf_obj'], remove_s=True).split() if word not in stop_words])
     import itertools
-    i_list = list(itertools.permutations(match_with.split(), len(match_with.split())))
+    i_list = list(itertools.permutations(match_with.split(), len(match_with.split()))) if len(match_with.split())<=7 else \
+                list(match_with.split())
     i_list_words = [' '.join(i).strip().replace('-','') for i in i_list]
     for comb in i_list_words:
         if comb:

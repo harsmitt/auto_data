@@ -1,11 +1,10 @@
 import scrapy
 from twisted.internet import reactor,defer
-import logging
 import pdfkit
 from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import CrawlSpider
 
-DEFAULT_DATA_PATH = '/home/mahima/Automation/fin_dict/company_pdf/Apple/Quarter/'
+DEFAULT_DATA_PATH = '/home/administrator/Automation/fin_dict/company_pdf/Apple/Quarter/'
 
 class WebsiteItem(scrapy.Item):
     url = scrapy.Field()
@@ -21,7 +20,6 @@ class WebsiteSpider(CrawlSpider):
     #This is initial process method.
     def start_requests(self): # Gets called automatically on running script
         urls = 'https://www.apple.com/in/'#self.url_list
-        logging.info(">>>>>>>>>>>>>>Crawling starting<<<<<<<<<<<<<<<<<<<<")
         # for url in urls:
         yield scrapy.Request(url=urls, callback=self.parse_url)
 

@@ -11,6 +11,7 @@ pass_list = ['diluted','basic','per share','statement of']
 index_list =['consolidated','balance sheets','operations','income','cash flow','comprehensive loss']
 spl_char=['\xe2\x80\x93','\xe2\x80\x99','\xe2\x80\x94']
 exceptional = ['current\n','deferred\n']
+except_words =['per share','comprehensive','per common share']
 
 
 
@@ -19,23 +20,18 @@ def ExtractPNL(**kwargs):
         last_notes_no=0
         sub_dict = False
         data_dict = copy.deepcopy(kwargs['data_dict'])
-
-        for l_num, line in enumerate(kwargs['data'][kwargs['date_line']:]):
-            line = line.replace('$', '  ')
-            print (line)
-
-
-            if l_num>10 and len(data_dict)<2 and data_dict:
+        data = kwargs['data'][kwargs['date_line']:]
+        for l_num, line in enumerate(data):
+            line = line.replace('$', '').strip()
+            if l_num>15 and len(data_dict)<2 and data_dict:
                 d_keys =list(data_dict.keys())[-1]
                 if not data_dict[d_keys]:
                     break;
-            if data_dict and any(word in line.lower() for word in ['per share','comprehensive','per common share']):
+            if data_dict and any(word in line.lower() for word in except_words) and not any(word in line.lower() for word in ['except per share']):
                 break;
 
             elif not kwargs['unit'] and line and any(word in line.lower() for word in ['millions', 'thousands']):
-                print (line)
                 x = [w1 for word in line.lower().split() for w1 in ['millions', 'thousands'] if w1 in word]
-                print (x)
                 kwargs['unit'] = x[0] if x else ''
 
             elif any((re.split('  +',ex.lower())[0]) ==  line.lower() for ex in exceptional):
@@ -57,9 +53,14 @@ def ExtractPNL(**kwargs):
             elif len(re.split('  +',line)) >2 and not data_dict and not num_there(line):
                 pass
 
-            elif  (len(re.split('  +', line.replace('-','').strip())) < 2 and alpha_there(line.replace('-','').strip())) or (len(re.split('  +', line.replace('-','').strip())) ==2 and num_there(line) and not alpha_there(line)):
+            elif  (len(re.split('  +', line.replace('-','').strip())) < 2 and alpha_there(line)) or (len(re.split('  +', line.replace('-','').strip())) ==2 and num_there(line) and not alpha_there(line)):
                 if num_there(line) and not alpha_there(line):
                     values = list(filter(lambda name: num_there(name), line.split()))
+                    if len(values) < (len(kwargs['date_obj'])+len(kwargs['ignore_index'])):
+                        new_line = line
+                        for n_line in range(1,(len(kwargs['date_obj'])+len(kwargs['ignore_index']))-len(values)+1):
+                            new_line = line + data[l_num+n_line]
+                        values = list(filter(lambda name: num_there(name), new_line.split()))
                     if kwargs['ignore_index']:
                         values, last_notes_no = remove_ignore_index(values, last_notes_no,
                                                                     ignore_index=kwargs['ignore_index'],
@@ -78,7 +79,7 @@ def ExtractPNL(**kwargs):
                         data_dict[new_key] = OrderedDict()
 
 
-            elif len(re.split('  +', line)) > 2 :
+            elif len(re.split('  +', line)) >= 2 :
 
                 values = re.split('  +', line)
                 key_name = get_alpha(values[0],key=True,pnl=True)
@@ -99,10 +100,11 @@ def ExtractPNL(**kwargs):
                     return False
 
 
-                if (new_key.split()[0].split('-')[0].istitle()or new_key.split()[0][0].split('-')[0].istitle() ) and not check_datetime(new_key.split()[0]):
+                if new_key and (new_key.split()[0].split('-')[0].istitle()or new_key.split()[0][0].split('-')[0].istitle() ) and not check_datetime(new_key.split()[0]):
                     if data_dict and not data_dict[list(data_dict.keys())[-1]] or sub_dict:
                         last_key = list(data_dict.keys())[-1]
-                        sub_dict = False if key_name.split('total')[-1] in last_key else True
+                        sub_dict = False if any(word in key_name.lower() for word in ['total','net']) and all(word in key_name.split() for word in last_key.split())\
+                                else True
                         if not 'total' in key_name.lower() or sub_dict:
                             data_dict[list(data_dict.keys())[-1]][key_name] = get_modigy_values(date_obj =kwargs['date_obj'],val=val)# list(zip(kwargs['date_obj'], val))
                         else:
@@ -111,17 +113,30 @@ def ExtractPNL(**kwargs):
                     else:
                         data_dict[key_name] = get_modigy_values(date_obj =kwargs['date_obj'],val=val)#list(zip(kwargs['date_obj'], val))
 
-                else:
-                    pass
+
+                elif data_dict:
+                    if kwargs['ignore_index']:
+                        values, last_notes_no = remove_ignore_index(values, last_notes_no,
+                                                                    ignore_index=kwargs['ignore_index'],
+
+                                                                    data=kwargs['data'], date_obj=kwargs['date_obj'])
+
+                    new_values = list(filter(lambda num: num_there(num), values[1:]))
+
+                    val = map(lambda x: str(get_digit(x)), new_values)
+
+                    old_dict = data_dict[list(data_dict.keys())[-1]]
+                    if not data_dict[list(data_dict.keys())[-1]]:
+                        data_dict[list(data_dict.keys())[-1]] = list(zip(kwargs['date_obj'], val))
+                    else:pass
 
         data_dict= remove_extra_keys(data_dict =data_dict)
         return data_dict,kwargs['unit']
 
-    except Exception as e:
+    except (RuntimeError, TypeError, NameError):
         import traceback
         print (traceback.format_exc())
-        print (kwargs['data'])
-        return e
+        return data_dict,kwargs['unit']
 
 def get_modigy_values(**kwargs):
     if len(kwargs['date_obj']) == 3:

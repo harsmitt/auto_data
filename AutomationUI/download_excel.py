@@ -20,9 +20,9 @@ from django.http import HttpResponse
 from openpyxl.writer.excel import save_virtual_workbook
 
 
-date_obj = qtr_date_pnl()
+date_obj = qtr_date('December')
 date_obj.update(year_date('December'))
-q_list = list(qtr_date_pnl().keys())[-5:]
+q_list = list(qtr_date('December').keys())[-5:]
 y_list = list(year_date('December').keys())[-4:]
 
 fill_qy=q_list+y_list
@@ -36,7 +36,7 @@ pnl_row_mapping = {'Revenue':14, 'Cost of Revenue': 19,'Other Operating Income':
 
 
 def download_pdf(request):
-    wb = openpyxl.load_workbook('/home/mahima/Desktop/DataAutomation/Ditmt_template/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
+    wb = openpyxl.load_workbook('/home/DataAutomation/Ditmt_template/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
     sheet = wb.get_sheet_by_name('BasicInfo')
     for i in range(1,18):
         sheet['C'+str(i)].value=''
@@ -78,7 +78,7 @@ def download_pdf(request):
 
     # wb.save('/home/administrator/DataAutomation/company_pdf/different patterns/aditi/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
     c_name= CompanyList.objects.get(id= int(request.GET['c_id']))
-    print (c_name)#.values_list('ditname__dit_name',flat=True)
+    #.values_list('ditname__dit_name',flat=True)
     # response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
     # response['Content-Disposition'] = 'attachment; filename='+c_name[0]+'.xlsx'
     stream = save_virtual_workbook(wb)
@@ -108,12 +108,10 @@ def fill_data(row,data_objs,sheet,sec_type=None):
             sub_objs = data_objs.filter(subsection__item = sub)
         ch = 70
         for obj in sub_objs:
-            print (obj.quarter_date)
             for da in fill_qy:
                 if obj.quarter_date == str(date_obj[da]):
                     obj_val = get_val(obj)
                     sheet[chr(ch)+str(row)].value =obj_val
-                    print (chr(ch) ,obj.quarter_date )
                     ch += 1
                     break;
 

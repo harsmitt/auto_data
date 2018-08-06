@@ -19,6 +19,7 @@ def check_spl(str1):
         return str(str1)
 
 def save_data(**kwargs):
+    import pdb;pdb.set_trace()
     try:
         if type(kwargs['pdf_obj'])==OrderedDict:# or  all(type(i)==tuple for i in kwargs['pdf_obj']):# (len(kwargs['pdf_obj'])==2 and type(kwargs['pdf_obj'][0][1])==list):
             for loop_obj in kwargs['pdf_obj']:
@@ -97,8 +98,10 @@ def save_data_p2(**kwargs):
                             val = abs(val) if val > 0 else '(' + str(abs(val)) + ')'
                         else:
                             try:
-                                val = val = get_digit(val_obj[0].q1.replace(',', '')) + get_digit(check_spl(str(j[1])).replace(',', ''))
-                            except:
+                                val = get_digit(val_obj[0].q1.replace(',', '')) + get_digit(check_spl(str(j[1]).replace('–','0').replace(',', '')))
+                            except Exception as e:
+                                import traceback
+                                print (traceback.format_exc())
                                 print (val_obj)
 
                         description =  get_description(val_obj[0],kwargs['comp'],j[1])# val_obj[0].description + '##' + kwargs['comp'] + '(' + str(j[1]) + ')' if val_obj[
@@ -125,9 +128,7 @@ def get_description(obj,comp,val):
     return des
 
 def get_new_data(**kwargs):#data,c_name,t_pdf,year_end):
-    print (kwargs['override'])
     override = [key.replace('_',' ') for key in kwargs['override']]
-    print ('________________________________________')
     p_extraction = 'bsheet' if kwargs['p_type'] != 'pnl' else 'pnl'
     try:
         data_list = list(kwargs['data'].values())
@@ -140,8 +141,6 @@ def get_new_data(**kwargs):#data,c_name,t_pdf,year_end):
         # year_list,val = map(list,zip(*d_val))
         for year in year_list:
             y_key = valid_yq_name(year,kwargs['year_end'],pdf_type = kwargs['t_pdf'],p_type = kwargs['p_type'])
-            print (y_key)
-            print ('+++++++++++++++++++++++++++++++++++++++')
             if y_key and str(y_key) not in override:
                 # y1_key = y_key
                 year_exist = quarter_data.objects.filter(Q(company_name__company_name=kwargs['c_name']), Q(quarter_date=y_key),~Q(q1=0), Q(page_extraction=p_extraction))
@@ -204,48 +203,64 @@ def redefined_data(**kwargs):
 
 
 def unit_conversion(**kwargs):
-    print ("mahima")
     c_obj = CompanyList.objects.filter(company_name= kwargs['c_name'])
     if c_obj:
         #todo year and quarter logic is same just need to implement
         prev_unit = c_obj[0].c_y_unit.split('##') if c_obj[0].c_y_unit else ''
         if prev_unit :
-            print ('**************************************************')
-            print("_____________________________________________-")
-            print(prev_unit)
-            print(kwargs['unit'])
-            print ('**************************************************')
-            print("_____________________________________________-")
-            if prev_unit[1] == kwargs['unit']:
+            if prev_unit and not kwargs['unit']:
+                kwargs['unit'] = 'thousands'
+            elif prev_unit[1] == kwargs['unit']:
                 return kwargs['data']
             else:
                 if kwargs['t_pdf']!='year' or int(prev_unit[0]) > max(map(lambda x :int(x.split()[-1]), kwargs['date_obj'])):
                     print ("convert only data_dict into the stored unit")
                     for k1,k2 in kwargs['data'].items():
-                        if type(k2)==OrderedDict:
+                        if type(k2) == OrderedDict:
                             for p1,p2 in k2.items():
                                 if kwargs['data'][k1][p1]:
-                                    date_obj, values = map(list, zip(*kwargs['data'][k1][p1]))
-                                    if prev_unit == 'millions':
-                                        values = list(map(lambda x: str(get_digit(x)), values))
-                                        val = [int(val) / 1000 if val.isdigit() else 0 for val in values]
-                                        kwargs['data'][k1][p1] = list(zip(date_obj, val))
+                                    if type(kwargs['data'][k1][p1])!=OrderedDict:
+                                        if kwargs['data'][k1][p1] :
+                                            date_obj, values = map(list, zip(*kwargs['data'][k1][p1]))
+
+                                            if prev_unit[1] == 'millions':
+                                                values = list(map(lambda x: str(get_digit(x)), values))
+                                                val = [int(val) / 1000 if val.isdigit() else 0 for val in values]
+                                                kwargs['data'][k1][p1] = list(zip(date_obj, val))
+                                            else:
+                                                values = list(map(lambda x: str(get_digit(x)), values))
+                                                val = [int(val) * 1000 if val.isdigit() else 0 for val in values]
+                                                kwargs['data'][k1][p1]  = list(zip(date_obj, val))
                                     else:
-                                        values = list(map(lambda x: str(get_digit(x)), values))
-                                        val = [int(val) * 1000 if val.isdigit() else 0 for val in values]
-                                        kwargs['data'][k1][p1]  = list(zip(date_obj, val))
+                                        for p1_key,p1_val in kwargs['data'][k1][p1].items():
+                                            if kwargs['data'][k1][p1][p1_key]:
+                                                date_obj, values = map(list, zip(*kwargs['data'][k1][p1][p1_key]))
+
+                                                if prev_unit[1] == 'millions':
+                                                    values = list(map(lambda x: str(get_digit(x)), values))
+                                                    val = [int(val) / 1000 if val.isdigit() else 0 for val in
+                                                           values]
+                                                    kwargs['data'][k1] = list(zip(date_obj, val))
+                                                else:
+                                                    values = list(map(lambda x: str(get_digit(x)), values))
+                                                    val = [int(val) * 1000 if val.isdigit() else 0 for val in
+                                                           values]
+                                                    kwargs['data'][k1][p1][p1_key] = list(zip(date_obj, val))
+
                         else:
                             if kwargs['data'][k1]:
                                 date_obj, values = map(list, zip(*kwargs['data'][k1]))
-                                if prev_unit =='millions':
-                                    values = list(map(lambda x: str(get_digit(x)), values))
-                                    val = [int(val)/1000 if val.isdigit() else 0 for val in values]
-                                    kwargs['data'][k1] = list(zip(date_obj, val))
-                                else:
-                                    values = list(map(lambda x: str(get_digit(x)), values))
-                                    val = [int(val) * 1000 if val.isdigit() else 0 for val in values ]
-                                    kwargs['data'][k1]= list(zip(date_obj, val))
-                    print (kwargs['data'])
+                                try:
+                                    if prev_unit[1] == 'millions':
+                                        values = list(map(lambda x: str(get_digit(x)), values))
+                                        val = [int(val)/1000 if val.isdigit() else 0 for val in values]
+                                        kwargs['data'][k1] = list(zip(date_obj, val))
+                                    else:
+                                        values = list(map(lambda x: str(get_digit(x)), values))
+                                        val = [int(val) * 1000 if val.isdigit() else 0 for val in values ]
+                                        kwargs['data'][k1]= list(zip(date_obj, val))
+                                except:
+                                    print("shi mil gya")
                     return kwargs['data']
 
 
@@ -263,7 +278,6 @@ def unit_conversion(**kwargs):
                                 i.save()
 
                     return kwargs['data']
-                    print("convert all stored data into the latest unit")
 
         elif not prev_unit:
             f_name = max(map(lambda x :int(x.split()[-1]) ,kwargs['date_obj']))
@@ -271,6 +285,5 @@ def unit_conversion(**kwargs):
             c_obj.update(**{'c_y_unit':unit_val})
             return kwargs['data']
 
-    print (c_obj)
     return kwargs['data']
 

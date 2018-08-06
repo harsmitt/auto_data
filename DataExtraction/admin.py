@@ -9,6 +9,7 @@ from django.contrib.admin import AdminSite
 from django.shortcuts import render
 
 from django.http import HttpResponseRedirect, HttpResponse
+
 #
 class SectionForm( forms.ModelForm ):
     i_synonyms = forms.CharField( widget=forms.Textarea )
@@ -79,13 +80,6 @@ class QuarterAdmin(admin.ModelAdmin):
     class Meta:
         models = quarter_data
 
-# def show_image(request):
-#     from django.shortcuts import render
-#
-#     pdf_path= request.GET['pdf_path']
-#     path = 'http://10.10.0.84/media/'+ pdf_path.split('/')[-3]+'/'+pdf_path.split('/')[-2]+'/'+pdf_path.split('/')[-1]
-#     return render(request, 'image.html',{'path':path})
-
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ['company_name','c_ticker','y_end','PNL','BalanceSheet']
 
@@ -104,12 +98,16 @@ class CompanyAdmin(admin.ModelAdmin):
     BalanceSheet.allow_tags = True
     BalanceSheet.short_description = "BalanceSheet Data"
 
-class SectorDitAdmin(admin.ModelAdmin):
-    list_display = ['sector','dit_name','dit_code']
 
 
+
+##database
 admin.site.register(CompanyList,CompanyAdmin)
 admin.site.register(Section,SectionAdmin)
 admin.site.register(SubSection,SubSectionAdmin)
 admin.site.register(S2Section,S2SectionAdmin)
 admin.site.register(quarter_data,QuarterAdmin)
+
+
+
+##login module

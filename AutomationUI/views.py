@@ -313,26 +313,25 @@ class UploadPDfView(APIView):
             c_year_end = list(year_end)
             p_type = list(pdf_type)
             files= get_file_sorted(files= request.FILES,p_type=request.POST['pdf_type'])
-            # import multiprocessing
-            # from multiprocessing import Process,Queue,Pool
-            # # pool =Pool(10)
-            # manager = multiprocessing.Manager()
-            # return_dict = manager.dict()
-            # jobs=[]
+            import multiprocessing
+            from multiprocessing import Process,Queue,Pool
+            # pool =Pool(10)
+            manager = multiprocessing.Manager()
+            return_dict = manager.dict()
+            jobs=[]
             for file_name in files:
                 f_name= request.FILES[str(file_name)]
-                result = upload(f_name,request.POST['company_name'],f_name.name,request.POST)
-                status.append(result)
-                # p = Process(target = upload,args=(f_name,request.POST['company_name'],f_name.name,request.POST))
-                # p.start()
-                # p.join()
-                # print ('upload view')
-                # print (return_dict.values())
+                # result = upload(f_name,request.POST['company_name'],f_name.name,request.POST)
+                # status.append(result)
+                p = Process(target = upload,args=(f_name,request.POST['company_name'],f_name.name,request.POST,return_dict))
+                p.start()
+                p.join()
+            print (return_dict)
 
             return render(request, 'AutomationUI/upload_pdf.html', locals())
 
 
-def upload(f_name,c_name,name,post_data):
+def upload(f_name,c_name,name,post_data,return_dict):
     from .upload_pdf import upload_pdf
     from DataExtraction.store_data import pdf_detail
     #function save pdf into uploads folder
@@ -346,7 +345,8 @@ def upload(f_name,c_name,name,post_data):
         page_num = OrderedDict({'bs_num':post_data['bs_pnum'],'pnl_num':post_data['pnl_pnum']})
 
         # calling this function to extract the pdf
-        file_status = OrderedDict()
+        # file_status = OrderedDict()
+
 
         result = pdf_detail(c_name=post_data['company_name'], sector=sector_name.sector.sector_name,
                             year_end=post_data['year_end'],dit_name= post_data['dit_name'],
@@ -362,8 +362,9 @@ def upload(f_name,c_name,name,post_data):
                 msg="pnl not extracted"
         else:
             msg="Error in File Uploading"
-        file_status[name]=msg
-        return file_status
+
+        return_dict[name]=msg
+        # return file_status
 
 class NewCompanyView(APIView):
     template_name = 'AutomationUI/bs_data.html'

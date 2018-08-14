@@ -2,34 +2,40 @@ from DataExtraction.common_files.basic_functions import *
 from DataExtraction.common_files.utils import *
 from .statements_page import *
 from .utils import *
-
+from DataExtraction.logger_config import logger
 
 def get_page_num(l_num,**kwargs):
-    line = kwargs['data'][l_num]
-    n_line = kwargs['data'][l_num+1] if (len(kwargs['data'])-1!=l_num+1) else ''
-    if n_line:
+    try:
+        line = kwargs['data'][l_num]
+        n_line = kwargs['data'][l_num+1] if (len(kwargs['data'])-1!=l_num+1) else ''
+        if n_line:
 
-        if line.split()[-1].split('-')[0].isdigit():
-            c_num = line.split()[-1].split('-')[0]
-            next_num =next_num_page(data=kwargs['data'],line_num=l_num,i=0,index = -1)
+            if line.split()[-1].split('-')[0].isdigit():
+                c_num = line.split()[-1].split('-')[0]
+                next_num =next_num_page(data=kwargs['data'],line_num=l_num,i=0,index = -1)
 
-        elif line.split()[0].split('-')[0].isdigit():
-            c_num=line.split()[0].split('-')[0]
-            next_num = next_num_page(data=kwargs['data'],line_num=l_num,i=0,index = 0)
+            elif line.split()[0].split('-')[0].isdigit():
+                c_num=line.split()[0].split('-')[0]
+                next_num = next_num_page(data=kwargs['data'],line_num=l_num,i=0,index = 0)
 
-        if (int(next_num) - int(c_num)) > 1 :
-            if kwargs['section_name'] in kwargs['page_detail']:
-                kwargs['page_detail'][kwargs['section_name']].update({kwargs['key_name']: c_num + '-' + next_num})
-            else:
-                kwargs['page_detail'].update({kwargs['section_name']: {kwargs['key_name']: c_num + '-' + next_num}})
+            if (int(next_num) - int(c_num)) > 1 :
+                if kwargs['section_name'] in kwargs['page_detail']:
+                    kwargs['page_detail'][kwargs['section_name']].update({kwargs['key_name']: c_num + '-' + next_num})
+                else:
+                    kwargs['page_detail'].update({kwargs['section_name']: {kwargs['key_name']: c_num + '-' + next_num}})
 
-    else:
-        c_num = line.split()[-1].split('-')[0] if line.split()[-1].split('-')[0].isdigit() else line.split()[0].split('-')[0]
-        if kwargs['section_name'] in kwargs['page_detail']:
-            kwargs['page_detail'][kwargs['section_name']].update({kwargs['key_name']: c_num})
         else:
-            kwargs['page_detail'].update({kwargs['section_name']: {kwargs['key_name']: c_num }})
-    return kwargs['page_detail']
+            c_num = line.split()[-1].split('-')[0] if line.split()[-1].split('-')[0].isdigit() else line.split()[0].split('-')[0]
+            if kwargs['section_name'] in kwargs['page_detail']:
+                kwargs['page_detail'][kwargs['section_name']].update({kwargs['key_name']: c_num})
+            else:
+                kwargs['page_detail'].update({kwargs['section_name']: {kwargs['key_name']: c_num }})
+        return kwargs['page_detail']
+    except Exception as e:
+        logger.debug("error in table content get_page_num %s " % str(e))
+        logger.debug("error in table content get_page_num line: %s " % str(line))
+        logger.debug(traceback.format_exc())
+        pass
 
 
 
@@ -108,6 +114,9 @@ def table_content(**kwargs):
                             else:
                                 kwargs['page_detail'].update({'notes_section': n_dict})
 
-    except:
+    except Exception as e:
+        import traceback
+        logger.debug("error in table content  %s " % str(e))
+        logger.debug(traceback.format_exc())
         return kwargs['page_detail']
     return kwargs['page_detail']

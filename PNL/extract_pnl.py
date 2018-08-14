@@ -6,6 +6,8 @@ from DataExtraction.common_files.ignore_index import remove_ignore_index
 from collections import OrderedDict
 import copy
 import itertools
+from DataExtraction.logger_config import logger
+
 
 pass_list = ['diluted','basic','per share','statement of']
 index_list =['consolidated','balance sheets','operations','income','cash flow','comprehensive loss']
@@ -23,6 +25,7 @@ def ExtractPNL(**kwargs):
         data = kwargs['data'][kwargs['date_line']:]
         for l_num, line in enumerate(data):
             line = line.replace('$', '').strip()
+            # import pdb;pdb.set_trace()
             if l_num>15 and len(data_dict)<2 and data_dict:
                 d_keys =list(data_dict.keys())[-1]
                 if not data_dict[d_keys]:
@@ -133,19 +136,27 @@ def ExtractPNL(**kwargs):
         data_dict= remove_extra_keys(data_dict =data_dict)
         return data_dict,kwargs['unit']
 
-    except (RuntimeError, TypeError, NameError):
+
+    except Exception as e:
         import traceback
-        print (traceback.format_exc())
+        logger.debug("error in pnl extraction for data:%s " % kwargs)
+        logger.debug(traceback.format_exc())
         return data_dict,kwargs['unit']
 
 def get_modigy_values(**kwargs):
-    if len(kwargs['date_obj']) == 3:
-        if all(kwargs['date_obj'][i] >= kwargs['date_obj'][i + 1] for i in range(len(kwargs['date_obj']) - 1)):
+    try:
+        if len(kwargs['date_obj']) == 3:
+            if all(kwargs['date_obj'][i] >= kwargs['date_obj'][i + 1] for i in range(len(kwargs['date_obj']) - 1)):
 
-            modify_val = list(zip(kwargs['date_obj'][:-1], kwargs['val'][:-1]))
+                modify_val = list(zip(kwargs['date_obj'][:-1], kwargs['val'][:-1]))
+            else:
+                modify_val= list(zip(kwargs['date_obj'][1:], kwargs['val'][1:]))
         else:
-            modify_val= list(zip(kwargs['date_obj'][1:], kwargs['val'][1:]))
-    else:
-        modify_val = list(zip(kwargs['date_obj'], kwargs['val']))
+            modify_val = list(zip(kwargs['date_obj'], kwargs['val']))
 
-    return modify_val
+        return modify_val
+    except Exception as e:
+        import traceback
+        logger.debug("error for :%s " % kwargs)
+        logger.debug(traceback.format_exc())
+        return e

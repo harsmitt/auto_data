@@ -10,6 +10,7 @@ from .ignore_index import i_index#,ignore_qtr_index
 from .mapping_data import qtr_combinations
 
 from DataExtraction.notes_section.get_notes import get_notes_data
+from DataExtraction.logger_config import logger
     #,qtr_combinations
 '''
 This Function is mainly used to extract Page.
@@ -60,7 +61,7 @@ def scrap_pdf_page(**kwargs):
                     #find if the page is okk to extract or not
                     if any(word in line.lower() for word in
                                           ['results of','supplementary financial data','summary of','overview of','summarizes','summarized as' 'comparison',
-                                           'dollers','selected financial data']) and not 'special' in kwargs:
+                                           'dollers','selected financial data','standalone','statistics','directors']) and not 'special' in kwargs:
                         return balance_sheet_data,pnl_data
 
                     #if any keyword exists in ignore_index_list
@@ -88,6 +89,7 @@ def scrap_pdf_page(**kwargs):
 
 
                 if date_obj and len(date_obj)<5:
+
                     if not balance_sheet_data and kwargs['pdf_page']=='bsheet':
                         for pdf in range(pdf_page_next):
                             data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
@@ -99,14 +101,15 @@ def scrap_pdf_page(**kwargs):
                                                            pdf_type=kwargs['pdf_type'],data_dict=data_dict,
                                                        page=pdf_page+1, path=kwargs['path'],pdf_page=kwargs['pdf_page'],
                                                        file=kwargs['file'], notes_sec=kwargs['notes'])
+
+                                print (data_dict)
                                 data_dict = remove_extra_keys(data_dict=data_dict)
                             except Exception as e:
                                 import traceback
-                                print (traceback.format_exc())
-                                print("notes section me error aa gya" + str(e))
+                                logger.debug("error in notes section %s " % str(e))
+                                logger.debug(traceback.format_exc())
                                 pass
                             print (data_dict)
-                            import pdb;pdb.set_trace()
                             #This function actually creates company object and all the financial parameters
                             img_path, c_name = Create_blank_sheet(year_end=kwargs['year_end'],c_name=kwargs['c_name'], path=kwargs['path'], page=pdf_page,dit_name=kwargs['dit_name'])
 
@@ -134,7 +137,10 @@ def scrap_pdf_page(**kwargs):
                                                        path=kwargs['path'], file=kwargs['file'],
                                                        pdf_page=kwargs['pdf_page'], notes_sec=kwargs['notes'])
                                 data_dict = remove_extra_keys(data_dict=data_dict)
-                            except:
+                            except Exception as e:
+                                import traceback
+                                logger.debug("error in notes section %s " % str(e))
+                                logger.debug(traceback.format_exc())
                                 pass
 
                             img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],dit_name=kwargs['dit_name'],
@@ -158,4 +164,7 @@ def scrap_pdf_page(**kwargs):
     except Exception as e:
         import traceback
         print (traceback.format_exc())
+        logger.debug("error in scrap pdf page  %s " % e)
+        logger.debug(traceback.format_exc())
+
         return e

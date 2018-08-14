@@ -5,6 +5,8 @@ from .basic_functions import *
 from .mapping_data import k_list,stop_words
 from collections import OrderedDict
 # from BalanceSheet.models import *
+from DataExtraction.logger_config import logger
+
 
 
 
@@ -20,10 +22,6 @@ output: return text format data or an exception
 def get_page_content(seprator=' ',**kwargs):
 
     try:
-        # logger1.info("Entering in get_page_content")
-        # logger1.info(kwargs)
-
-
         pdfData = kwargs['file'].read()
         tf = tempfile.NamedTemporaryFile()
         tf.write(pdfData)
@@ -44,14 +42,13 @@ def get_page_content(seprator=' ',**kwargs):
 
         return data
     except Exception as e:
-        # logger1.error("error in get_page_content %s" %e )
         import traceback
-        # logger1.error(traceback.format_exc())
+        logger.debug("error in get data %s " % e)
+        logger.debug(traceback.format_exc())
         return e
 
 def check_content(**kwargs):
     try:
-        # logger1.info("Entering in check_content")
         k_words = [get_alpha(i.lower(),remove_space=True,remove_s=True) for i in k_list[kwargs['p_type']]]
         data =  kwargs['data'] if type(kwargs['data'])==list else [kwargs['data']]
         for l_num,line in enumerate(data):
@@ -60,8 +57,7 @@ def check_content(**kwargs):
             elif get_alpha(line.lower(),remove_space=True,remove_s=True) in k_words and not 'check_statement' in kwargs :
                 return True
             else:
-                # ' '.join([word for word in i.lower().split() if word not in stop_words ])
-                for i in k_list[kwargs['p_type']] :
+               for i in k_list[kwargs['p_type']] :
                     if (all((loop in get_alpha(line,remove_space=True,remove_s=True)) or (loop in get_alpha(line,remove_space=True))\
                            for loop in [word for word in i.lower().split() if word not in stop_words ])) or \
                        (all((loop in get_alpha(' '.join(data), remove_space=True, remove_s=True)) or (loop in get_alpha(' '.join(data), remove_space=True)) \
@@ -70,19 +66,11 @@ def check_content(**kwargs):
         return False
     except Exception as e:
         import traceback
-        # logger1.error("error in check_content %s " % e)
-        # logger1.error(traceback.format_exc())
+        logger.debug("error for values %s " % kwargs['data'])
+        logger.debug(traceback.format_exc())
         return e
 
 
-# def get_key_words_list(k_name):
-#     import itertools
-#     l_key = len(k_name.split())
-#     ignore_stop_word = ' '.join([word for word in get_alpha(k_name,remove_s=True).split() if word not in stop_words])
-#     len_key = len(ignore_stop_word.split())
-#     k_name_list = list(itertools.permutations(k_name.split(),l_key ))+list(itertools.permutations(ignore_stop_word.split(), len_key))
-#     k_name_list = [' '.join(word) for word in k_name_list]
-#     return k_name_list
 
 '''
 We need this function when we are iterating the complete pdf.
@@ -106,8 +94,6 @@ Output :Return True/False
 '''
 def match_re_list(**kwargs):
     try:
-        # logger1.info("Entering in match_re_list")
-
         from .all_regex import check_1,check_2
         data = get_page_content(seprator='@@', page=kwargs['page'], path=kwargs['path'], file=kwargs['f_obj'])
         keywords_list = k_list[kwargs['match_re']]
@@ -139,8 +125,8 @@ def match_re_list(**kwargs):
         return data,False
     except Exception as e:
         import traceback
-        # logger1.error("error in match_re_list %s" %e)
-        # logger1.error(traceback.format_exc())
+        logger.debug("error for values %s " % kwargs['data'])
+        logger.debug(traceback.format_exc())
         return e
 
 '''
@@ -149,7 +135,6 @@ inner function for match_re_list it will check the next minimum 5 lines should b
 '''
 def check_in_re(**kwargs):
     try:
-        # logger1.info("Entering in check_in_re")
         if any(word in (' '.join(kwargs['data']).lower()) for word in ['supplementary financial data','summary of','summarized as','overview of','comparison between','financial summary','financial comparison']):
             return False
 
@@ -157,11 +142,10 @@ def check_in_re(**kwargs):
         if len(x) > 5:
             return True
 
-
     except Exception as e:
         import traceback
-        # logger1.error("error in check in re %s " %e)
-        # logger1.error(traceback.format_exc())
+        logger.debug("error for values %s " % kwargs['data'])
+        logger.debug(traceback.format_exc())
         return e
 
 
@@ -179,13 +163,12 @@ def remove_extra_keys(**kwargs):
         return data_dict
     except Exception as e:
         import traceback
-        # logger1.error("error in remove_extra_keys %s " %e)
-        # logger1.error(traceback.format_exc())
+        logger.debug("error in remove_extra_keys for data :%s " % data_dict)
+        logger.debug(traceback.format_exc())
         return e
 
 def valid_yq_name(date_obj,y_end,pdf_type=None,p_type=None,):
     try:
-        # logger1.info("Entering in valid_yq_name")
         date_dict = year_date(year_end=y_end) if pdf_type =='year' else qtr_date(year_end=y_end)
         for key,val in date_dict.items():
             if pdf_type=='year':
@@ -198,16 +181,16 @@ def valid_yq_name(date_obj,y_end,pdf_type=None,p_type=None,):
                     val = val
                     return val
 
+
     except Exception as e:
         import traceback
-        # logger1.debug("error in valid_yq_name %s" %e)
-        # logger1.debug(traceback.format_exc())
+        logger.debug("error in remove_extra_keys for data :%s " % data_dict)
+        logger.debug(traceback.format_exc())
         return e
 
 #sort the years list in descending order to get always latest data of the year.
 def y_sorting(year_list):
     try:
-        # logger1.info("Entering in Y_sorting")
         list1= [int(i.split('.')[0]) for i in year_list]
         for loop1 in range(0,len(list1)):
             for i,j in enumerate(list1):
@@ -219,8 +202,8 @@ def y_sorting(year_list):
         return list1
     except Exception as e:
         import traceback
-        # logger1.error("error in y_sorting %s" % e)
-        # logger1.error(traceback.format_exc())
+        logger.debug("error  for data :%s " % year_list)
+        logger.debug(traceback.format_exc())
         return e
 
 #sort the qtrs in descending order to get always latest data of qtr.
@@ -238,8 +221,8 @@ def q_sorting(q_list):
         return name_list
     except Exception as e:
         import traceback
-        # logger1.error("error in q_sorting %s" % e)
-        # logger1.error(traceback.format_exc())
+        logger.debug("error for data :%s " % q_list)
+        logger.debug(traceback.format_exc())
         return e
 
 #get qtr_dates mention in pdf page.
@@ -294,18 +277,20 @@ def get_pdf_quarter(**kwargs):
             for i in list(zip(q_list, y_list)):
                 q_date =' '.join(i)
                 last_month, next_month = next_last_month(q_date)
-                # if q_date.lower() in qtr_list or last_month.lower() in qtr_list or next_month.lower() in qtr_list:
                 kwargs['date_obj'].append(q_date)
 
         return kwargs['date_obj']
 
+
     except Exception as e:
+        import traceback
+        logger.debug("error in fetching quarter date :%s " % kwargs)
+        logger.debug(traceback.format_exc())
         return e
 
 def calculations(old,new):
     try:
         year, values = map(list, zip(*old))
-        # old_values = list(map(lambda num : get_digit(num),list(filter(lambda x: num_there(x),values))))
         new = list(map(lambda num: get_digit(num), list(filter(lambda x: num_there(x), new))))
         new_values = [a + b for a, b in zip(values, new)]
         return new_values
@@ -339,6 +324,9 @@ def get_date(**kwargs):
 
         return kwargs['date_obj']
     except Exception as e:
+        import traceback
+        logger.debug("error in fetching year date  :%s " % kwargs)
+        logger.debug(traceback.format_exc())
         return e
 
 def check_date_obj(**kwargs):
@@ -364,4 +352,7 @@ def check_date_obj(**kwargs):
                 kwargs['date_line'] = kwargs['l_num'] + 1
         return  kwargs['date_obj'],kwargs['date_line']
     except Exception as e:
+        import traceback
+        logger.debug("error for data :%s " % kwargs)
+        logger.debug(traceback.format_exc())
         return e

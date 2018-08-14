@@ -3,6 +3,9 @@ from DataExtraction.common_files.match_keywords import *
 from DataExtraction.common_files.save_related_functions import *
 
 import copy
+from DataExtraction.logger_config import logger
+
+
 
 def save_pnl(**kwargs):
     try:
@@ -16,7 +19,7 @@ def save_pnl(**kwargs):
             if type(data[keyword])!=OrderedDict :
                 if 'total' not in keyword:
                     obj_list = copy.deepcopy(pnl_objs.sector_dict[kwargs['sector']])
-                    obj = match_with_formula_cell(pdf_obj=keyword)
+                    obj = match_with_formula_cell(pdf_obj=keyword,save_for='Profit and Loss')
                     if not obj:
                         obj = match_with_db(extraction =kwargs['extraction'],pdf_obj=keyword,
                                             db_key_list= obj_list,year_end=kwargs['year_end'],
@@ -59,7 +62,7 @@ def save_pnl(**kwargs):
                         for sec in section_list:
                             objs = copy.deepcopy(pnl_objs.sector_section[kwargs['sector']][sec])
 
-                            obj = match_with_formula_cell(pdf_obj=key_obj)
+                            obj = match_with_formula_cell(pdf_obj=key_obj,save_for='Profit and Loss')
                             if not obj:
                                 obj = match_with_db(extraction =kwargs['extraction'],pdf_obj=key_obj, db_key_list=objs,
                                                     year_end=kwargs['year_end'],p_type= 'pnl',
@@ -88,18 +91,9 @@ def save_pnl(**kwargs):
                                           other_key=other_key,model=CompanyPNLData)
 
         return True
-    except:
+    except Exception as e:
         import traceback
-        print(traceback.format_exc())
-        return False
+        logger.debug("error in save pnl for data :%s " % kwargs)
+        logger.debug(traceback.format_exc())
+        return e
 
-def match_with_formula_cell(**kwargs):
-    import itertools
-    pnl_sec = Section.objects.filter(i_related = 'Profit and Loss')
-    for s_obj in pnl_sec:
-        for syn in s_obj.i_synonyms.split('##'):
-            x2 = list(itertools.permutations(syn.split(), len(syn.split())))
-            obj_per = [' '.join(word) for word in x2]
-            if kwargs['pdf_obj'] in obj_per:
-                return True
-    return False

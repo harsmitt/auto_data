@@ -162,13 +162,14 @@ function SaveMultipleRow(elm)
     }
 
     data =JSON.stringify(exist_data)
+    datadict = {'type':type,'section':section,'c_id':company_id,'subsection':subsection,'new_data':data,'s2section':s2section}
     console.log(exist_data)
     if (confirm('Are you sure you want to save section: '+section  /*toTitleCase(item)*/  +' ?')) {
         jQuery.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/automation/save_multiple/',
-            data: {'type':type,'section':section,'c_id':company_id,'subsection':subsection,'new_data':data,'s2section':s2section},
-            contentType: "text/html; charset=utf-8",
+            data: datadict,
+            dataTypes: "text",
             success: function(data) {
                 setTimeout(function()
                   {
@@ -238,13 +239,16 @@ function DeleteMultipleRow(elm)
     }
 
     data =JSON.stringify(exist_data)
+    datadict = {'type':type,'section':section,'c_id':company_id,'subsection':subsection,'delete_data':data,'s2section':s2section}
     console.log(exist_data)
     if (confirm('Are you sure you want to Delete from section: '+section  /*toTitleCase(item)*/  +' ?')) {
         jQuery.ajax({
-            type: 'GET',
+
+            type: 'POST',
             url: '/automation/delete_multiple/',
-            data: {'type':type,'section':section,'c_id':company_id,'subsection':subsection,'delete_data':data,'s2section':s2section},
-            contentType: "text/html; charset=utf-8",
+            data: datadict,
+            dataTypes: "text",
+
             success: function(data) {
                 setTimeout(function()
                   {
@@ -255,9 +259,7 @@ function DeleteMultipleRow(elm)
         });   // Ajax Call
     }
     else{
-	    $(".loader-back").hide();
-	//console.log('closed');
-        //location.reload();
+    	    $(".loader-back").hide();
     }
 
 
@@ -320,13 +322,15 @@ function swap_multiple(elm)
     }
 
     data =JSON.stringify(exist_data)
+    datadict={'type':type,'section':section,'c_id':company_id,'subsection':subsection,'s_data':data,'item':item,'s2section':s2section}
     console.log(exist_data)
     if (confirm('Are you sure you want to Delete from section: '+section  /*toTitleCase(item)*/  +' ?')) {
         jQuery.ajax({
-            type: 'GET',
+
+            type: 'POST',
             url: '/automation/swap_multiple/',
-            data: {'type':type,'section':section,'c_id':company_id,'subsection':subsection,'s_data':data,'item':item,'s2section':s2section},
-            contentType: "text/html; charset=utf-8",
+            data: datadict,
+            dataTypes: "text",
             success: function(data) {
                 setTimeout(function()
                   {
@@ -435,11 +439,12 @@ function divide(elm)
 function add_browse(elm)
 {
     console.log($(elm))
+    yend = $('#year_end')[0].value
 
     jQuery.ajax({
             type: 'GET',
             url: '/automation/get_list/',
-            data: {"type":$(elm)[0].value},
+            data: {"type":$(elm)[0].value,'yend':yend},
             contentType: "text/html; charset=utf-8",
             success: function(data) {
                 console.log(data)

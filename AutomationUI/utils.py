@@ -167,7 +167,13 @@ def update_comp(request):
                 for i in data[sec_name]:
                     for key, val in i.items():
                         if type(val) != list and key == g_data['item'][0]:
-                            val.update({g_data['existing_sec'][0]: remove_item})
+                            if g_data['existing_sec'][0] in list(i[key].keys()):
+                                for key1,key2 in i[key].items():
+                                    if key1 ==g_data['existing_sec'][0]:
+                                        val[key1].update(remove_item)
+                            else:
+                                print (i)
+                                val.update({g_data['existing_sec'][0]: remove_item})
                             i['update']=True
                             add_in_item =True
                             break;
@@ -175,7 +181,12 @@ def update_comp(request):
                             for s2sec in val:
                                 for s2, s2_o in s2sec.items():
                                     if s2 == g_data['item'][0]:
-                                        s2_o.update({g_data['existing_sec'][0]: remove_item})
+                                        if g_data['existing_sec'][0] in list(s2sec[s2].keys()):
+                                            for key1, key2 in s2sec[s2].items():
+                                                if key1 == g_data['existing_sec'][0]:
+                                                    s2_o[key1].update(remove_item)
+                                        else:
+                                            s2_o.update({g_data['existing_sec'][0]: remove_item})
                                         i['update']=True
                                         add_in_item = True
                                         # remove_item =s2sec[s2].pop(g_data['existing_sec'][0])
@@ -209,10 +220,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 def get_list(request):
     if request.GET['type']=="year":
-        year_list = list(year_date("December").values())
+        year_list = list(year_date(request.GET['yend']).values())
         years = '##'.join(map(lambda y : str(y),year_list))
         return HttpResponse(years)
     else:
-        q_list =list(qtr_date("December").values())
+        q_list =list(qtr_date(request.GET['yend']).values())
         q_data = '##'.join(map(lambda y : str(y),q_list))
         return HttpResponse(q_data)

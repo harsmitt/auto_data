@@ -10,20 +10,20 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def delete_multiple(request):
-    g_data = OrderedDict(request.GET)
-    d_data = json.loads(request.GET['delete_data'])
+    g_data = OrderedDict(request.POST)
+    d_data = json.loads(request.POST['delete_data'])
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
     req_type = 'pnl' if g_data['type'] == 'pnl' else 'bsheet'
-    if cache.has_key(request.GET['c_id']):
-        cache_dict = cache.get(request.GET['c_id'])
+    if cache.has_key(request.POST['c_id']):
+        cache_dict = cache.get(request.POST['c_id'])
         if req_type in cache_dict:
             data_list = cache_dict[req_type]
             date_list = cache_dict['date_list']
             loop_key = cache_dict['loop_key']
         else:
-            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     else:
-        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
 
     for item in d_data:
         deleted_row = False
@@ -37,7 +37,7 @@ def delete_multiple(request):
                                     if d_key == item:
                                         res = add_delete_row(row=i[key], section=g_data['section'], item=item,
                                                              subsection=g_data['subsection'], type=req_type, s2sec=None,
-                                                             c_id=request.GET['c_id'], loop_key=loop_key)
+                                                             c_id=request.POST['c_id'], loop_key=loop_key)
 
                                         i[key].pop(item)
                                         i['update'] = True
@@ -47,12 +47,12 @@ def delete_multiple(request):
                                 for s2sec in val:
                                     for s2, s2_o in s2sec.items():
                                         if s2 == g_data['s2section']:
-                                            if not 'action' in request.GET:
+                                            if not 'action' in request.POST:
                                                 res = add_delete_row(row=s2sec[s2], section=g_data['section'],
                                                                      item = item,
                                                                      subsection=g_data['subsection'], type=req_type,
                                                                      s2sec=g_data['s2section'],
-                                                                     c_id=request.GET['c_id'], loop_key=loop_key)
+                                                                     c_id=request.POST['c_id'], loop_key=loop_key)
 
                                             s2sec[s2].pop(item)
                                             i['update'] = True
@@ -64,9 +64,9 @@ def delete_multiple(request):
             elif deleted_row:
                 break;
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
-    action_type = 'undo' if 'action' in request.GET else 'delete'
+    action_type = 'undo' if 'action' in request.POST else 'delete'
     if data:
-        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, action_type=action_type,
+        data_list, date_list, loop_key = save_data(data[0], request.POST['c_id'], req_type=r_type, action_type=action_type,
                                                    p_type=req_type)
     else:
         pass
@@ -78,21 +78,20 @@ def delete_multiple(request):
 
 @csrf_exempt
 def save_multiple(request):
-    n_data = json.loads(request.GET['new_data'])
-    g_data = OrderedDict(request.GET)
+    n_data = json.loads(request.POST['new_data'])
+    g_data = OrderedDict(request.POST)
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
-
     req_type = 'pnl' if g_data['type'] == 'pnl' else 'bsheet'
-    if cache.has_key(request.GET['c_id']):
-        cache_dict = cache.get(request.GET['c_id'])
+    if cache.has_key(request.POST['c_id']):
+        cache_dict = cache.get(request.POST['c_id'])
         if req_type in cache_dict:
             data_list = cache_dict[req_type]
             date_list = cache_dict['date_list']
             loop_key = cache_dict['loop_key']
         else:
-            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     else:
-        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     data = data_list
     for row in n_data:
         added_row = False
@@ -122,7 +121,7 @@ def save_multiple(request):
                 break;
     data = [i for i in data_list if g_data['section'] in list(i.keys())]
     if data:
-        data_list, date_list, loop_key = save_data(data[0], request.GET['c_id'], req_type=r_type, p_type=req_type)
+        data_list, date_list, loop_key = save_data(data[0], request.POST['c_id'], req_type=r_type, p_type=req_type,action_type="save")
     else:
         pass
     # data = save_data(data, request.GET['c_id'],g_data['type'][0])
@@ -134,26 +133,26 @@ def save_multiple(request):
 
 @csrf_exempt
 def swap_multiple(request):
-    g_data = OrderedDict(request.GET)
+    g_data = OrderedDict(request.POST)
     r_type = 'Profit and Loss' if g_data['type'] == 'pnl' else 'Balance Sheet'
     section = Section.objects.filter(i_related=r_type)
     subsection = SubSection.objects.filter(section__in=section)
     s2sec = S2Section.objects.filter(subsection__in=subsection)
     req_type = 'pnl' if g_data['type'] == 'pnl' else 'bsheet'
-    if cache.has_key(request.GET['c_id']):
-        cache_dict = cache.get(request.GET['c_id'])
+    if cache.has_key(request.POST['c_id']):
+        cache_dict = cache.get(request.POST['c_id'])
         if req_type in cache_dict:
             data_list = cache_dict[req_type]
             date_list = cache_dict['date_list']
             loop_key = cache_dict['loop_key']
         else:
-            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+            data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     else:
-        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.GET['c_id'])
+        data_list, date_list, loop_key = get_data(req_type=req_type, section_type=r_type, c_id=request.POST['c_id'])
     sub_list = list(subsection.filter(s2section=None).values_list('item', flat=True))
     s2_list = list(s2sec.values_list('item', flat=True))
     data = data_list
-    s_data = json.loads(request.GET['s_data'])
+    s_data = json.loads(request.POST['s_data'])
 
     for item in s_data:
         remove_item = ''
@@ -180,7 +179,7 @@ def swap_multiple(request):
                                                     break;
                                     if remove_item: break;
                         if remove_item: break;
-                    data_list, date_list, loop_key = save_data(data, request.GET['c_id'], req_type=r_type,
+                    data_list, date_list, loop_key = save_data(data, request.POST['c_id'], req_type=r_type,
                                                                action_type='update', p_type=req_type)
                     if remove_item: break;
         if remove_item and not add_in_item:
@@ -213,7 +212,7 @@ def swap_multiple(request):
                                             break;
                                     if add_in_item: break;
                         if add_in_item: break;
-                    data_list, date_list, loop_key = save_data(data, request.GET['c_id'], req_type=r_type,
+                    data_list, date_list, loop_key = save_data(data, request.POST['c_id'], req_type=r_type,
                                                                action_type='update', p_type=req_type)
                     if add_in_item: break;
 

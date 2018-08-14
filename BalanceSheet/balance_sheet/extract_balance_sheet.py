@@ -7,6 +7,7 @@ import itertools
 
 from .without_sections import without_sections
 from DataExtraction.common_files.utils import get_page_content,remove_extra_keys
+from DataExtraction.logger_config import logger
 
 pass_list = ['LIABILITIES AND', ]
 def ExtractBalnceSheet(**kwargs):
@@ -82,8 +83,8 @@ def ExtractBalnceSheet(**kwargs):
 
                 elif (len(re.split('  +',l_check)) < 2) or \
                         (len(re.split('  +',l_check)) == 2 and not num_there((re.split('  +',l_check)[-1]))) or\
-                        (len(re.split('  +', l_check)) ==2)\
-                        or any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k):
+                        (len(re.split('  +', l_check)) ==2):
+                        # or any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +',line)[0]) in k):
                     # pass_list = ['LIABILITIES AND', ]
 
                     # Add main key in data dict
@@ -264,23 +265,29 @@ def remove_ignore_index(values,last_notes_no,**kwargs):
         return values,last_notes_no
     except Exception as e:
         import traceback
-        print (traceback.format_exc())
+        logger.debug("error in balance sheet extarction %s " % str(e))
+        logger.debug(traceback.format_exc())
         return e
 
 
 def check_pattern(**kwargs):
-    line0 = kwargs['data'][0]
-    next_line1 = kwargs['data'][1]
-    next_line2 = kwargs['data'][2]
-    next_line3 = kwargs['data'][3]
-    next_line4 = kwargs['data'][4]
-    for line in [line0,next_line1,next_line2,next_line3,next_line4]:
-        if any(i.lower() in line.lower() for i in pass_list) and not num_there(line):
-            pass;
-        elif any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +', line)[0]) in k):
-            return kwargs['data_dict'] , False
-    # else:
-    data_dict = without_sections(data = kwargs['data'],data_dict = kwargs['data_dict'],mapping_dict=mapping_dict
-                                 ,ignore_index=kwargs['ignore_index'],date_obj = kwargs['date_obj'])
-    return data_dict,True
+    try:
+        line0 = kwargs['data'][0]
+        next_line1 = kwargs['data'][1]
+        next_line2 = kwargs['data'][2]
+        next_line3 = kwargs['data'][3]
+        next_line4 = kwargs['data'][4]
+        for line in [line0,next_line1,next_line2,next_line3,next_line4]:
+            if any(i.lower() in line.lower() for i in pass_list) and not num_there(line):
+                pass;
+            elif any(k for k, v in mapping_dict.key_mapping_dict.items() if get_alpha(re.split('  +', line)[0]) in k):
+                return kwargs['data_dict'] , False
+        # else:
+        data_dict = without_sections(data = kwargs['data'],data_dict = kwargs['data_dict'],mapping_dict=mapping_dict
+                                     ,ignore_index=kwargs['ignore_index'],date_obj = kwargs['date_obj'])
+        return data_dict,True
+    except Exception as e:
+        logger.debug("error in extraction of balance sheet %s " % str(e))
+        logger.debug(traceback.format_exc())
+        pass
 

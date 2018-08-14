@@ -50,23 +50,30 @@ def get_notes_pages(**kwargs):
             notes_section_dict['notes'] = OrderedDict({'f_num': kwargs['page']+3, 'l_num': end})
 
         return notes_section_dict
-    except:
+    except Exception as e:
+        logger.debug("error in notes section %s " % str(e))
+        logger.debug(traceback.format_exc())
         pass
 
 
 def find_breakup_bsheet(**kwargs):
-    key_list =[]
-    pdf_page_keys = list(kwargs['data_dict'].keys())
-    for key in pdf_page_keys:
-        if type(kwargs['data_dict'][key])==OrderedDict:
-            for i_key in kwargs['data_dict'][key]:
-                key_list.append(i_key)
-        elif key:
-            key_list.append(key)
-        else:
-            pass
-    key_list = [i for i in key_list if i]
-    return key_list
+    try:
+        key_list =[]
+        pdf_page_keys = list(kwargs['data_dict'].keys())
+        for key in pdf_page_keys:
+            if type(kwargs['data_dict'][key])==OrderedDict:
+                for i_key in kwargs['data_dict'][key]:
+                    key_list.append(i_key)
+            elif key:
+                key_list.append(key)
+            else:
+                pass
+        key_list = [i for i in key_list if i]
+        return key_list
+
+    except Exception as e:
+        logger.debug("error in notes section %s " % str(e))
+        logger.debug(traceback.format_exc())
 
 def get_notes_data(**kwargs):
     try:
@@ -87,6 +94,6 @@ def get_notes_data(**kwargs):
         return data_dict
     except Exception as e:
         import traceback
-        print (traceback.format_exc())
-        print("error hai get notes +" ,str(e))
+        logger.debug("error in get_notes %s " % str(e))
+        logger.debug(traceback.format_exc())
         return kwargs['data_dict']

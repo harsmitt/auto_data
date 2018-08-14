@@ -6,6 +6,7 @@ from DataExtraction.common_files.all_regex import *
 from DataExtraction.common_files.utils import *
 from DataExtraction.table_content.get_table_content import table_content
 from DataExtraction.common_files.extract_page_data import scrap_pdf_page
+from .logger_config import logger
 
 def get_start_page(**kwargs):
     f_num=1
@@ -85,8 +86,8 @@ def all_pages(**kwargs):
 
     except Exception as e:
         import traceback
-        # logger.error("error in all pages %s " %e)
-        # logger.error(traceback.format_exc())
+        logger.debug("error in all pages %s " %e)
+        logger.debug(traceback.format_exc())
         return e
 
 '''
@@ -98,13 +99,13 @@ Input: sector,year_end,pdf_type,path,page_detail,company_name,file_object,pdf,ov
 Output: return True/False.
 
 '''
+
 def update_financial_statements(**kwargs):
     try:
         bs_data = False
         status = OrderedDict()
-
         page_detail = kwargs['page_detail']
-        # logger.info('entering in update_finanical')
+
         ##means i have exact page number from table content
         if 'statement' not in page_detail['statement_section']:
             if all(key in page_detail['statement_section'] for key in ['bsheet','pnl']):
@@ -114,8 +115,6 @@ def update_financial_statements(**kwargs):
                         notes_pages = page_detail['notes_section'] if 'notes_section' in page_detail else 0
 
                         # calling scrap pdf page to extract that page
-                        # logger.ingo("calleg scrap page for %s") %(statement_key)
-
                         bs_data = scrap_pdf_page(sector =kwargs['sector'],year_end=kwargs['year_end'],p_num=p_num,
                                                  path=kwargs['path'],override = kwargs['override'],
                                                  pdf_page= statement_key,dit_name=kwargs['dit_name'],
@@ -156,8 +155,8 @@ def update_financial_statements(**kwargs):
     except Exception as e:
         import traceback
         print (traceback.format_exc())
-        # logger.error('error in update financial statement %s'  % e)
-        # logger.error(traceback.format_exc())
+        logger.debug('error in update financial statement %s'  % e)
+        logger.debug(traceback.format_exc())
         return e
 '''
 This will be main function for pdf processing, passing pdf then get its table content
@@ -196,6 +195,8 @@ def get_data(**kwargs):
             except Exception as e:
                 import traceback
                 print (traceback.format_exc())
+                logger.debug("Error is %s" % e)
+                logger.debug(traceback.format_exc())
 
                 return e
         return res
@@ -203,15 +204,15 @@ def get_data(**kwargs):
     except Exception as e:
         import traceback
         print (traceback.format_exc())
-        # logger.error("Error is %s" % e)
-        # logger.error(traceback.format_exc())
+        logger.debug("Error is %s" % e)
+        logger.debug(traceback.format_exc())
         return e
 
 
 
 def LoopPdfDir(**kwargs):
-    new_path = '/home/mahima/+Akshat/Other Countries/Emperor Entertainment Hotel Limited-Hong Kong SAR China/source file/AR/AR 2010.pdf'
-    result = get_data(sector="Aviation Services", path=new_path,override=[],dit_name='Sugarcane Farming & Processing', company_name="china test", pdf_type='year', year_end="December")
+    new_path = '/home/mahima/Phase 3/Data Automation/Vera Bradley/AR 2018.pdf'
+    result = get_data(sector="Aviation Services", path=new_path,override=[],dit_name='Sugarcane Farming & Processing', company_name="ananda1", pdf_type='year', year_end="December")
     print (result)
     # fix_path= '/home/administrator/different patterns/MahimaUSfiling/' if not kwargs['fix_path'] else kwargs['fix_path']
     # company_list = kwargs['company_list']
@@ -266,7 +267,7 @@ def pdf_detail(**kwargs):
                         # print (bs_data)
 
                     elif key == 'pnl_num':
-                        # logger.info("specific Balance Sheet Page number")
+                        logger.info("specific Balance Sheet Page number")
                         result = scrap_pdf_page(sector=kwargs['sector'], year_end=kwargs['year_end'],
                                                 p_num=pnum,p_extraction=True,
                                                 path=kwargs['file'], override=kwargs['override'],
@@ -286,8 +287,8 @@ def pdf_detail(**kwargs):
         return result
     except Exception as e:
         import traceback
-        # logger.error("error in pdf detail %s " % e)
-        # logger.error(traceback.format_exc())
+        logger.debug("error in pdf detail %s " % e)
+        logger.debug(traceback.format_exc())
         return e
 
 def test(**kwargs):

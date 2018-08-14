@@ -36,7 +36,7 @@ pnl_row_mapping = {'Revenue':14, 'Cost of Revenue': 19,'Other Operating Income':
 
 
 def download_pdf(request):
-    wb = openpyxl.load_workbook('/home/DataAutomation/Ditmt_template/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
+    wb = openpyxl.load_workbook('/home/mahima/Desktop/DataAutomation/Ditmt_template/DITMT-13010101.6-Air Conditioning Freezing  Heating Equipment Manufacturing..QC2.xlsx')
     sheet = wb.get_sheet_by_name('BasicInfo')
     for i in range(1,18):
         sheet['C'+str(i)].value=''

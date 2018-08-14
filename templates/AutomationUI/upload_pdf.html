@@ -143,13 +143,11 @@
 
                         <div class="col-sm-6">
                             <h5>
-                                {%for res in status %}
-                                    {%for key,val in res.items%}
+                                    {%for key,val in return_dict.items%}
 
                                          <li><span >{{key}} :</span> <span style="color:Red">{{val}}</span></li>
 
                                     {%endfor%}
-                                {%endfor%}
                             </h5>
 
                         </div>

@@ -4,12 +4,16 @@ from PNL.models import *
 
 
 class MappingDict(object):
+
     key_mapping_dict = {('assets', 'current assets'): 'current assets',
                     ( 'current liabilities','liabilities','total assets','liabilities and equity','current and accrued liabilities'): 'current liabilities',
                     ('total current assets', 'non current assets', 'long term assets'): 'non current assets',
                     ('total current liabilities', 'long term liabilities',
                      'non current liabilities'): 'non current liabilities',
-                    ('total liabilities','capitalization and liabilities', 'equity and liabilities','shareholders equity','capital and reserves', 'equity','stockholders equity','total non current liabilities','total long term liabilities','commitments and contingencies'): 'stockholders equity'}
+                    ('total liabilities','capitalization and liabilities',
+                     'equity and liabilities','shareholders equity','capital and reserves',
+                     'equity','stockholders equity','total non current liabilities',
+                     'total long term liabilities','commitments and contingencies'): 'stockholders equity'}
 
 
     other_mapping_dict = {'current assets': {'other_asset':'Other Current Assets (not listed above)',
@@ -23,8 +27,9 @@ class MappingDict(object):
                   'stockholders equity': {'other_asset':'Other Equity', 'deduction':'Other Equity Deduction'}
                   }
 
-    pnl_mapping_dict = {('Net revenue','Revenue','Net sales','revenues from operations','operating revenues'):'Revenue',
-                        ('cost of sales','cost of revenue'):'Cost of Revenue',
+    pnl_mapping_dict = {('Net revenue','Revenue','Net sales','revenues from operations',
+                         'operating revenues','Turnover'):'Revenue',
+                        ('cost of sales','cost of revenue','cost of goods sold'):'Cost of Revenue',
                         ('Operating expenses','Operating cost'):'Operating Expenses',
                         ('operating income', 'other income'): 'Other Operating Income',
                         ('selling, general and administrative expenses','selling and general expenses'):'selling and general',
@@ -148,6 +153,7 @@ class PNLMapping(object):
                 'section', 'id')
 
             sector_section[i.sector_name].update({'selling and general': list(sell_gen)})
+    print ("done mapping")
 
 
 bs_objs = ObjectMapping()
@@ -158,13 +164,16 @@ mapping_dict = MappingDict()
 
 toc =['table of content','index','content','page no']
 
-b_keywords = ['balance sheet','financial position','condensed consolidated balance sheet',
-              'consolidated balance sheet','consolidated statement of financial position',
-              'consolidated statement of balance sheet']
+b_keywords = ['balance sheet','financial position']#,'condensed consolidated balance sheet',
+              # 'consolidated balance sheet','consolidated statement of financial position',
+              # 'consolidated statement of balance sheet']
 
-p_keywords = ['consolidated statement of income','consolidated statement of operation','consolidated statements of earnings','consolidated statement of comprehensive loss',
-              'consolidated statement of comprehensive income',
-              'statement of income','statement of operation']
+p_keywords = ['statement of income','statement of operation','statement of profit and loss',
+              # 'consolidated statement of income','consolidated statement of operation',
+              'statements of earnings','statement of comprehensive loss',
+#               'consolidated statement of comprehensive income',
+#               'statement of income','statement of operation'
+              ]
 
 stop_words =  ['of', 'on', 'at', 'a', 'an','to','the','are','from']
 
@@ -181,8 +190,7 @@ qtr_combinations=[('three months ended','six months ended'),('three months ended
                     ('three months ended',), ('3 months ended',), ('13 weeks ended',),('sixteen week ended ',),('16 week ended ',
                     ('twelve weeks ended ',),('12 weeks ended ',),('note'))]
 
-i_list_comb = ['group', 'company', 'note','paren'
-                                          't']#]+qtr_combinations
+i_list_comb = ['group', 'company', 'note','parent']#]+qtr_combinations
 
 balance_sheet_keys = ['current assets','non current assets','current liabilities','non current liabilities','stockholders equity']
 

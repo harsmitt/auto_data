@@ -1,29 +1,35 @@
 from DataExtraction.models import *
 from BalanceSheet.models import *
 from PNL.models import *
+from DataExtraction.logger_config import logger
 
 import os
 import errno
 import re
 from .utils import *
 
-DEFAULT_DATA_PATH = '/home/administrator/DataAutomation/images/'
+from wand.display import display
+from wand.image import Image
+
+DEFAULT_DATA_PATH = '/home/mahima/DataAutomation/images/'
 
 
 def make_directory(company_name):
     # Making the directory to save comapny filings
-    path = os.path.join(DEFAULT_DATA_PATH, company_name.split()[0])
+    try:
+        path = os.path.join(DEFAULT_DATA_PATH, company_name.split()[0])
 
-    if not os.path.exists(path):
-        try:
-            os.makedirs(path)
-        except OSError as exception:
-            if exception.errno != errno.EEXIST:
-                raise
+        if not os.path.exists(path):
+            try:
+                os.makedirs(path)
+            except OSError as exception:
+                if exception.errno != errno.EEXIST:
+                    raise
+    except Exception as e:
+        logger.debug("error in make directory %s " % e)
+        logger.debug(traceback.format_exc())
 
 
-from wand.display import display
-from wand.image import Image
 
 
 def save_image(path, page, company_name):
@@ -40,6 +46,8 @@ def save_image(path, page, company_name):
                 img.save(filename=img_path)
         return img_path
     except Exception as e:
+        logger.debug("error in save_image %s " % e)
+        logger.debug(traceback.format_exc())
         return e
 
 
@@ -59,24 +67,9 @@ def add_quarter(path, page, qtr_dict,c_obj,subsection,section,s2section):
                 q_dict[k] = query1
             return q_dict
     except Exception as e:
+        logger.debug("error in add_quarter %s " % e)
+        logger.debug(traceback.format_exc())
         return e
-#
-#
-# def add_year(path, page, c_name,year_end):
-#     try:
-#         y_dict = {}
-#         year_dict = year_date(year_end)
-#         for k, v in year_dict.items():
-#             key_dict = {'description': '', 'quarter_date': v, 'q1': 0,
-#                         'pdf_page': page,
-#                         'pdf_image_path': path}
-#             query1 = quarter_data(**key_dict)
-#             query1.save()
-#             y_dict[k] = query1
-#         return y_dict
-#     except Exception as e:
-#         return e
-
 
 def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=None,pdf_page = None):
     try:
@@ -103,6 +96,8 @@ def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=No
         return True
 
     except Exception as e:
+        logger.debug("error in add gbc %s " % e)
+        logger.debug(traceback.format_exc())
         return e
 
 def Create_blank_sheet(c_name, path, page,year_end,dit_name):
@@ -136,6 +131,8 @@ def Create_blank_sheet(c_name, path, page,year_end,dit_name):
         return img_path,c_obj.company_name
 
     except Exception as e:
+        logger.debug("error in create balance sheet blank data %s " % e)
+        logger.debug(traceback.format_exc())
         return e
 
 def Create_pnl(c_name,path,page,year_end,dit_name):
@@ -172,4 +169,6 @@ def Create_pnl(c_name,path,page,year_end,dit_name):
         return img_path,c_obj.company_name
 
     except Exception as e:
+        logger.debug("error in create blank pnl %s " % e)
+        logger.debug(traceback.format_exc())
         return e

@@ -4,6 +4,7 @@
 
 from django.forms.models import model_to_dict
 from DataExtraction.common_files.match_keywords import *
+from DataExtraction.logger_config import logger
 
 def save_bsheet(**kwargs):
     try:
@@ -43,52 +44,58 @@ def save_bsheet(**kwargs):
         return True
     except Exception as e:
         import traceback
-        print (traceback.format_exc())
+        logger.debug("error in balance sheet save section %s " % str(e))
+        logger.debug(traceback.format_exc())
         return False
 
 
 def save_comp(**kwargs):
-    for comp in kwargs['data']:
-        print (comp)
-        import pdb;pdb.set_trace()
-        if all(word in comp.lower() for word in ['total' , 'discontinued']) or 'total' not in comp.lower():
-            obj_save = match_with_db(extraction=kwargs['extraction'], year_end=kwargs['year_end'],
-                                     pdf_obj=comp,
-                                     pdf_key_list=kwargs['data'], db_key_list= kwargs['obj_list'],
-                                     img=kwargs['img_path'],page=kwargs['page'],p_type= kwargs['p_type'],
-                                     c_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'],
-                                     model=CompanyBalanceSheetData)
-            if not obj_save:
-                obj_save = match_synonym(extraction=kwargs['extraction'], pdf_obj=comp,
-                                    db_key_list=kwargs['obj_list'],
-                                    year_end=kwargs['year_end'],p_type= kwargs['p_type'],
-                                    pdf_key_list=kwargs['data'], img=kwargs['img_path'],
-                                    page=kwargs['page'],
-                                    c_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'],
-                                    model=CompanyBalanceSheetData)
+    try:
+        for comp in kwargs['data']:
+            if all(word in comp.lower() for word in ['total' , 'discontinued']) or 'total' not in comp.lower():
+                obj = match_with_formula_cell(pdf_obj=comp, save_for='Balance Sheet')
+                if not obj:
+                    obj_save = match_with_db(extraction=kwargs['extraction'], year_end=kwargs['year_end'],
+                                             pdf_obj=comp,
+                                             pdf_key_list=kwargs['data'], db_key_list= kwargs['obj_list'],
+                                             img=kwargs['img_path'],page=kwargs['page'],p_type= kwargs['p_type'],
+                                             c_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'],
+                                             model=CompanyBalanceSheetData)
+                    if not obj_save:
+                        obj_save = match_synonym(extraction=kwargs['extraction'], pdf_obj=comp,
+                                            db_key_list=kwargs['obj_list'],
+                                            year_end=kwargs['year_end'],p_type= kwargs['p_type'],
+                                            pdf_key_list=kwargs['data'], img=kwargs['img_path'],
+                                            page=kwargs['page'],
+                                            c_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'],
+                                            model=CompanyBalanceSheetData)
 
-                if not obj_save:
-                    if kwargs['key'] != 'stockholders equity' and kwargs['key']!='combine':
-                        other_obj = S2Section.objects.filter(
-                            item=mapping_dict.other_mapping_dict[kwargs['key']]['other_asset'])
-                        other_obj = \
-                        list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'subsection',
-                                              'subsection__section', 'id'))[0]
-                    elif kwargs['key'] =='combine':
-                        other_obj = S2Section.objects.filter(item=mapping_dict.other_mapping_dict['current assets']['other_asset'])
-                        other_obj = \
-                            list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'subsection',
-                                                  'subsection__section', 'id'))[0]
-                    else:
-                        other_obj = SubSection.objects.filter(
-                            item=mapping_dict.other_mapping_dict[kwargs['key']]['other_asset'])
-                        other_obj = list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'section',
-                                                          'id'))[0]
-                    save_obj = save_data(extraction=kwargs['extraction'], year_end=kwargs['year_end'], comp=comp,
-                                         pdf_obj=kwargs['data'][comp],p_type= kwargs['p_type'],
-                                         d_obj=other_obj, pdf_type=kwargs['pdf_type'],
-                                         type='breakdown', c_name=kwargs['c_name'],
-                                         model=CompanyBalanceSheetData)
+                        if not obj_save:
+                            if kwargs['key'] != 'stockholders equity' and kwargs['key']!='combine':
+                                other_obj = S2Section.objects.filter(
+                                    item=mapping_dict.other_mapping_dict[kwargs['key']]['other_asset'])
+                                other_obj = \
+                                list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'subsection',
+                                                      'subsection__section', 'id'))[0]
+                            elif kwargs['key'] =='combine':
+                                other_obj = S2Section.objects.filter(item=mapping_dict.other_mapping_dict['current assets']['other_asset'])
+                                other_obj = \
+                                    list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'subsection',
+                                                          'subsection__section', 'id'))[0]
+                            else:
+                                other_obj = SubSection.objects.filter(
+                                    item=mapping_dict.other_mapping_dict[kwargs['key']]['other_asset'])
+                                other_obj = list(other_obj.values('i_synonyms', 'i_breakdown', 'i_keyword', 'item', 'section',
+                                                                  'id'))[0]
+                            save_obj = save_data(extraction=kwargs['extraction'], year_end=kwargs['year_end'], comp=comp,
+                                                 pdf_obj=kwargs['data'][comp],p_type= kwargs['p_type'],
+                                                 d_obj=other_obj, pdf_type=kwargs['pdf_type'],
+                                                 type='breakdown', c_name=kwargs['c_name'],
+                                                 model=CompanyBalanceSheetData)
 
 
-    return True
+        return True
+    except Exception as e:
+        logger.debug("errror in balance sheet %s at the time of save " %str(e))
+        logger.debug("error in balance sheet save data  %s " % str(e))
+        logger.debug(traceback.format_exc())

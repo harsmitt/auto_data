@@ -21,7 +21,11 @@
 	height: 67px;
 }
 
+.intro {
+    position : absolute;
+    z-index: 99999;
 
+}
 .top-bar .col-md-4 {
 	height: 67px;
 	align-items: center;
@@ -214,8 +218,6 @@ nav ul li a:hover, nav ul li .active {
 	position: absolute;
 	width: 100%;
 	z-index: 0;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	-khtml-opacity: 0;
 	-moz-opacity: 0;
 	opacity: 0;
@@ -466,6 +468,7 @@ footer a {
 .edit_icon {
 	background-position: -174px -23px;
 	right: 45px;
+	right: -74px;
 }
 .delete_icon {
 	background-position: -195px -23px;

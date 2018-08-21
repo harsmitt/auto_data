@@ -1,7 +1,6 @@
 import scrapy
 from selenium import webdriver
 from twisted.internet import reactor,defer
-import logging
 import pdfkit
 import time
 import re
@@ -21,7 +20,6 @@ class CrawlerSpider(CrawlSpider):
 
     def start_requests(self):  # Gets called automatically on running script
         urls = self.url_list
-        logging.info(">>>>>>>>>>>>>>Crawling starting<<<<<<<<<<<<<<<<<<<<")
         # for url in urls:
         yield scrapy.Request(url=urls, callback=self.parse_url)
 

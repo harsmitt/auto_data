@@ -1,4 +1,3 @@
-import logging
 import re
 # Third parties
 from scrapy.crawler import CrawlerProcess
@@ -19,7 +18,6 @@ class WebsiteSpider(CrawlSpider):
 
     def start_requests(self): # Gets called automatically on running script
         urls = url_list
-        logging.info(">>>>>>>>>>>>>>Crawling starting<<<<<<<<<<<<<<<<<<<<")
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse_url)
 

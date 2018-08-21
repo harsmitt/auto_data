@@ -1,0 +1,57 @@
+{% extends 'AutomationUI/b_s1.html' %}
+{% block tabs %}
+<div class="page-wrap">
+    <div class="container">
+        <header>
+            <div class="col-sm-4">
+					<a href="#">
+						<img src="{{MEDIA_URL}}automationui/images/logo.png" alt="">
+					</a>
+				</div>
+
+        </header>
+
+        <div class="row">
+                <div class="col-md-7" style="margin-top:70px;">
+
+                </div>
+            <div class="col-md-5">
+                <div class="white-box">
+                    <div class="col-md-12">
+                        <h2>Login</h2>
+                        <div id="detail"><p>Please enter details to login</p></div>
+                        <div class="error_msg" style="color:red" id="error_msg">{%if errors%}{{errors}}{%endif%}</div>
+                        <form method="POST" id="id_login_form" action="/automation/login/">{% csrf_token %}
+                            <ul class="flw100 login_list">
+
+                                <li>
+                                    <input type="user_name" class="form-control"  id="id_user" placeholder="Enter Username" name="username">
+                                </li>
+
+                                <li>
+                                    <input type="password" class="form-control"  id="id_password" placeholder="Enter Password" name="password">
+
+                                </li>
+
+
+                                <li><input name="button" type="button" class="btn btn-success w100" value="Login" onclick="javascript:return  form_submission('id_login_form');"></li>
+
+                            </ul>
+
+
+                        </form>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+</div>
+
+{% endblock tabs %}

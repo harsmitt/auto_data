@@ -2,46 +2,52 @@ from datetime import datetime, timedelta
 import pdfkit
 import os
 import errno
-
+from collections import OrderedDict
 DEFAULT_DATA_PATH='/home/administrator/DataAutomation/company_pdf/'
 
 # from fun import year_date,qtr_date
 
 def qtr_date():
-    date_time = datetime.now()-timedelta(days=45)
-    month = date_time.month
-    year = date_time.year
-    if month<=3:
-        year=year-1
-        qtr1 = 'December ' + str(year)
-        qtr2 ='September ' + str(year)
-        qtr3 = 'June ' + str(year)
-        qtr4 = 'March '+ str(year)
-        qtr5 ='December '+ str(year-1)
-    elif month>3 and month<=6:
-        year1 = year - 1
-        qtr1 = 'March '+ str(year)
-        qtr2 = 'December ' + str(year1)
-        qtr3 = 'September '+ str(year1)
-        qtr4 = 'June ' + str(year1)
-        qtr5 = 'March '+ str(year1)
-    elif month>6 and month<9:
-        year1 = year - 1
-        qtr1 = 'June ' +  str(year)
-        qtr2 = 'March '+ str(year)
-        qtr3 = 'December ' + str(year1)
-        qtr4 = 'September '+ str(year1)
-        qtr5 = 'June ' +  str(year1)
-    qtr_dict={'q1':qtr1,'q2':qtr2,'q3':qtr3,'q4':qtr4,'lrq':qtr5}
+    latest_q=[]
+    qtr_dict = OrderedDict()
+    date_time = datetime.now() - timedelta(days=45)
+    current_year= date_time.year
+    current_month = date_time.month
+    qtr_year_list = [i for i in range(2014,current_year)]
+    q_d =['march','june','september','december']
+    for i in qtr_year_list:
+        for q1 in q_d:
+            key = 'q' + str(len(qtr_dict)+1)
+            qtr_dict[key] = q1+' '+str(i)
+    if current_month>3 and current_month<=6:
+        latest_q = ['march']
+    elif current_month>6 and current_month<=9:
+        latest_q=['march','june']
+    elif current_month>9 and current_month<=12:
+        latest_q = ['march','june','september']
+    for l_qtr in latest_q:
+        key = 'q'+str(len(qtr_dict)+1)
+        qtr_dict[key]= l_qtr+' '+str(current_year)
     return qtr_dict
 
-def year_date():
-    year = datetime.now().year
-    year_dict ={'y1':year-4,'y2':year-3,'y3':year-2,'y4':year-1}
+
+def year_date(year_end):
+    c_date = datetime.now()
+    y_start =2011
+    year_dict =OrderedDict()
+    year_end_month = datetime.strptime(year_end, '%B').month
+    year_pdf = year_end_month+int(3)
+    for i in range(y_start,c_date.year):
+        y_key= 'y'+str(len(year_dict) + 1)
+        year_dict[y_key] = i
+    if c_date.month > year_pdf:
+        y_key = 'y' + str(len(year_dict) + 1)
+        year_dict[y_key] = c_date.year
     return year_dict
 
+
 def year_list():
-    return range(13,18)
+    return range(11,19)
 
 
 def save_qtr(date_obj,cname,ftype,link=None,file_type =None,file_name=None):
@@ -76,6 +82,28 @@ def save_qtr(date_obj,cname,ftype,link=None,file_type =None,file_name=None):
         else:
             os.rename(file_name,name)
 
+import re
+
+def get_digit(s,num=False):
+    if num==True:
+        digit = ("".join(re.findall("[0-9]+", s.lower().strip())))
+    elif s in s in ['-','*','â','- -'] or not [i for i in s if ord(i)<128]:
+        return s
+    else:
+        if s[0]=='-':
+            digit = ("".join(re.findall("[0-9()*.-]+", s.lower().strip())))
+        else:
+            digit = ("".join(re.findall("[0-9()*.]+", s.lower().strip())))
+
+    digit  = (digit.replace(',', '').replace('(', '-').replace(')', '').replace('$', '').replace('*','0'))
+    if digit and '.' in digit:
+        digit = float(digit)
+
+    elif digit:
+        digit = int(digit)
+    return digit
+
+
 def save_year(date_obj,cname,ftype,link,file_type=None,file_name=None):
     if len(date_obj)>500:
         s2 = date_obj.split('\n\n')[1][:500]
@@ -85,14 +113,14 @@ def save_year(date_obj,cname,ftype,link,file_type=None,file_name=None):
         try:
             obj=i.split('or')[0]
             obj=i.split('OR')
-            if datetime.strptime(obj[0], '%Y'):
+            if datetime.strptime(str(get_digit(obj[0])), '%Y'):
                 y_1 = obj[0]
         except:
             pass
 
     make_directory(cname,ftype)
     path = os.path.join(DEFAULT_DATA_PATH, cname, ftype)
-    date_1 = year_date()
+    date_1 = year_date("December")
     if [i for i in date_1 if int(y_1) == int(date_1[i])]:
         name = path +'/'+ y_1 + '.pdf'
         if not file_type:
@@ -135,7 +163,6 @@ def download_file(download_url,file_name,cname):
                 break;
 
     except:
-        print ("error aa gya")
         pass
     print("Completed")
 
@@ -154,7 +181,6 @@ def make_directory(company_name, file_type):
 
 def get_url_list(url=None,link=None):
     u_list=[]
-    print ("make url")
     if url and link:
         if url.endswith('/') and link.startswith('/'):
             u_list.append(url[:-1] + link +'/?DocType=Quarterly')

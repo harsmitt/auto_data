@@ -1,6 +1,5 @@
 import scrapy
 from twisted.internet import reactor,defer
-import logging
 import pdfkit
 from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import CrawlSpider
@@ -21,7 +20,6 @@ class WebsiteSpider(CrawlSpider):
     #This is initial process method.
     def start_requests(self): # Gets called automatically on running script
         urls = 'https://www.apple.com/in/'#self.url_list
-        logging.info(">>>>>>>>>>>>>>Crawling starting<<<<<<<<<<<<<<<<<<<<")
         # for url in urls:
         yield scrapy.Request(url=urls, callback=self.parse_url)
 
@@ -40,6 +38,7 @@ class WebsiteSpider(CrawlSpider):
                     yield scrapy.Request(url=link, callback=self.parse_item,
                                          meta={'url': link}, dont_filter=True)
         except:
+
             print("unable to extract the %s keyword in url:%s" % (WebsiteSpider.keyword, link))
 
     #This method will find the quarterly pdf's from the url and pass the link one by one to the another method
@@ -80,7 +79,6 @@ runner = CrawlerRunner()
 @defer.inlineCallbacks
 def crawl():
     url = raw_input(' Enter the company url')
-    print (url)
     yield runner.crawl(WebsiteSpider,url=url)
     reactor.stop()
 

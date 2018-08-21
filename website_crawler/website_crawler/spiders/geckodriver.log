@@ -1689,3 +1689,840 @@ IPDL protocol error: Handler returned error code!
 (/usr/lib/firefox/firefox:8879): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
 
 (/usr/lib/firefox/firefox:8879): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524456433390	geckodriver	INFO	Listening on 127.0.0.1:33671
+1524456435466	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524456440462	Marionette	INFO	Listening on port 45970
+
+(/usr/lib/firefox/firefox:3224): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:3224): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:3224): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:3224): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524456498321	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=Bojangles&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:3156): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524456749164	geckodriver	INFO	Listening on 127.0.0.1:44498
+1524456749275	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:4069): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:4069): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:4069): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:4069): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524456755324	Marionette	INFO	Listening on port 42252
+
+(/usr/lib/firefox/firefox:4132): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:4132): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:4132): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:4132): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524456811846	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1524460274814	geckodriver	INFO	Listening on 127.0.0.1:59974
+1524460276921	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:5628): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:5628): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:5628): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:5628): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524460284171	Marionette	INFO	Listening on port 60772
+
+(/usr/lib/firefox/firefox:5694): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:5694): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:5694): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:5694): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524460339722	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1524460689781	geckodriver	INFO	Listening on 127.0.0.1:40486
+1524460691873	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:5844): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:5844): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:5844): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:5844): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524460696262	Marionette	INFO	Listening on port 36506
+
+(/usr/lib/firefox/firefox:5909): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:5909): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:5909): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:5909): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524460754425	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1524461047125	geckodriver	INFO	Listening on 127.0.0.1:53251
+1524461049224	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6142): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6142): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6142): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6142): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524461053394	Marionette	INFO	Listening on port 39356
+1524461112111	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=Apple+INC.&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193&owner=exclude&count=40&hidefilings=0, line 5: ReferenceError: gtmYTplayers is not defined
+1524461286727	geckodriver	INFO	Listening on 127.0.0.1:40747
+1524461288815	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6244): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6244): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6244): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6244): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524461294676	Marionette	INFO	Listening on port 51540
+
+(/usr/lib/firefox/firefox:6312): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6312): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6312): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6312): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=Apple&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=Apple+&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6075): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524461351697	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1524462145509	geckodriver	INFO	Listening on 127.0.0.1:46423
+1524462147688	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524462155961	Marionette	INFO	Listening on port 49374
+
+(/usr/lib/firefox/firefox:6880): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6880): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6880): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6880): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524462210080	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+*************************
+A coding exception was thrown and uncaught in a Task.
+
+Full message: TypeError: NetworkError when attempting to fetch resource.
+Full stack: 
+*************************
+1524462696555	geckodriver	INFO	Listening on 127.0.0.1:45318
+1524462698717	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524462707260	Marionette	INFO	Listening on port 53834
+
+(/usr/lib/firefox/firefox:7902): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7902): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7902): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7902): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524462761719	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1524462904893	geckodriver	INFO	Listening on 127.0.0.1:44128
+1524462963071	geckodriver	INFO	Listening on 127.0.0.1:57157
+1524462963362	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=+American_Woodmark&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7835): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=American_Woodmark&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6805): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524462976289	Marionette	INFO	Listening on port 37837
+
+(/usr/lib/firefox/firefox:8251): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:8251): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:8251): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:8251): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524463026137	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1524463279567	geckodriver	INFO	Listening on 127.0.0.1:44520
+1524463281778	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=American_Woodmark&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8182): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524463289449	Marionette	INFO	Listening on port 53543
+
+(/usr/lib/firefox/firefox:8597): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:8597): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:8597): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:8597): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524463344253	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+*************************
+A coding exception was thrown and uncaught in a Task.
+
+Full message: TypeError: NetworkError when attempting to fetch resource.
+Full stack: 
+*************************
+
+** (firefox:8524): WARNING **: No marshaller for signature of signal 'PropertiesChanged'
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=American_Woodmark&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:8524): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524472982126	geckodriver	INFO	Listening on 127.0.0.1:42424
+1524472984307	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:10140): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:10140): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:10140): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:10140): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524472990893	Marionette	INFO	Listening on port 43656
+
+(/usr/lib/firefox/firefox:10204): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:10204): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:10204): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:10204): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524473046899	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+
+** (firefox:10140): WARNING **: No marshaller for signature of signal 'PropertiesChanged'
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=American_Woodmark&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(/usr/lib/firefox/firefox:10455): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:10455): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:10455): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:10455): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+*************************
+A coding exception was thrown and uncaught in a Task.
+
+Full message: TypeError: NetworkError when attempting to fetch resource.
+Full stack: 
+*************************
+1524476994096	geckodriver	INFO	Listening on 127.0.0.1:43359
+1524476996202	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524477000357	Marionette	INFO	Listening on port 43623
+
+(/usr/lib/firefox/firefox:11117): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:11117): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:11117): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:11117): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1524477058665	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1076: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=American_Woodmark&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:11053): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:10140): GVFS-RemoteVolumeMonitor-WARNING **: Owner of volume monitor org.gtk.Private.UDisks2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(firefox:10140): GVFS-RemoteVolumeMonitor-WARNING **: Owner of volume monitor org.gtk.Private.MTPVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(firefox:10140): GVFS-RemoteVolumeMonitor-WARNING **: Owner of volume monitor org.gtk.Private.GPhoto2VolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+
+(firefox:10140): GVFS-RemoteVolumeMonitor-WARNING **: Owner of volume monitor org.gtk.Private.AfcVolumeMonitor disconnected from the bus; removing drives/volumes/mounts
+g_dbus_connection_real_closed: Remote peer vanished with error: Error receiving message: Connection reset by peer (g-io-error-quark, 0). Exiting.
+
+(firefox:10140): GConf-WARNING **: Got Disconnected from DBus.
+
+g_dbus_connection_real_closed: Remote peer vanished with error: Underlying GIOStream returned 0 bytes on an async read (g-io-error-quark, 0). Exiting.
+1527661472260	geckodriver	INFO	Listening on 127.0.0.1:55541
+1527661474316	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661481075	Marionette	INFO	Listening on port 42600
+
+(/usr/lib/firefox/firefox:6427): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6427): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6427): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6427): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661537119	Marionette	WARN	TLS certificate errors will be ignored for this session
+1527661631383	geckodriver	INFO	Listening on 127.0.0.1:57702
+1527661633483	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6517): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6517): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6517): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6517): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661638265	Marionette	INFO	Listening on port 35152
+
+(/usr/lib/firefox/firefox:6585): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6585): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6585): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6585): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661683901	geckodriver	INFO	Listening on 127.0.0.1:40471
+1527661685998	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6656): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6656): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6656): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6656): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661710608	geckodriver	INFO	Listening on 127.0.0.1:51052
+1527661712696	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661717420	Marionette	INFO	Listening on port 58310
+
+(/usr/lib/firefox/firefox:6788): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6788): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6788): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6788): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6363): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661775366	Marionette	WARN	TLS certificate errors will be ignored for this session
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6719): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661858117	geckodriver	INFO	Listening on 127.0.0.1:38767
+1527661860213	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661865117	Marionette	INFO	Listening on port 52154
+
+(/usr/lib/firefox/firefox:6959): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6959): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6959): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:6959): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527661923000	Marionette	WARN	TLS certificate errors will be ignored for this session
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:6888): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527662296700	geckodriver	INFO	Listening on 127.0.0.1:45819
+1527662298801	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527662303382	Marionette	INFO	Listening on port 40130
+
+(/usr/lib/firefox/firefox:7174): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7174): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7174): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7174): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527662361225	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1021: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=Apple&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=Appl&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+1527662532051	geckodriver	INFO	Listening on 127.0.0.1:52667
+1527662534151	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=APPLE+INC&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7102): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527662539082	Marionette	INFO	Listening on port 44540
+
+(/usr/lib/firefox/firefox:7319): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7319): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7319): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7319): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527662596776	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1021: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=APPLE+INC&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7250): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527663453420	geckodriver	INFO	Listening on 127.0.0.1:33669
+1527663461218	geckodriver	INFO	Listening on 127.0.0.1:41558
+1527663463350	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:7617): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7617): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7617): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7617): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527663468181	Marionette	INFO	Listening on port 54364
+
+(/usr/lib/firefox/firefox:7685): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7685): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7685): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7685): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527663526240	Marionette	WARN	TLS certificate errors will be ignored for this session
+1527663543723	geckodriver	INFO	Listening on 127.0.0.1:32922
+1527663545818	geckodriver::marionette	INFO	Starting browser /usr/lib/firefox/firefox.sh with args ["-marionette"]
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527663550156	Marionette	INFO	Listening on port 48300
+
+(/usr/lib/firefox/firefox:7834): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7834): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7834): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(/usr/lib/firefox/firefox:7834): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+1527663608787	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.sec.gov/, line 1021: TypeError: typeSelect is undefined
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/files/js/js_M8bMkMWYaa6GjkCVIa45Had-OgBsWiXUcfHbMCa0eN8.js, line 4: TypeError: f.getClientRects is not a function
+JavaScript error: https://www.sec.gov/, line 5: ReferenceError: gtmYTplayers is not defined
+JavaScript error: https://www.sec.gov/edgar/searchedgar/companysearch.html, line 5: ReferenceError: gtmYTplayers is not defined
+*************************
+A coding exception was thrown and uncaught in a Task.
+
+Full message: TypeError: NetworkError when attempting to fetch resource.
+Full stack: 
+*************************
+
+** (firefox:7765): WARNING **: No marshaller for signature of signal 'PropertiesChanged'
+JavaScript error: https://www.sec.gov/cgi-bin/browse-edgar?company=APPLE+INC&owner=exclude&action=getcompany, line 5: ReferenceError: gtmYTplayers is not defined
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
+
+(firefox:7765): GLib-GObject-CRITICAL **: g_object_unref: assertion 'object->ref_count > 0' failed

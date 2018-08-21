@@ -1,18 +1,28 @@
 from DataExtraction.store_data import pdf_detail
 import os
 
+Default_path='/home/mahima/Desktop/uploads/'
 
-def upload_pdf(file, filename):
+def upload_pdf(file_1,c_name, file_n):
     try:
-        if not os.path.exists('/home/administrator/Desktop/uploads/'):
-            os.mkdir('/home/administrator/Desktop/uploads/')
+        path = os.path.join(Default_path, c_name)
 
-        with open('/home/administrator/Desktop/uploads/' + filename, 'wb+') as destination:
-            for chunk in file.chunks():
+        if not os.path.exists(path):
+            try:
+                os.makedirs(path)
+            except Exception as e:
+                import traceback
+                print (traceback.format_exc())
+        path+='/'
+        with open(path + file_n, 'wb+') as destination:
+            for chunk in file_1.chunks():
                 destination.write(chunk)
 
-        return True,'/home/administrator/Desktop/uploads/' + filename
-    except:
+        return True, path+ file_n
+
+    except Exception as e:
+        import traceback
+        print (traceback.format_exc())
         return False
 
 

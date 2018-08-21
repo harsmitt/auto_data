@@ -26,9 +26,9 @@ ROOT_BASE_URL = '127.0.0.1:8000'
 SECRET_KEY = '$wuu-o(i=0)k8ivd0)1u4_y+^@&=f-ypp#9d0hi6if*1md6djl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['10.10.0.84']
+ALLOWED_HOSTS = ['10.10.0.84','127.0.0.1','10.10.0.110']
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'automationmedia').replace('\\', '/')
 MEDIA_URL = '/media/'
@@ -57,8 +57,9 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'vw3c5-2c7dgqkkl@0myc7e@_h8-2=ehyra4v_e3me*f_m9%vrb'
-
-
+ADMINS = (
+    ('automation', 'mahima.garg@televisory.com'),
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -67,15 +68,34 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+        # 'memcache',
     'AutomationUI',
     'rest_framework',
+    # 'website_crawler',
     # 'DataExtraction',
     'BalanceSheet',
     'PNL',
+    'Login',
     # 'DataExtraction',
 
 ]
+
+
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+
+
+
+# CACHE_MIDDLEWARE_ALIAS =
+
+# CACHE_MIDDLEWARE_KEY_PREFIX = ''
+# CACHE_MIDDLEWARE_SECONDS = 30 * 24 * 60 * 60
+
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -85,14 +105,22 @@ TEMPLATE_LOADERS = (
 REST_FRAMEWORK = { 'DEFAULT_RENDERER_CLASSES': ( 'rest_framework.renderers.TemplateHTMLRenderer', 'rest_framework.renderers.JSONRenderer', 'rest_framework.renderers.BrowsableAPIRenderer', ) }
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
 
 ROOT_URLCONF = 'DataAutomation.urls'
 
@@ -112,6 +140,7 @@ TEMPLATES = [
         'libraries': {
             'get_item': 'AutomationUI.templatetags.get_item',
             'get_value': 'AutomationUI.templatetags.get_value',
+            'get_data': 'AutomationUI.templatetags.get_data',
 
         }
         },
@@ -128,7 +157,7 @@ WSGI_APPLICATION = 'DataAutomation.wsgi.application'
 
 DATABASES = {
         'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',#'django.db.backends.mysql',
         'NAME': 'test_automation',
         'USER': 'root',
         'PASSWORD': 'root',
@@ -161,6 +190,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
     )
+
+
 
 #
 # TEMPLATE_CONTEXT_PROCESSORS = (

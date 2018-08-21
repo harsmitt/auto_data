@@ -16,8 +16,6 @@ import os
 # application = get_wsgi_application()
 
 import os, sys
-print ("mahima")
-# import pdb;pdb.set_trace()
 # Calculate the path based on the location of the WSGI script.
 apache_configuration= os.path.dirname(__file__)
 project = os.path.dirname(apache_configuration)
@@ -26,7 +24,7 @@ sys.path.append(workspace)
 sys.path.append(project)
 
 # Add the path to 3rd party django application and to django itself.
-sys.path.append('/home/administartor')
+sys.path.append('/home/mahima')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'DataAutomation.settings'
 # import django.core.handlers.wsgi
 # application = django.core.handlers.wsgi.WSGIHandler()
@@ -35,4 +33,17 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'DataAutomation.settings'
 #
 from django.core.wsgi import get_wsgi_application
 
-application = get_wsgi_application()
+#application = get_wsgi_application()
+
+import time
+import traceback
+import signal
+try:
+    application = get_wsgi_application()
+except Exception:
+    # Error loading applications
+    if 'mod_wsgi' in sys.modules:
+        traceback.print_exc()
+        os.kill(os.getpid(), signal.SIGINT)
+        time.sleep(2.5)
+

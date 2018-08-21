@@ -22,6 +22,8 @@ class SectorSubSection(models.Model):
     section = models.ForeignKey(SectorSection)
     item = models.CharField(max_length=2000)
     neg_ro = models.BooleanField(default=False)
+    is_expense = models.BooleanField(default=False)
+    is_income = models.BooleanField(default=False)
     i_synonyms = models.CharField(max_length=2000, blank=True,null=True)
     i_breakdown = models.CharField(max_length=5000, blank=True,null=True)
     i_keyword = models.CharField(max_length =1000,blank=True,null=True)
@@ -75,11 +77,14 @@ class CompanyPNLData(models.Model):
     q3 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLQtr3')
     q4 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLQtr4')
     lrq = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLLRQ')
-    y1 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'PNLyr1')
-    y2 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'PNLyr2')
-    y3 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'PNLyr3')
-    y4 = models.ForeignKey(year_data,blank=True,null=True, related_name = 'PNLyr4')
-    tlm = models.ForeignKey(year_data,blank=True,null=True, related_name = 'PNLyr5')
+    q6 = models.ForeignKey(quarter_data, blank=True, null=True, related_name='PNLQtr6')
+    q7 = models.ForeignKey(quarter_data, blank=True, null=True, related_name='PNLQtr7')
+    q8 = models.ForeignKey(quarter_data, blank=True, null=True, related_name='PNLQtr8')
+    y1 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLyr1')
+    y2 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLyr2')
+    y3 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLyr3')
+    y4 = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLyr4')
+    # tlm = models.ForeignKey(quarter_data,blank=True,null=True, related_name = 'PNLyr5')
 
 
     def __str__(self):

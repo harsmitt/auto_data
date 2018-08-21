@@ -1,167 +1,201 @@
-from DataExtraction.common_files.basic_functions import *
-from DataExtraction.common_files.utils import *
 from .add_blank_in_data import *
-import copy
-from collections import OrderedDict
 from PNL.extract_pnl import ExtractPNL
-from PNL.get_notes_data import *
 from BalanceSheet.balance_sheet.extract_balance_sheet import ExtractBalnceSheet
 
-from BalanceSheet.balance_sheet.save_data import *
+from BalanceSheet.balance_sheet.save_data import save_bsheet
 from PNL.save_pnl import *
 
+from .ignore_index import i_index  # ,ignore_qtr_index
+from .mapping_data import qtr_combinations
+
+from DataExtraction.notes_section.get_notes import get_notes_data
+from DataExtraction.logger_config import logger
+
+# ,qtr_combinations
+'''
+This Function is mainly used to extract Page.
+ 1. loop variable we are using to loop 10 times in case of specific page number extraction.
+    Because there are cases where pdf page number is different with theactual page.
+    e.g page number 45 is for balance sheet but 
+    when we are trying to extract page 45 it is actual page 42 in pdf. mention at the end of the page.
+
+ 2.Store units value for unit conversion used later
+ 3.Some keywords like reports to etc. for droping this page for extraction.
+ 4. ignore index concept is used for ignore columns(like notes, group company concept ) etc.
+ 5. geting date obj if all conditions will true then it will call Extraction function
+ and notes extraction and saving data into database.
 
 
-def get_ignore_index(**kwargs):
-    try:
-        g_index = None
-        c_index = None
-        n_index = None
-        ignore_index={}
-        date_obj= kwargs['date_obj']
-        date_line=0
-        for l_num in range(kwargs['l_num'],len(kwargs['data'])):
-            line = kwargs['data'][l_num].lower()
-            if all(word in line for word in ['group','company']):
-                group = [word for word in line.split() if 'group' in word ]
-                g_index = re.split('  +',line).index(group[0])+1 if group else None
-                company = [word for word in line.split() if 'company' in word]
-                c_index = re.split('  +',line).index(company[0])+1 if company else None
-            if any( 'note' in word  for word in line.split()):
-                notes = [word for word in line.split() if 'note' in word]
-                if ('assets' in line or 'liabilities' in line) or ('note' not in  line.split()[0] and not any(check_datetime(obj) for obj in line.split()[0] )):
-                    n_index = re.split('  +',line).index(notes[0]) if notes and notes[0] in re.split('  +',line) else None
-                else:
-                    n_index = re.split('  +',line).index(notes[0])+1 if notes and notes[0] in re.split('  +',line) else None
+Input : sector, year_end,data, p_num, path, pdf_page,override ,file, c_name, pdf_type,notes
 
-                if not any(i in line for i in ['group','company']):
-                    # date_obj,date_line = get_date(word_list =line.split(),pdf_type = kwargs['pdf_type'],
-                    #                     date_obj=kwargs['date_obj'],year_end=kwargs['year_end'])
-                    next_line = kwargs['data'][l_num + 1] if len(kwargs['data']) > l_num + 1 else ''
-
-                    date_obj, date_line = check_date_obj(pdf_type=kwargs['pdf_type'], line=line,
-                                   year_end=kwargs['year_end'], date_obj=kwargs['date_obj'],
-                                   date_line=date_line, data=kwargs['data'],
-                                   next_line=next_line, l_num=l_num)
-
-            if n_index and g_index and c_index and not kwargs['date_obj']:
-                next_line = kwargs['data'][l_num + 1] if len(kwargs['data']) > l_num + 1 else ''
-
-                date_obj, date_line = check_date_obj(pdf_type=kwargs['pdf_type'], line=line,
-                                                     year_end=kwargs['year_end'], date_obj=kwargs['date_obj'],
-                                                     date_line=date_line, data=kwargs['data'],
-                                                     next_line=next_line, l_num=l_num)
-
-
-            if g_index and c_index  and kwargs['date_obj']:
-                if g_index < c_index :
-                    for i in range(1,len(date_obj)+1):
-                        key = 'c_y'+str(i)
-                        c_in_dict ={key:-(int(i))}
-                        ignore_index.update(**c_in_dict)
-                else:
-                    for i in range(1,len(date_obj)+1):
-                        key = 'c_y'+str(i)
-                        c_in_dict ={key:n_index+(int(i))} if n_index else {key:(int(i))}
-                        ignore_index.update(**c_in_dict)
-                if n_index : ignore_index.update({'notes':n_index})
-
-                break;
-
-            elif n_index:
-                ignore_index.update({'notes': n_index})
-                break;
-
-        return ignore_index,date_obj,date_line
-
-    except Exception as e:
-        return e
+Output: balance_sheet_data,pnl_data in True/False (depending on the page ) or an exception
+'''
 
 
 def scrap_pdf_page(**kwargs):
     try:
-        date_obj=[]
-        date_line=0
-        ignore_index ={}
-        data_dict = OrderedDict()
+        balance_sheet_data = False
+        unit = ''
+        pnl_data = False
+        subtract = ''
+        ignore_index = OrderedDict()
         p_num = kwargs['p_num'].split('-')
         pdf_page = copy.deepcopy(p_num[0])
+        # if data exists it means it is all_pages extraction else specific page extraction.
         loop = 1 if 'data' in kwargs else 10
-        pdf_page_next = int(int(p_num[-1])- int(p_num[0])) if len(p_num)==2  else 1
+        pdf_page_next = int(int(p_num[-1]) - int(p_num[0])) if len(p_num) == 2 and not check_datetime(p_num[-1]) else 1
         for i in range(loop):
-            data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
-            print (data)
+            data_dict = OrderedDict()
+            date_obj = []
+            date_line = 0
+            data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],
+                                    file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
+            if check_content(data=data, p_type=kwargs['pdf_page'], check_statement=True):
+                l_data = data
+                for l_num, line in enumerate(l_data):
+                    from .mapping_data import ignore_index_list
 
-            if any(i in ' '.join(data[:10]).lower() for i in kwargs['pdf_page']):
-                for l_num,line in enumerate(data[:20]):
-                    print (line)
-                    import itertools
-                    # if not ignore_index:
-                    #     for loop in range(len(['group','company','notes'])+1):
-                    #         for subset in itertools.combinations(['group','company','notes'],loop):
-                    #             if subset == line.lower() :
-                    #
+                    # fetching units for units conversions.
+                    if line and any(word in line.lower() for word in ['millions', 'thousands']):
+                        x = [w1 for word in line.lower().split() for w1 in ['millions', 'thousands'] if w1 in word]
+                        unit = x[0] if x else ''
 
-                    ## todo list should be rewrite
+                    # find if the page is okk to extract or not
+                    if any(word in line.lower() for word in
+                           ['results of', 'supplementary financial data', 'summary of', 'overview of', 'summarizes',
+                            'summarized as' 'comparison',
+                            'dollers', 'selected financial data', 'standalone', 'statistics',
+                            'directors']) and not 'special' in kwargs:
+                        return balance_sheet_data, pnl_data
 
-                    if line and not ignore_index and any(re.search(r'\b' + word + r'\b',  line.lower()) for word in ['group','company','notes','note']) and len(line.split())<6:
-                        ignore_index,date_obj,date_line = get_ignore_index(year_end=kwargs['year_end'],data=data,l_num=l_num,pdf_type=kwargs['pdf_type'],date_obj=date_obj)
-                        if date_obj:break;
+                    # if any keyword exists in ignore_index_list
+
+                    elif line and len([i for i in re.split('  +', line) if i]) < 6 and \
+                            not (len([i for i in re.split('  +', line) if i]) == 1 and len(
+                                [i for i in ignore_index_list if
+                                 all(word in extract_s(line).split() for word in i)]) == 1) \
+                            and (len([i for i in ignore_index_list if
+                                      all(word in extract_s(line).split() for word in i)]) >= 1 \
+                                         or (kwargs['pdf_page'] == 'pnl' and len(
+                                    [i for i in qtr_combinations if all(word in line.lower() for word in i)]) >= 1)):
+
+                        # function called for getting ignore column index.
+                        ignore_index, date_obj, date_line = i_index(year_end=kwargs['year_end'], data=data,
+                                                                    l_num=l_num, pdf_page=kwargs['pdf_page'],
+                                                                    pdf_type=kwargs['pdf_type'],
+                                                                    ignore_index=ignore_index,
+                                                                    date_obj=date_obj, date_line=date_line)
+                        if date_obj: break;
+
+                    # fetching date_obj
+
                     elif line and not date_obj and not ignore_index:
                         next_line = data[l_num + 1] if len(data) > l_num + 1 else ''
+                        date_obj, date_line = check_date_obj(pdf_type=kwargs['pdf_type'], line=line,
+                                                             year_end=kwargs['year_end'], date_obj=date_obj,
+                                                             date_line=date_line, data=data,
+                                                             next_line=next_line, l_num=l_num)
 
-                        date_obj,date_line = check_date_obj(pdf_type=kwargs['pdf_type'],line = line,
-                                                            year_end=kwargs['year_end'],date_obj=date_obj,
-                                                            date_line =date_line,data=data,
-                                                            next_line= next_line,l_num=l_num)
-                        if date_obj : break;
+                # logger_/info.info("date obj %s" % date_obj)
+                if date_obj and len(date_obj) < 5 and len(data) > 10:
 
-
-
-                if date_obj:
-                    # for pdf in range(pdf_page_next):
-                    if 'balance sheet' in kwargs['pdf_page']:
+                    if not balance_sheet_data and kwargs['pdf_page'] == 'bsheet':
                         for pdf in range(pdf_page_next):
-                            pdf_page = int(pdf_page)+pdf
+                            data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],
+                                                    file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
+                            data_dict, unit = ExtractBalnceSheet(page=int(pdf_page) + 1, path=kwargs['path'],
+                                                                 file=kwargs['file'], date_line=date_line,
+                                                                 data_dict=data_dict, data=data,
+                                                                 ignore_index=ignore_index, date_obj=date_obj,
+                                                                 unit=unit)
+                            pdf_page = int(pdf_page) + 1
+                            # logger_info.info("all_pages balance sheet status %s" % data_dict)
+                        if 'p_extraction' in kwargs or (data_dict and len(data_dict) >= 3 and any(
+                                    key in list(data_dict.keys()) for key in
+                                    ['current assets', 'non current assets', 'current liablities',
+                                     'non burrent liabilities'])):
+                            try:
+                                data_dict = get_notes_data(date_obj=date_obj, year_end=kwargs['year_end'],
+                                                           pdf_type=kwargs['pdf_type'], data_dict=data_dict,
+                                                           page=pdf_page + 1, path=kwargs['path'],
+                                                           pdf_page=kwargs['pdf_page'],
+                                                           file=kwargs['file'], notes_sec=kwargs['notes'])
 
-                            data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
-                            data_dict = ExtractBalnceSheet(date_line=date_line,data_dict=data_dict,data=data,ignore_index=ignore_index,date_obj=date_obj)
+                                # logger_info.info("balance sheet %s" %data_dict)
+                                data_dict = remove_extra_keys(data_dict=data_dict)
+                            except Exception as e:
+                                import traceback
+                                print (traceback.format_exc())
+                                logger.debug(traceback.format_exc())
+                                logger.debug("error in notes section %s " % str(e))
+                                pass
+                            print (data_dict)
+                            # This function actually creates company object and all the financial parameters
+                            img_path, c_name = Create_blank_sheet(year_end=kwargs['year_end'], c_name=kwargs['c_name'],
+                                                                  path=kwargs['path'], page=pdf_page,
+                                                                  dit_name=kwargs['dit_name'])
 
-                        if data_dict:
-                            img_path, c_name = Create_blank_sheet(year_end=kwargs['year_end'],c_name=kwargs['c_name'], path=kwargs['path'], page=pdf_page)
-                            status = match_keyword(year_end=kwargs['year_end'],data=data_dict, img_path=img_path, page=i, c_name=c_name,new_dict=True,pdf_type = kwargs['pdf_type'])
-                            return True
+                            status = save_bsheet(override=kwargs['override'], year_end=kwargs['year_end'],
+                                                 data=data_dict,
+                                                 img_path=img_path,
+                                                 file=kwargs['file'], page=i, c_name=c_name, new_dict=True,
+                                                 date_obj=date_obj,
+                                                 pdf_type=kwargs['pdf_type'], extraction='bsheet', unit=unit)
 
-                    elif any(i in kwargs['pdf_page'] for i in  ['income','operations']):
+                            if status:
+                                balance_sheet_data = True
+                                return (balance_sheet_data, pnl_data)
+
+                    elif not pnl_data and kwargs['pdf_page'] == 'pnl':
                         for pdf in range(pdf_page_next):
-                            pdf_page = int(pdf_page) + pdf
+                            data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],
+                                                    file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
 
-                            data = get_page_content(seprator='@@', page=pdf_page, path=kwargs['path'],file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
-                            data_dict = ExtractPNL(date_line=date_line,data_dict=data_dict, data=data, ignore_index=ignore_index,
-                                                       date_obj=date_obj)
-
-
-                        if data_dict and (len(data_dict) > 5 or any('revenue' in x.strip(' s') for x in list(data_dict.keys()))):
-
-                            comp_data = get_notes_data(n_sec = 'pnl',date_obj=date_obj,year_end=kwargs['year_end'],pdf_type=kwargs['pdf_type'],notes_sec=kwargs['notes'],
-                                                       path=kwargs['path'], file=kwargs['file'], page_data=data_dict)
-
+                            data_dict, unit = ExtractPNL(date_line=date_line, data_dict=data_dict, data=data,
+                                                         ignore_index=ignore_index,
+                                                         date_obj=date_obj, unit=unit)
+                            pdf_page = int(pdf_page) + 1
+                        print (data_dict)
+                        if 'p_extraction' in kwargs or (data_dict and (len(data_dict) >= 4 or all(
+                                        len(data_dict) >= 2 and len(data_dict[x]) >= 2 for x in
+                                        list(data_dict.keys())))):
+                            try:
+                                data_dict = get_notes_data(date_obj=date_obj, year_end=kwargs['year_end'],
+                                                           pdf_type=kwargs['pdf_type'],
+                                                           data_dict=data_dict, page=pdf_page + 1,
+                                                           path=kwargs['path'], file=kwargs['file'],
+                                                           pdf_page=kwargs['pdf_page'], notes_sec=kwargs['notes'])
+                                data_dict = remove_extra_keys(data_dict=data_dict)
+                            except Exception as e:
+                                import traceback
+                                print (traceback.format_exc())
+                                logger.debug(traceback.format_exc())
+                                logger.debug("error in notes section %s " % str(e))
+                                pass
 
                             img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],
-                                                                  path=kwargs['path'], page=pdf_page)
-                            status = save_pnl(sector =kwargs['sector'],year_end=kwargs['year_end'], data=comp_data, img_path=img_path,
-                                                   page=i, c_name=c_name, new_dict=True, pdf_type=kwargs['pdf_type'])
-                            return True
+                                                          dit_name=kwargs['dit_name'],
+                                                          path=kwargs['path'], page=pdf_page)
 
-                            # pdf_page = str(int(pdf_page) + 1)
+                            status = save_pnl(override=kwargs['override'], extraction='pnl', subtract=subtract,
+                                              sector=kwargs['sector'], year_end=kwargs['year_end'], file=kwargs['file'],
+                                              data=data_dict, img_path=img_path, unit=unit, date_obj=date_obj,
+                                              page=i, c_name=c_name, new_dict=True, pdf_type=kwargs['pdf_type'])
+                            if status:
+                                pnl_data = True
+                                return balance_sheet_data, pnl_data
                 else:
-                    print (data[-2].split()[-1])
                     pdf_page = str(int(pdf_page) + 1)
 
 
             else:
-                print (data[-2].split()[-1])
                 pdf_page = str(int(pdf_page) + 1)
+        return balance_sheet_data, pnl_data
 
     except Exception as e:
+        import traceback
+        print (traceback.format_exc())
+        logger.debug(traceback.format_exc())
+        logger.debug("error in scrap pdf page  %s " % str(e))
+
         return e

@@ -1,0 +1,159 @@
+{% load get_value %}
+{% load get_data %}
+<div class ="container_bs">
+<table>
+<thead>
+<tr>
+    <td class="headcol" >
+         <div class="sheet_header">{{p_type}}</div>
+    </td>
+        {%for date in date_list%}
+            <th class="long">
+                    {% if q2 in date.lower and 'Profit' in p_type%}
+                        {{date|upper}}
+                        <div class="options_list">
+                            <a onclick="cal_q2(this)" style="color:Blue">Cal_q2</a>
+                        </div>
+                    {%else %}
+                        {%if q3 in date.lower and 'Profit' in p_type %}
+
+                            {{date|upper}}
+                            <div class="options_list">
+                                <a onclick="cal_q2(this)" style="color:Blue">Cal_q3</a>
+                            </div>
+                        {%else%}
+                            {{date|upper}}
+                        {%endif%}
+                    {%endif%}
+            </th>
+        {%endfor%}
+</tr>
+</thead>
+{%for obj in data_list%}
+    {% for sec,sub in obj.items%}
+        {%if not sub%}
+            <tr class="total_block">
+                <th class="headcol section"><div class="text main_section">{{sec}}</div></th>
+                {%for date in date_list%}
+                    <td class="long section_td">0</td>
+                {%endfor%}
+            </tr>
+        {%else%}
+            <tr class="sec_block">
+
+                <th class="headcol section"><div class="text main_section">{{sec}}</div>
+                    <div class="options_list">
+                            <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Section"  onclick="save_sec(this)" >
+                        </div>
+                </th>
+                {%for date in date_list%}
+                    <td class="long section_td">0
+                    <div class="option_list"><img style ="widht:10px; height:10px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Calculate section Column"  onclick="calc_col(this);" ></div></td>
+
+
+                {%endfor%}
+            </tr>
+        {%endif%}
+
+        {%for sub_l in sub%}
+            {%for s,s2 in sub_l.items%}
+                {%if s2|get_value%}
+                    <tr class="sub_block">
+                        <th class="headcol subsection">
+                            <div class="text sub_block">{{s}}</div>
+                            <div class="options_list">
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/plus-sign.png"  title="Add Row" onclick="add_row(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete Checked Row" onclick="DeleteMultipleRow(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" title="Swap Checked Row"  onclick="movesecmultiple(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Checked Row"  onclick="SaveMultipleRow(this)" >
+                            </div>
+
+                        </th>
+                        {%for date in date_list%}
+                            <td class="long subsection_td">0</td>
+                        {%endfor%}
+
+                    </tr>
+                {%else%}
+                    <tr class="sub_block">
+                        <th class="headcol subsection">
+                            <div class="text sub_block" >{{s}}</div>
+                        </th>
+                        {%for date in date_list%}
+                            <td class="long subsection_id"  style="color: black;background-color:#228B22;">0</td>
+                        {%endfor%}
+
+                    </tr>
+                {%endif%}
+                {%for word , key in s2.items%}
+                    <tr class="existing_block">
+                        <th class="headcol existing_sec">
+
+                            <div class="text subsub_section">{{word}}</div>
+                            <div class="options_list">
+                                <input style = "height: 15px;width: 13px;margin-left: 19px;"  type="checkbox" value="">
+                                 <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete Row" onclick="delete_row(this)" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png"  title="Swap Row" onclick="movesec(this);" >
+                                <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save Edited Row"  onclick="SaveRow(this)" >
+                                <img style ="widht:10px; height:20px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Calculate Row"  onclick="calc(this);" >
+
+                            </div>
+
+                        </th>
+                        {%for q_key,date in loop_key.items%}
+                            <td class="long existing_td" onkeyup="change_sum(event,this)"  contenteditable='true'>{% get_data key q_key  %}</td>
+                        {%endfor%}
+
+                    </tr>
+                {%endfor%}
+
+
+                {%for s2obj in s2%}
+                    {%for s2_o,i in s2obj.items%}
+                        <tr class="s2sec_block">
+                            <th class="headcol s2sec">
+                                <div class="text sub_block">{{s2_o}}</div>
+                                    <div class ="options_list">
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/plus-sign.png"  title="Add row"  onclick="add_row2(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png"  title="Delete checked row"  onclick="DeleteMultipleRow(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png"  title="Swap checked row"  onclick="movesecmultiple(this);" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png"  title="Save checked Row"  onclick="SaveMultipleRow(this)" >
+
+                                    </div>
+                            </th>
+                            {%for q_key,date in loop_key.items%}
+                                <td class="long subsection_td">0</td>
+                            {%endfor%}
+                        </tr>
+
+                        {%for hupp , sun in i.items%}
+                            <tr class="existing_block">
+                                <th class="headcol existing_sec">
+				
+                                    <div class="text subsub_section">{{hupp}}</div>
+			                        <div class="options_list">
+                                        <input style = "height: 15px;width: 13px;margin-left: 19px;"  type="checkbox" value="">
+                                         <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/delete-sign.png" title="Delete Row" onclick="delete_row2(this)" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/swap-sign.png" title="Swap Row"  onclick="move_s2sec(this);" >
+                                        <img style ="widht:10px; height:15px;" src="{{MEDIA_URL}}automationui/images/save.png" title="Save Edited Row" onclick="SaveRow2(this)" >
+
+                                        <img style ="widht:10px; height:20px;" src="{{MEDIA_URL}}automationui/images/calc.png"  title="Convert Row in Positive numbers"  onclick="calc(this);" >
+                                    </div>
+                                </th>
+                                {%for q_key,date in loop_key.items%}
+                                    <td class="long existing_td" onkeyup="change_sum(event,this)" contenteditable='true'>{% get_data sun q_key  %}</td>
+                                {%endfor%}
+                            </tr>
+                        {%endfor%}
+
+                    {%endfor%}
+                {%endfor%}
+
+            {%endfor%}
+        {%endfor%}
+
+
+    {%endfor%}
+{%endfor%}
+</table>
+</div>

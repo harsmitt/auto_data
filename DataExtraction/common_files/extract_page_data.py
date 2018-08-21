@@ -88,13 +88,15 @@ def scrap_pdf_page(**kwargs):
                                                          next_line=next_line, l_num=l_num)
 
 
-                if date_obj and len(date_obj)<5:
+                # logger_/info.info("date obj %s" % date_obj)
+                if date_obj and len(date_obj)<5 and len(data)>10:
 
                     if not balance_sheet_data and kwargs['pdf_page']=='bsheet':
                         for pdf in range(pdf_page_next):
                             data = get_page_content(seprator='@@',page=pdf_page, path=kwargs['path'], file=kwargs['file']) if not 'data' in kwargs else kwargs['data']
                             data_dict,unit = ExtractBalnceSheet(page= int(pdf_page)+1, path=kwargs['path'], file=kwargs['file'],date_line=date_line,data_dict=data_dict,data=data,ignore_index=ignore_index,date_obj=date_obj,unit=unit)
                             pdf_page = int(pdf_page) + 1
+                            # logger_info.info("all_pages balance sheet status %s" % data_dict)
                         if 'p_extraction' in kwargs or  (data_dict and len(data_dict)>=3 and any(key in list(data_dict.keys()) for key in ['current assets','non current assets','current liablities','non burrent liabilities'])):
                             try:
                                 data_dict = get_notes_data(date_obj=date_obj,year_end=kwargs['year_end'],
@@ -102,12 +104,13 @@ def scrap_pdf_page(**kwargs):
                                                        page=pdf_page+1, path=kwargs['path'],pdf_page=kwargs['pdf_page'],
                                                        file=kwargs['file'], notes_sec=kwargs['notes'])
 
-                                print (data_dict)
+                                # logger_info.info("balance sheet %s" %data_dict)
                                 data_dict = remove_extra_keys(data_dict=data_dict)
                             except Exception as e:
                                 import traceback
-                                logger.debug("error in notes section %s " % str(e))
+                                print (traceback.format_exc())
                                 logger.debug(traceback.format_exc())
+                                logger.debug("error in notes section %s " % str(e))
                                 pass
                             print (data_dict)
                             #This function actually creates company object and all the financial parameters
@@ -139,8 +142,9 @@ def scrap_pdf_page(**kwargs):
                                 data_dict = remove_extra_keys(data_dict=data_dict)
                             except Exception as e:
                                 import traceback
-                                logger.debug("error in notes section %s " % str(e))
+                                print (traceback.format_exc())
                                 logger.debug(traceback.format_exc())
+                                logger.debug("error in notes section %s " % str(e))
                                 pass
 
                             img_path, c_name = Create_pnl(year_end=kwargs['year_end'], c_name=kwargs['c_name'],dit_name=kwargs['dit_name'],
@@ -164,7 +168,7 @@ def scrap_pdf_page(**kwargs):
     except Exception as e:
         import traceback
         print (traceback.format_exc())
-        logger.debug("error in scrap pdf page  %s " % e)
         logger.debug(traceback.format_exc())
+        logger.debug("error in scrap pdf page  %s " % str(e))
 
         return e

@@ -20,8 +20,9 @@ def notes_section(**kwargs):
 
         return n_dict
     except Exception as e:
-        logger.debug("error in notes section notes section %s " % str(e))
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in notes section notes section %s " % str(e))
         pass
 
 def financial_page(**kwargs):
@@ -43,8 +44,11 @@ def financial_page(**kwargs):
                     check_next_num) - int(num) > 1 else {kwargs['key']: num}
         return temp_dict,n_dict
     except Exception as e:
-        logger.debug("error in table content financial page %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in table content financial page %s " % str(e))
+        return e
 
 
 def get_financial_statements(**kwargs):
@@ -98,8 +102,10 @@ def get_financial_statements(**kwargs):
                     next_num  = int(next_num)+1 if next_num else ''
         return statements_page
     except Exception as e:
-        logger.debug("error in table content get_financial_statements %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in table content get_financial_statements %s " % str(e))
 
 
 

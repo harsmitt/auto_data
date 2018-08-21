@@ -108,8 +108,9 @@ def i_notes_index(**kwargs):#[(notes,group,company),(group,notes),(company,notes
         return kwargs['ignore_index']
     except Exception as e:
         import traceback
-        logger.debug("error in notes index for values %s " %kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in notes index for values %s " %str(kwargs))
         return e
 
 def i_company_index(**kwargs):#[group,company]
@@ -133,8 +134,9 @@ def i_company_index(**kwargs):#[group,company]
         return kwargs['ignore_index']
     except Exception as e:
         import traceback
-        logger.debug("error in company index for values  %s " %kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in company index for values  %s " %str(kwargs))
         return e
 
 
@@ -194,8 +196,9 @@ def i_qtr_index(**kwargs):
         return kwargs['ignore_index']
     except Exception as e:
         import traceback
-        logger.debug("error in qtr index for values %s " %kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in qtr index for values %s " %str(kwargs))
         return e
 
 #code tested for [group,company,notes] combinations
@@ -244,8 +247,9 @@ def i_index(**kwargs):
         return kwargs['ignore_index'],kwargs['date_obj'],kwargs['date_line']
     except Exception as e:
         import traceback
-        logger.debug("error in i index for values %s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in i index for values %s " % str(kwargs))
         return e
 
 
@@ -268,6 +272,8 @@ def remove_ignore_index(values,last_notes_no,**kwargs):
             del values[i]
         return values,last_notes_no
     except Exception as e:
-        logger.debug("error in remove_ignore_index for values  %s " % values)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in remove_ignore_index for values  %s " %str(values))
         return e

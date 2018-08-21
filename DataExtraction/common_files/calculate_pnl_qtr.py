@@ -19,7 +19,7 @@ def cal_qtr_pnl(request):
         qtr_list = list(qtrs.values())
 
         q_val = request.GET['q_val']
-        q_key = (list(qtrs.keys())[list(qtrs.values()).index(str(request.GET['q_val']).lower())])
+        q_key = (list(qtrs.keys())[list(qtrs.values()).index(str(request.GET['q_val']).title())])
         if get_digit(q_key) >= 2 and request.GET['cal_qtr'] == 'Cal_q2':
             prev_q.append('q' + str(get_digit(q_key) - 1)) if get_digit(q_key) !=0 else prev_q.append('q' + str(get_digit(q_key)))
         else:
@@ -34,10 +34,13 @@ def cal_qtr_pnl(request):
         return render(request, 'AutomationUI/pnl.html', locals())
 
     except Exception as e:
-        logger.debug("error in cal_qtr_pnl for company %s " % c_obj)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in cal_qtr_pnl for company %s " % str(c_obj))
 
 def get_qtr(**kwargs):
+    #todo need to change code .(code should be in description not in obj itself)
     for i in kwargs['p_qtrs']:
         p_1 = quarter_data.objects.filter(company_name__company_name=kwargs['name'], page_extraction='pnl',quarter_date = kwargs['date_objs'][i])
         ending_q = quarter_data.objects.filter(company_name__company_name=kwargs['name'], page_extraction='pnl',quarter_date = kwargs['date_objs'][kwargs['end_qtr']])
@@ -47,8 +50,11 @@ def get_qtr(**kwargs):
             p1 = p_1.get(section=obj.section,subsection=obj.subsection,s2section=obj.s2section)
             val+= float(p1.q1) if '.' in str(p1.q1) else int(p1.q1)
             six_months = ending_q.get(section=obj.section, subsection=obj.subsection, s2section=obj.s2section)
-            val = (float(six_months.q1) if '.' in str(six_months.q1) else int(six_months.q1)) - val
-            obj.description= obj.description.split('(')[0] +'('+str(val)+')'
-            obj.q1 = val
-            obj.save()
+            if '-' in six_months.q1:
+                val = (float(six_months.q1) if '.' in str(six_months.q1) else int(six_months.q1)) + val
+            else:
+                val = (float(six_months.q1) if '.' in str(six_months.q1) else int(six_months.q1)) - val
+            six_months.description= obj.description.split('(')[0] +'('+str(val)+')'
+            six_months.q1 = val
+            six_months.save()
     return True

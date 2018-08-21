@@ -16,8 +16,9 @@ def match_all_synonym_words(**kwargs):
             False
     except Exception as e:
         import traceback
-        logger.debug("error in for values %s " %kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in for values %s " %kwargs)
         return e
 
 def match_synonym(**kwargs):
@@ -54,8 +55,9 @@ def match_synonym(**kwargs):
             pass
     except Exception as e:
         import traceback
-        logger.debug("error in match synonym %s " % e)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in match synonym %s " % e)
         return e
 
 
@@ -81,8 +83,9 @@ def match_breakdown_words(**kwargs):
                 pass
     except Exception as e:
         import traceback
-        logger.debug("error in match breakdown permutations for values %s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in match breakdown permutations for values %s " % kwargs)
         return e
 
 
@@ -110,8 +113,9 @@ def match_breakdown(**kwargs):
 
     except Exception as e:
         import traceback
-        logger.debug("error in match breakdown for values %s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in match breakdown for values %s " % kwargs)
         return e
 
 def not_match(**kwargs):
@@ -128,8 +132,9 @@ def not_match(**kwargs):
 
     except Exception as e:
         import traceback
-        logger.debug("error for values %s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error for values %s " % kwargs)
         return e
 
 def match_with_db(**kwargs):
@@ -181,8 +186,9 @@ def match_with_db(**kwargs):
 
     except Exception as e:
         import traceback
-        logger.debug("error for values %s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error for values %s " % kwargs)
         return e
 
 
@@ -193,13 +199,16 @@ def match_with_formula_cell(**kwargs):
         pnl_sec = Section.objects.filter(i_related = kwargs['save_for'])
         for s_obj in pnl_sec:
             for syn in s_obj.i_synonyms.split('##'):
-                x2 = list(itertools.permutations(syn.split(), len(syn.split())))
-                obj_per = [' '.join(word) for word in x2]
+                x2 =list(itertools.permutations(syn.split(), len(syn.split()))) if len(syn.split())<=7 else \
+                    list(syn.split())
+
+                obj_per = [' '.join(word).lower() for word in x2]
                 if kwargs['pdf_obj'] in obj_per:
                     return True
         return False
     except Exception as e:
         import traceback
-        logger.debug("error at the time of skipping formula cell for data :%s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error at the time of skipping formula cell for data :%s " % kwargs)
         return e

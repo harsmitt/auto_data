@@ -26,8 +26,11 @@ def make_directory(company_name):
                 if exception.errno != errno.EEXIST:
                     raise
     except Exception as e:
-        logger.debug("error in make directory %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in make directory %s " % str(e))
+        return e
 
 
 
@@ -46,8 +49,10 @@ def save_image(path, page, company_name):
                 img.save(filename=img_path)
         return img_path
     except Exception as e:
-        logger.debug("error in save_image %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in save_image %s " % str(e))
         return e
 
 
@@ -67,8 +72,10 @@ def add_quarter(path, page, qtr_dict,c_obj,subsection,section,s2section):
                 q_dict[k] = query1
             return q_dict
     except Exception as e:
-        logger.debug("error in add_quarter %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in add_quarter %s " % str(e))
         return e
 
 def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=None,pdf_page = None):
@@ -96,8 +103,10 @@ def add_gbc(img_path, page, c_name,year_end, c_obj, sec, sub_obj=None, s2_obj=No
         return True
 
     except Exception as e:
-        logger.debug("error in add gbc %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in add gbc %s " % str(e))
         return e
 
 def Create_blank_sheet(c_name, path, page,year_end,dit_name):
@@ -131,8 +140,10 @@ def Create_blank_sheet(c_name, path, page,year_end,dit_name):
         return img_path,c_obj.company_name
 
     except Exception as e:
-        logger.debug("error in create balance sheet blank data %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in create balance sheet blank data %s " %str(e))
         return e
 
 def Create_pnl(c_name,path,page,year_end,dit_name):
@@ -169,6 +180,8 @@ def Create_pnl(c_name,path,page,year_end,dit_name):
         return img_path,c_obj.company_name
 
     except Exception as e:
-        logger.debug("error in create blank pnl %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in create blank pnl %s " %str(e))
         return e

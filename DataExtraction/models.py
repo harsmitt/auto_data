@@ -25,7 +25,7 @@ class SectorDit(models.Model):
 
 class Section(models.Model):
     item = models.CharField(max_length=2000)
-    i_synonyms = models.CharField(max_length=400, blank=True,null=True)
+    i_synonyms = models.CharField(max_length=3000, blank=True,null=True)
     i_related = models.CharField(max_length=200,choices=Comp_type)
     added_date = models.DateTimeField(auto_now=True)
     added_by = models.ForeignKey(User,related_name = 'createdby',blank=True,null=True)

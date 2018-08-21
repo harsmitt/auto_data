@@ -197,7 +197,12 @@ def swap_multiple(request):
                     for i in data[sec_name]:
                         for key, val in i.items():
                             if type(val) != list and key == g_data['item']:
-                                val.update({item: remove_item})
+                                if item in list(i[key].keys()):
+                                    for key1, key2 in i[key].items():
+                                        if key1 == item:
+                                            val[key1].update(remove_item)
+                                else:
+                                    val.update({item: remove_item})
                                 i['update'] = True
                                 add_in_item = True
                                 break;
@@ -205,10 +210,15 @@ def swap_multiple(request):
                                 for s2sec in val:
                                     for s2, s2_o in s2sec.items():
                                         if s2 == g_data['item']:
-                                            s2_o.update({item: remove_item})
+
+                                            if item in list(s2sec[s2].keys()):
+                                                for key1, key2 in s2sec[s2].items():
+                                                    if key1 == item:
+                                                        s2_o[key1].update(remove_item)
+                                            else:
+                                                s2_o.update({item: remove_item})
                                             i['update'] = True
                                             add_in_item = True
-                                            # remove_item =s2sec[s2].pop(g_data['existing_sec'][0])
                                             break;
                                     if add_in_item: break;
                         if add_in_item: break;

@@ -9,24 +9,21 @@ from DataExtraction.logger_config import logger
 def save_bsheet(**kwargs):
     try:
         data=kwargs['data']
-
         if kwargs['new_dict']:
-            data = get_new_data(override = kwargs['override'],data= kwargs['data'], c_name=kwargs['c_name'],
+            data = get_new_data(override = kwargs['override'],data= kwargs['data'],
+                                c_name=kwargs['c_name'],
                                 t_pdf = kwargs['pdf_type'],year_end =kwargs['year_end'],
                                 model = CompanyBalanceSheetData,p_type = 'bsheet')
             print (data)
             data = unit_conversion(data=data,unit= kwargs['unit'],file=kwargs['file']
-                                   ,c_name=kwargs['c_name'], t_pdf = kwargs['pdf_type'],date_obj=kwargs['date_obj'])
-        print (data)
+                                   ,c_name=kwargs['c_name'], t_pdf = kwargs['pdf_type'],
+                                   date_obj=kwargs['date_obj'])
         key_list = list(data.keys())
-
-        if 'current assets' not in data :#len(key_list)>5:
-
-
+        if 'current assets' not in data :
             obj_list = copy.deepcopy(bs_objs.comp_mapping_dict['bsheet'])
             save_comp(data = data,extraction=kwargs['extraction'],
                       year_end=kwargs['year_end'],img_path=kwargs['img_path'],
-                      page=kwargs['page'],key = 'combine'
+                      page=kwargs['page'],key = 'combine',p_type='bsheet'
                       ,c_name=kwargs['c_name'], pdf_type=kwargs['pdf_type'],obj_list = obj_list)
         else:
             for key in key_list:
@@ -44,8 +41,9 @@ def save_bsheet(**kwargs):
         return True
     except Exception as e:
         import traceback
-        logger.debug("error in balance sheet save section %s " % str(e))
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in balance sheet save section %s " % str(e))
         return False
 
 
@@ -96,6 +94,9 @@ def save_comp(**kwargs):
 
         return True
     except Exception as e:
-        logger.debug("errror in balance sheet %s at the time of save " %str(e))
-        logger.debug("error in balance sheet save data  %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("errror in balance sheet %s at the time of save " %str(e))
+        logger.debug("error in balance sheet save data  %s " % str(kwargs['data']))
+        return e

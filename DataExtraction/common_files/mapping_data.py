@@ -31,16 +31,17 @@ class MappingDict(object):
                          'operating revenues','Turnover'):'Revenue',
                         ('cost of sales','cost of revenue','cost of goods sold'):'Cost of Revenue',
                         ('Operating expenses','Operating cost'):'Operating Expenses',
-                        ('operating income', 'other income'): 'Other Operating Income',
                         ('selling, general and administrative expenses','selling and general expenses'):'selling and general',
                         ('other income expense, net','other income expense , net','other income expense'):'nonop and income tax',
                                                 }
 
-    other_pnl_mapping = {'Revenue':'Revenue','Cost of Revenue':'Cost of Revenue','Operating Expenses':'Other Operating Expense',
-                         'Other Operating Income' :'Other Operating Revenue','selling and general':'Other Operating Expense',
+    other_pnl_mapping = {'Revenue':'Revenue',
+                         'Cost of Revenue':'Cost of Revenue',
+                         'Operating Expenses':'Other Operating Expense',
+                         'selling and general':'Other Operating Expense',
                          'Non-Operating Income/(Expenses)' : 'Other Non-Operating Income/(Expenses)',
-                         'opearting cost and expense and nonop':'Other Operating Expense',
-                         'nonop and income tax': 'Other Non-Operating Income/(Expenses)',
+                         'opearting cost and expense and nonop':'Extra PNL Keywords',
+                         'nonop and income tax': 'Extra PNL Keywords',
 
                          # 'opearting expense and non operating':'Other Operating Expense',
                          }
@@ -114,12 +115,14 @@ class PNLMapping(object):
             sector_section[i.sector_name].update({'opearting cost and expense and nonop': list(sec_subsec)})
 
             sec_subsec = SubSection.objects.filter(
-                section__item__in=['Non-Operating Income/(Expenses)',
+                section__item__in=['Non-Operating Income/(Expenses)','Other Operating Income',
                                    'Income Tax Expense', 'Profit/(Loss) from Discontinued Operations']).values(
                 'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
                 'section', 'id')
 
             sector_section[i.sector_name].update({'nonop and income tax': list(sec_subsec)})
+
+
         else:
             sectorsec = SectorSection.objects.filter(sector = i)
             sector_subsec = SectorSubSection.objects.filter(sector=i,section__in = sectorsec).values('i_synonyms','i_breakdown','i_keyword','item','section','id')
@@ -133,7 +136,9 @@ class PNLMapping(object):
                 key =sec.item.split('##')[-1]
                 sector_section[i.sector_name].update({key:list(sec_subsec)})
 
-            sectorsection_name = [i.sector_name+'##Non-Operating Income/(Expenses)',i.sector_name+'##Operating Expenses',i.sector_name+'##Cost of Revenue',i.sector_name+'##Income Tax Expense',i.sector_name+'##Profit/(Loss) from Discontinued Operations']
+            sectorsection_name = [i.sector_name+'##Non-Operating Income/(Expenses)',i.sector_name+'##Operating Expenses',\
+                                  i.sector_name+'##Cost of Revenue',i.sector_name+'##Income Tax Expense',i.sector_name+'##Other Operating Income',\
+                                  i.sector_name+'##Profit/(Loss) from Discontinued Operations']
 
             opcost_exp = SectorSubSection.objects.filter(section__item__in=sectorsection_name).values(
                 'i_synonyms', 'i_breakdown', 'i_keyword', 'item',
@@ -175,7 +180,7 @@ p_keywords = ['statement of income','statement of operation','statement of profi
 #               'statement of income','statement of operation'
               ]
 
-stop_words =  ['of', 'on', 'at', 'a', 'an','to','the','are','from']
+stop_words =  ['of', 'on', 'at', 'a', 'an','to','the','are','from','and']
 
 k_list = {'toc':toc,'bsheet':b_keywords,'pnl':p_keywords}
 

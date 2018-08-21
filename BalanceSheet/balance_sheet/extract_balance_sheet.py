@@ -22,7 +22,6 @@ def ExtractBalnceSheet(**kwargs):
         if not res:
             for l_num, line in enumerate(kwargs['data'][kwargs['date_line']:]):
                 l_num = l_num+kwargs['date_line']
-
                 if l_num > 15 and len(data_dict) < 2 and data_dict :
                    d_keys =list(data_dict.keys())[-1]
                    if not any(key in d_keys for key in  ['current assets','current liabilities','stockholders equity']):
@@ -243,6 +242,10 @@ def ExtractBalnceSheet(**kwargs):
             return data_dict,kwargs['unit']
 
     except Exception as e:
+        import traceback
+        print (traceback.format_exc())
+        logger.debug(traceback.format_exc())
+        logger.debug("error in balance sheet extarction %s " % str(e))
         return data_dict, kwargs['unit']
 
 
@@ -265,8 +268,9 @@ def remove_ignore_index(values,last_notes_no,**kwargs):
         return values,last_notes_no
     except Exception as e:
         import traceback
-        logger.debug("error in balance sheet extarction %s " % str(e))
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in balance sheet extarction %s " % str(e))
         return e
 
 
@@ -287,7 +291,9 @@ def check_pattern(**kwargs):
                                      ,ignore_index=kwargs['ignore_index'],date_obj = kwargs['date_obj'])
         return data_dict,True
     except Exception as e:
-        logger.debug("error in extraction of balance sheet %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in extraction of balance sheet %s " % str(e))
         pass
 

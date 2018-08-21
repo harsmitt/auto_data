@@ -172,7 +172,6 @@ def update_comp(request):
                                     if key1 ==g_data['existing_sec'][0]:
                                         val[key1].update(remove_item)
                             else:
-                                print (i)
                                 val.update({g_data['existing_sec'][0]: remove_item})
                             i['update']=True
                             add_in_item =True

@@ -51,8 +51,10 @@ def get_notes_pages(**kwargs):
 
         return notes_section_dict
     except Exception as e:
-        logger.debug("error in notes section %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in notes section %s " % str(e))
         pass
 
 
@@ -72,8 +74,11 @@ def find_breakup_bsheet(**kwargs):
         return key_list
 
     except Exception as e:
-        logger.debug("error in notes section %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in notes section %s " % str(e))
+        return e
 
 def get_notes_data(**kwargs):
     try:
@@ -94,6 +99,7 @@ def get_notes_data(**kwargs):
         return data_dict
     except Exception as e:
         import traceback
-        logger.debug("error in get_notes %s " % str(e))
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in get_notes %s " % str(e))
         return kwargs['data_dict']

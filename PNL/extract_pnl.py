@@ -25,7 +25,6 @@ def ExtractPNL(**kwargs):
         data = kwargs['data'][kwargs['date_line']:]
         for l_num, line in enumerate(data):
             line = line.replace('$', '').strip()
-            # import pdb;pdb.set_trace()
             if l_num>15 and len(data_dict)<2 and data_dict:
                 d_keys =list(data_dict.keys())[-1]
                 if not data_dict[d_keys]:
@@ -56,7 +55,9 @@ def ExtractPNL(**kwargs):
             elif len(re.split('  +',line)) >2 and not data_dict and not num_there(line):
                 pass
 
-            elif  (len(re.split('  +', line.replace('-','').strip())) < 2 and alpha_there(line)) or (len(re.split('  +', line.replace('-','').strip())) ==2 and num_there(line) and not alpha_there(line)):
+            elif  (len(re.split('  +', line.replace('-','').strip()))) < 2 or\
+                           (len(re.split('  +', line.replace('-','').strip())) ==2 and \
+                                num_there(line) and not alpha_there(line)):
                 if num_there(line) and not alpha_there(line):
                     values = list(filter(lambda name: num_there(name), line.split()))
                     if len(values) < (len(kwargs['date_obj'])+len(kwargs['ignore_index'])):
@@ -139,8 +140,9 @@ def ExtractPNL(**kwargs):
 
     except Exception as e:
         import traceback
-        logger.debug("error in pnl extraction for data:%s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in pnl extraction for data:%s " % str(kwargs))
         return data_dict,kwargs['unit']
 
 def get_modigy_values(**kwargs):
@@ -157,6 +159,7 @@ def get_modigy_values(**kwargs):
         return modify_val
     except Exception as e:
         import traceback
-        logger.debug("error for :%s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error for :%s " % str(kwargs))
         return e

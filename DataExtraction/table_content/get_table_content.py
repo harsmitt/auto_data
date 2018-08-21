@@ -4,10 +4,15 @@ from .statements_page import *
 from .utils import *
 from DataExtraction.logger_config import logger
 
+financial_statement =['financial statements and supplementary data',
+                      'financial content','financial reporting']
+
 def get_page_num(l_num,**kwargs):
     try:
         line = kwargs['data'][l_num]
         n_line = kwargs['data'][l_num+1] if (len(kwargs['data'])-1!=l_num+1) else ''
+        next_num =0
+        c_num=0
         if n_line:
 
             if line.split()[-1].split('-')[0].isdigit():
@@ -32,9 +37,11 @@ def get_page_num(l_num,**kwargs):
                 kwargs['page_detail'].update({kwargs['section_name']: {kwargs['key_name']: c_num }})
         return kwargs['page_detail']
     except Exception as e:
+        import traceback
+        print (traceback.format_exc())
+        logger.debug(traceback.format_exc())
         logger.debug("error in table content get_page_num %s " % str(e))
         logger.debug("error in table content get_page_num line: %s " % str(line))
-        logger.debug(traceback.format_exc())
         pass
 
 
@@ -116,7 +123,8 @@ def table_content(**kwargs):
 
     except Exception as e:
         import traceback
-        logger.debug("error in table content  %s " % str(e))
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
-        return kwargs['page_detail']
+        logger.debug("error in table content  %s " % str(e))
+        return {}
     return kwargs['page_detail']

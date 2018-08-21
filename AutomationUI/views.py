@@ -222,19 +222,10 @@ def delete_row(request):
     # return render(request, 'AutomationUI/bs_data.html', {'data': data})
 
 def get_qtrs(c_obj):
-    c_m= datetime.strptime(c_obj.y_end, '%B').month
-    if c_m in [11,12,1]:
-        q2 = 'june'
-        q3 ='september'
-    elif c_m in [2,3,4]:
-        q2 = 'september'
-        q3 ='december'
-    elif c_m in [5,6,7]:
-        q2 ='december'
-        q3= 'march'
-    else:
-        q2 ='march'
-        q3='june'
+    # c_m= datetime.strptime(c_obj.y_end, '%B').month
+    qtrs = qtr_date(c_obj.y_end)
+    q2 = get_alpha(qtrs['q2'])
+    q3 = get_alpha(qtrs['q3'])
     return q2,q3
 
 class PNLFormView(APIView):
@@ -353,6 +344,8 @@ def upload(f_name,c_name,name,post_data,return_dict):
                             file=path, pdf_type=post_data['pdf_type'],page_num=page_num,
                             override=data_dict['override']
                             )
+        print ('_-----------------------------')
+        print (result)
         if len(result)==2:
             msg = "Uploaded"
         elif len(result) ==1:
@@ -363,6 +356,7 @@ def upload(f_name,c_name,name,post_data,return_dict):
         else:
             msg="Error in File Uploading"
 
+        print (msg)
         return_dict[name]=msg
         # return file_status
 
@@ -397,6 +391,7 @@ class NewCompanyView(APIView):
             except Exception as e:
                 import traceback
                 print (traceback.format_exc())
+
             res = LoopPdfDir(fix_path='/home/administrator/DataAutomation/company_pdf/',\
                              company_list=[request.POST['company_name']],c_ticker = request.POST['company_ticker'],
                              sector = request.POST['sector'],year_end = request.POST['year_end']

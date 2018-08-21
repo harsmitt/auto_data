@@ -44,7 +44,6 @@ def FillBalanceSheet(sheet,data,row,date_list,loop_key,total_row,crosscheck):
                 sheet[chr(ch) + str(row)].border = format_excel.thin_border
                 ch += 1
             crosscheck.append(row)
-            print ("bvhvhghjjhjhhkhkkjkjjk "+str(crosscheck))
             row+=1
             total_row=[]
         else:

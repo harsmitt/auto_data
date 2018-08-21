@@ -9,13 +9,13 @@
     </td>
         {%for date in date_list%}
             <th class="long">
-                    {% if q2 in date and 'Profit' in p_type%}
+                    {% if q2 in date.lower and 'Profit' in p_type%}
                         {{date|upper}}
                         <div class="options_list">
                             <a onclick="cal_q2(this)" style="color:Blue">Cal_q2</a>
                         </div>
                     {%else %}
-                        {%if q3 in date and 'Profit' in p_type %}
+                        {%if q3 in date.lower and 'Profit' in p_type %}
 
                             {{date|upper}}
                             <div class="options_list">

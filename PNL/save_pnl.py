@@ -93,7 +93,8 @@ def save_pnl(**kwargs):
         return True
     except Exception as e:
         import traceback
-        logger.debug("error in save pnl for data :%s " % kwargs)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in save pnl for data :%s " % kwargs)
         return e
 

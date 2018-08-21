@@ -12,12 +12,12 @@ def get_last_qtr_pnl(**kwargs):
         qtr_list = list(qtrs.values())
         for year in years:
             p_qtrs = []
-            qtr = kwargs['year_end'].lower()+' '+str(date_objs[year])
+            qtr = kwargs['year_end']+' '+str(date_objs[year])
             last_m, next_m = next_last_month(qtr)
-            match_qtr = qtr.lower() if qtr.lower() in qtr_list else last_m if last_m.lower() in qtr_list \
-                else next_m if next_m.lower() in qtr_list else ''
+            match_qtr = qtr if qtr in qtr_list else last_m if last_m in qtr_list \
+                else next_m if next_m in qtr_list else ''
             if match_qtr:
-                q_key = (list(qtrs.keys())[list(qtrs.values()).index(str(match_qtr).lower())])
+                q_key = (list(qtrs.keys())[list(qtrs.values()).index(str(match_qtr))])
                 if get_digit(q_key) >=4:
                     p_qtrs.append('q'+str(get_digit(q_key)-1))
                     p_qtrs.append('q' + str(get_digit(q_key) - 2))
@@ -26,8 +26,10 @@ def get_last_qtr_pnl(**kwargs):
                 else:
                     print ("data is not available")
     except Exception as e:
-        logger.debug("error in get last qtr for pnl with values " % kwargs)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in get last qtr for pnl with values " %str(kwargs))
         return e
 
 
@@ -54,8 +56,10 @@ def update_last_qtr(**kwargs):
             obj.q1 = val
             obj.save()
     except Exception as e:
-        logger.debug("error in update_last_qtr with values %s " % kwargs)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in update_last_qtr with values %s " % str(kwargs))
         return e
 
 def get_last_bs_qtr(**kwargs):
@@ -69,18 +73,20 @@ def get_last_bs_qtr(**kwargs):
         for year in year_list:
             qtr = kwargs['year_end']+' '+str(year)
             last_m,next_m = next_last_month(qtr)
-            match_qtr = qtr.lower() if qtr.lower() in qtr_list else last_m if last_m.lower() in qtr_list\
-                        else next_m if next_m.lower() in qtr_list else ''
+            match_qtr = qtr if qtr in qtr_list else last_m if last_m in qtr_list\
+                        else next_m if next_m in qtr_list else ''
             if match_qtr :
                 y_key = (list(year_dict.keys())[list(year_dict.values()).index(int(year))])
 
-                q_key = (list(qtr_dict.keys())[list(qtr_dict.values()).index(str(match_qtr).lower())])  # Prints george
+                q_key = (list(qtr_dict.keys())[list(qtr_dict.values()).index(str(match_qtr))])  # Prints george
                 save_yending_qtr = copy_year_data(year_end =kwargs['year_end'],c_name =kwargs['c_name'],y_key = y_key,q_key = q_key)
             else:
                 pass
     except Exception as e:
-        logger.debug("error in get last balance sheet qtr for values %s " % kwargs)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in get last balance sheet qtr for values %s " % str(kwargs))
         return e
 
 def copy_year_data(**kwargs):
@@ -96,6 +102,8 @@ def copy_year_data(**kwargs):
             q_o.save()
         return True
     except Exception as e:
-        logger.debug("error in copy year data for values %s " % kwargs)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
-        return e
+        logger.debug("error in copy year data for values %s " %str(kwargs))
+        return eq

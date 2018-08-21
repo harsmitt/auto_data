@@ -19,10 +19,10 @@ file_name = path+'dataautomation_log_%s.log' %(timestr)
 # create a file handler
 
 handler = logging.FileHandler(file_name)
-handler.setLevel(logging.INFO)
+handler.setLevel(logging.DEBUG)
 
 # create a logging format
-formatter = logging.Formatter('%(asctime)s -(name)-12s - %(message)s')
+formatter = logging.Formatter('%(asctime)s -(fname)-12s - %(message)s')
 handler.setFormatter(formatter)
 
 # add the handlers to the logger

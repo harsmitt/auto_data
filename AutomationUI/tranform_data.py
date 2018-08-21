@@ -11,11 +11,12 @@ from django.core.cache import cache
 
 def get_des(loop_key,objs):
     des_d =OrderedDict()
-    for q_key, q_date in loop_key.items():
+    for l_num, q_key in reversed(list(enumerate(loop_key))):#q_key, q_date in loop_key.items():
+        q_date = loop_key[q_key]
         obj_data = objs.filter(quarter_date=q_date)
         des = obj_data[0].description.split('##') if obj_data else []
         for d_obj in des:
-            if d_obj:
+            if get_digit(d_obj, ui_num=True):
                 if not get_alpha(d_obj) or not get_alpha(d_obj).split(',')[0] in des_d:
                     des_d[get_alpha(d_obj).split(',')[0]] = OrderedDict({q_key: get_digit(d_obj, ui_num=True)})
                 else:
@@ -45,7 +46,6 @@ def get_delete_data(c_id=None):
     data_objs = DeleteRow.objects.filter(company_name=c_id)
     sec = data_objs.values_list('section__item',flat=True).distinct()
     for sec_obj in sec:
-        print ("delete row " + str(sec))
         sec_d = OrderedDict()
         subsec = data_objs.filter(section__item= sec_obj).values_list('subsection__item',flat=True).distinct()
         sub_list = []
@@ -65,7 +65,6 @@ def get_delete_data(c_id=None):
             else:
                 sub_d[sub] = get_des(loop_key, s1_obj)
             sub_list.append(sub_d)
-        print (sub_list)
         sec_d[sec_obj] = sub_list
         sec_list.append(sec_d)
 
@@ -83,7 +82,6 @@ def get_data(req_type=None,c_id=None,section_type=None,o_sec = None):
 
     sec_list =[]
     for sec in section:
-        print ("hello"+str(sec))
         sec_d = OrderedDict()
         sub_list =get_subsec_data(sec,data_objs,loop_key)
         sec_d[sec.item]=sub_list

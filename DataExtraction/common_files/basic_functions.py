@@ -13,15 +13,21 @@ def num_there(s):
             return True
         return any(i.isdigit() for i in s)
     except Exception as e:
-        logger.debug("error in num_there string: %s " % s)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in num_there string: %s " % s)
+        return e
 
 def alpha_there(s):
     try:
         return any(i.isalpha() for i in s)
     except Exception as e:
-        logger.debug("error in alpha_there string: %s " % s)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in alpha_there string: %s " % s)
+        return e
 
 
 def get_alpha(s,key=False,pnl=False,remove_space=False,remove_s = False):
@@ -50,8 +56,11 @@ def get_alpha(s,key=False,pnl=False,remove_space=False,remove_s = False):
         else:
             return alpha_obj
     except Exception as e:
-        logger.debug("error in get_alpha string : %s " % s)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in get_alpha string : %s " % s)
+        return e
 
 
 def extract_s(line):
@@ -60,8 +69,11 @@ def extract_s(line):
 
         return  remove_s_obj
     except Exception as e:
-        logger.debug("error in extract_s  string : %s " % e)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in extract_s  string : %s " % e)
+        return e
 
 def get_digit(s,num=False,ui_num=False):
     try:
@@ -87,8 +99,9 @@ def get_digit(s,num=False,ui_num=False):
         return digit
     except Exception as e:
         import traceback
-        logger.debug("error in get_digit string %s " % s)
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in get_digit string %s " % s)
         return 0
 
 def check_datetime(obj,pdf_type = None):
@@ -112,9 +125,11 @@ def check_datetime(obj,pdf_type = None):
             except:
                 return False
     except Exception as e:
-        logger.debug("error in check_datetime obj: %s " % obj)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
-
+        logger.debug("error in check_datetime obj: %s " % obj)
+        return e
 
 from dateutil.parser import parse
 
@@ -140,8 +155,10 @@ def year_date(year_end):
             year_dict[y_key] = c_date.year
         return year_dict
     except Exception as e:
-        logger.debug("error in year_date  year end id  %s " % year_end)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in year_date for year end :  %s " % year_end)
         return e
 
 #get next and last month from a current month
@@ -161,8 +178,10 @@ def next_last_month(current_month):
                 month=1,year=year)).strftime('%B %Y')
         return last_month,next_month
     except Exception as e:
-        logger.debug("error in fetching next last month from %s " % current_month)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in fetching next last month from %s " % current_month)
         return e
 
 from datetime import datetime, timedelta
@@ -255,6 +274,8 @@ def qtr_date(year_end):
         return qtr_dict
 
     except Exception as e:
-        logger.debug("error in qtr_date for year end  %s " % year_end)
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in qtr_date for year end  %s " % year_end)
         return e

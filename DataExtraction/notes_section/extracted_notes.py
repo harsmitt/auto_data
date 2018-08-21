@@ -47,9 +47,10 @@ def match_key(**kwargs):
                     return True
         return False
     except Exception as e:
-        logger.debug("error in notes section match key %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
-
+        logger.debug("error in notes section match key %s " % str(e))
 def get_values(**kwargs):
     try:
         keys = list(kwargs['data_dict'].keys())
@@ -62,8 +63,10 @@ def get_values(**kwargs):
                     date_obj, values =map(list,zip(*kwargs['data_dict'][i][kwargs['exist_key']]))
                     return date_obj,values
     except Exception as e:
-        logger.debug("error in notes section get values %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in notes section get values %s " % str(e))
 
 import copy
 def extract_notes(**kwargs):
@@ -72,7 +75,6 @@ def extract_notes(**kwargs):
     pdf_page_keys = copy.deepcopy(kwargs['pdf_page_keys'])
     if pdf_page_keys:
         for notes in range(int(start), int(end)):
-            print (notes)
             date_obj = []
             data = get_page_content(seprator='@@', page=notes, path=kwargs['path'], file=kwargs['file'])
             try:
@@ -125,8 +127,9 @@ def extract_notes(**kwargs):
                                                 break;
             except Exception as e:
                 import traceback
-                logger.debug("error in notes section extract notes %s " % str(e))
+                print (traceback.format_exc())
                 logger.debug(traceback.format_exc())
+                logger.debug("error in notes section extract notes %s " % str(e))
                 pass
 
         return kwargs['data_dict'],pdf_page_keys
@@ -208,7 +211,9 @@ def get_data_dict(**kwargs):
                     del new_key_dict[key]
         return new_key_dict
     except Exception as e:
-        logger.debug("error in notes section get data dict %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in notes section get data dict %s " % str(e))
         return new_key_dict
 

@@ -151,7 +151,6 @@ def pdf_key_write(**kwargs):
             ch = 66
             for d1, d2 in kwargs['loop_key'].items():
                 if d1 == p_val1:
-                    print (p_val2)
                     kwargs['sheet'][chr(ch) + str(kwargs['row_no'])].value = p_val2
                 # else:
                 #     kwargs['sheet'][chr(ch) + str(kwargs['row_no'])].value = 0

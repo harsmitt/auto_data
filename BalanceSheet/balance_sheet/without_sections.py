@@ -145,8 +145,10 @@ def without_sections(**kwargs):
 
         return data_dict
     except Exception as e:
-        logger.debug("error in extraction of balance sheet without section %s " % str(e))
+        import traceback
+        print (traceback.format_exc())
         logger.debug(traceback.format_exc())
+        logger.debug("error in extraction of balance sheet without section %s " % str(e))
         pass
 
 

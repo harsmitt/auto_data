@@ -22,3 +22,8 @@ CountryList=(
     ('India','India')
 
 )
+
+pdf_type = (
+            ('year','year'),
+            ('quarter','quarter'),
+            )

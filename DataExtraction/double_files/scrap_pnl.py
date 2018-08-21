@@ -12,7 +12,6 @@ from collections import OrderedDict
 
 
 def GetData(file_path):
-    import pdb;pdb.set_trace()
     print ("mahima")
 
     qtr_exists = ''
@@ -35,7 +34,6 @@ def GetData(file_path):
         for lt_obj in layout:
             if num==48:
                 if isinstance(lt_obj, LTTextLineHorizontal) or isinstance(lt_obj, LTTextBoxHorizontal):
-                    import pdb;pdb.set_trace()
                     extracted_text += (lt_obj.get_text())
 
 
@@ -45,7 +43,6 @@ def GetData(file_path):
             print (extracted_text)
             for i in extracted_text.split('\n'):
                 if i and num_there(i) and not date_val:
-                    import pdb;pdb.set_trace()
 
                     date_obj, qtr_exists, date_val = get_year(date_obj, i, date_val, qtr_exists)
                     if qtr_exists == False :
@@ -54,7 +51,5 @@ def GetData(file_path):
                 elif date_val == True:
                     word = i.strip().replace(':', '')
                     print (word)
-                    import pdb;
-                    pdb.set_trace()
 
 

@@ -4,57 +4,48 @@ from django.contrib import admin
 from .models import *
 from DataExtraction.models import *
 from DataExtraction.common_files.basic_functions import *
-# from django.utils.safestring import mark_safe
-# from django import forms
-# from django.contrib.admin import AdminSite
-# from django.shortcuts import render
-#
-# from django.http import HttpResponseRedirect, HttpResponse
+from .keywords_handling import *
+
 qtr_dict=qtr_date(year_end='December')
 year_dict = year_date(year_end='December')
 
+from django import forms
 
-def copy_main_subsection(obj):
-    sec_obj = Section.objects.filter(i_related='Profit and Loss')
-    for s_obj in sec_obj:
-        new_obj  = {'sector':obj,'item':obj.sector_name+'##'+s_obj.item,'i_synonyms':s_obj.i_synonyms,'added_date':datetime.now()}
-        sector_sec = SectorSection(**new_obj)
-        sector_sec.save()
+class SectorSubSectionForm(forms.ModelForm):
+    i_synonyms = forms.CharField(widget=forms.Textarea)
+    i_breakdown =forms.CharField(widget=forms.Textarea)
 
-        sub_objs = SubSection.objects.filter(section=s_obj)
-        print (len(sub_objs))
-
-        for so in sub_objs:
-            new_obj = {'sector': obj,'section':sector_sec, 'item': obj.sector_name + '##' + so.item,
-                       'i_synonyms': so.i_synonyms,'i_breakdown':so.i_breakdown,'i_keyword':so.i_keyword,
-                       'i_deduction':so.i_deduction,'added_date': datetime.now()}
-            sector_subsec = SectorSubSection(**new_obj)
-            sector_subsec.save()
-    return True
-
-def remove_main_sub(obj):
-    sec = SectorSection.objects.filter(sector=obj)
-    for i in sec:
-        subsec = SectorSubSection.objects.filter(sector=obj,section=i)
-
-        for ob in subsec:
-            ob.delete()
-        i.delete()
-    return True
+    class Meta:
+        model = SectorSubSection
+        fields = '__all__'
 
 class SectorSubAdmin(admin.TabularInline):
     model = SectorSubSection
-    exclude = ['section','i_deduction','neg_ro']
-    readonly_fields = ['item']
+    exclude =('section','item','neg_ro','is_expense','is_income','i_synonyms','i_breakdown','i_keyword','i_deduction','added_date','added_by','modified_by')
+    readonly_fields = ['link']
+
+    def link(self, obj):
+        # url = reverse(...)
+        return mark_safe("<a href='/admin/PNL/sectorsubsection/%s'>%s</a>" % (obj.id,obj.item.split('##')[-1]))
+
+    # the following is necessary if 'link' method is also used in list_display
+    link.allow_tags = True
 
 
 class SectorSectionAdmin(admin.TabularInline):
     inlines =[SectorSubAdmin]
     model = SectorSection
 
+class SectorSubSectionAdmin(admin.ModelAdmin):
+    form = SectorSubSectionForm
+
+    # def save_model(self, request, obj, form, change):
+    #     obj.i_synonyms = '##'.join(obj.i_synonyms.split('\r\n'))
+    #     obj.save()
 
 
 class SectorAdmin(admin.ModelAdmin):
+    readonly_fields = ('sector_name',)
     inlines = [SectorSubAdmin]
     def save_model(self, request, obj, form, change):
         if obj.copy_main:
@@ -129,7 +120,6 @@ class GBCADMIN(admin.ModelAdmin):
 
     def q1_url(self, obj):
         if obj.q1:
-            # import pdb;pdb.set_trace()
             val = obj.q1.q1#'('+str(obj.q1.q1)+')' if obj.subsection and obj.subsection.neg_ro else obj.q1.q1
             return ('<a href="/show_image?pdf_path=%s&gbc_name=%s">%s</a>' % (obj.q1.pdf_image_path,obj.gbc_name.id,val) ,
                     "<a target='_blank' href='/admin/DataExtraction/quarter_data/%d/'>Change</a>" % obj.q1.id)
@@ -176,5 +166,5 @@ admin.site.register(SectorDit)
 admin.site.register(DITSectorSection)
 admin.site.register(DITSectorSubSection)
 admin.site.register(SectorSection)
-admin.site.register(SectorSubSection)
+admin.site.register(SectorSubSection,SectorSubSectionAdmin)
 admin.site.register(CompanyPNLData,GBCADMIN)

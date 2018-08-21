@@ -4,7 +4,6 @@ import os
 # from fun import year_date,qtr_date
 
 def qtr_date():
-    # import pdb;pdb.set_trace()
     date_time = datetime.now()-timedelta(days=45)
     month = date_time.month
     year = date_time.year

@@ -24,7 +24,6 @@ def financial_page(**kwargs):
     if any(i in kwargs['line'].split()[int(kwargs['index'])] for i in ['and',',']) or check_datetime(kwargs['line'].split()[int(kwargs['index'])]):
         line = kwargs['line'] + '' + kwargs['data'][kwargs['line_num'] + 1]
     else:line=kwargs['line']
-    # import pdb;pdb.set_trace()
     if line.split()[int(kwargs['index'])].split('-')[0].isdigit() and not check_datetime(line.split()[0]):
         num = str(int(line.split()[int(kwargs['index'])].split('-')[0]) + kwargs['i'])
         index = [index for index in index_list if index in get_alpha(line)][0]
@@ -70,7 +69,6 @@ def get_financial_statements(**kwargs):
                                 key = list(t_dict.keys())[0]
                             elif notes :
                                 key = list(notes.keys())[0]
-                            # import pdb;pdb.set_trace()
                             if not key in statements_page:
                                 statements_page.update(t_dict)
                         else:

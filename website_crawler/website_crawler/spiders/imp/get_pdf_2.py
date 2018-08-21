@@ -30,7 +30,6 @@ class CrawlerSpider(CrawlSpider):
             for counter, link in enumerate(
                     response.css('a::attr(href)').extract()):  # Get all the <a herf> value from response page.
                 if 'investor' in link or 'investors' in link or 'javascript' in link :
-                    # import pdb;pdb.set_trace()
                     if 'http' not in link and'https' not in link :
                         link = self.url_list + link
                     # dont_filter=True gets passed duplicate urls to crawl.

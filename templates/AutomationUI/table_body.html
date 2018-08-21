@@ -17,6 +17,7 @@
                             </div>
                                 {%for s1,s2 in sub.items %}
                                     {%if not s2|get_item  %}
+
                                         <div class="subsection college-list">
                                             <div >
                                                 <div class="col-md-3"><input type="text" style="border:None;padding-left :40px;color:purple" name="subsection" value="{{s1}}"></div>
@@ -67,7 +68,7 @@
                                                             <div class="s2section">
 
                                                             <div >
-                                                                <div class="col-md-3"><input type="text" style="border:None;padding-left :80px;color:blue" name="s2section" value="{{i}}"></div>
+                                                                <div class="col-md-3"><input type="text" style="border:None;padding-left :80px;color:black" name="s2section" value="{{i}}"></div>
                                                                 <div class="col-md-1"><input style="border:None;color:blue" name="s2_q1" type="text" value="{{s2.q1|default:0}}"></div>
                                                                 <div class="col-md-1"><input style="border:None;color:blue" name="s2_q2" type="text" value="{{s2.q2|default:0}}"></div>
                                                                 <div class="col-md-1"><input style="border:None;color:blue" name="s2_q3" type="text" value="{{s2.q3|default:0}}"></div>
@@ -83,15 +84,15 @@
 
                                                                 {%for k,val in j.items %}
                                                                     <div class="existing_s2sec">
-                                                                        <div class="col-md-3"><input type="text" style="border:None;padding-left :120px;color:red" name="existing_s2sec" value="{{k}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2q1" type="text" value="{{val.q1|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2q2" type="text" value="{{val.q2|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2q3" type="text" value="{{val.q3|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2q4" type="text" value="{{val.q4|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2y1" type="text" value="{{val.y1|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2y2" type="text" value="{{val.y2|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2y3" type="text" value="{{val.y3|default:0}}"></div>
-                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exist_s2y4" type="text" value="{{val.y4|default:0}}"></div>
+                                                                        <div class="col-md-3"><input type="text" style="border:None;padding-left :120px;color:red" name="existing_s2" value="{{k}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_q1" type="text" value="{{val.q1|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_q2" type="text" value="{{val.q2|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_q3" type="text" value="{{val.q3|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_q4" type="text" value="{{val.q4|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_y1" type="text" value="{{val.y1|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_y2" type="text" value="{{val.y2|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_y3" type="text" value="{{val.y3|default:0}}"></div>
+                                                                        <div class="col-md-1"><input  class="val" style="border:None;color:red" name="exists2_y4" type="text" value="{{val.y4|default:0}}"></div>
                                                                         <div class="col-md-1">
                                                                             <select id="moves2section" style="width: 100px;" onchange="move_s2section(this);">
                                                                                 <option value ='' selected>Select Subsection Head</option>
@@ -116,6 +117,6 @@
                                 {%endfor%}
                             </div>
                             <!--<input style="width: 30%" type="button" value="Save" onclick="javascript:return form_save('bs_form');">-->
-                            <button class="btn btn-success"><span class="sprite plus-button" onclick="save_sec(this)"></span>Save </button>
+                            <!--<button class="btn btn-success"><span class="sprite plus-button" onclick="save_sec(this)"></span>Save </button>-->
                         </form>
                     {%endfor%}

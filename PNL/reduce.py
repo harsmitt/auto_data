@@ -2,7 +2,6 @@ def match_with_db(**kwargs):
     found = False
     for loop, db_obj in enumerate(kwargs['db_key_list']):
         save_obj = False
-        # import pdb;pdb.set_trace()
         for synonym in db_obj['i_synonyms'].split('##'):
             scomp_list = get_alpha(synonym).split()
             c_list = get_alpha(kwargs['pdf_obj']).split()

@@ -13,7 +13,6 @@ def match_keyword_qtr(**kwargs):
             for comp in data[keyword]:
 
                 print (comp)
-                # import pdb;pdb.set_trace()
                 if 'total' not in comp.lower():
                     obj_save = place_keyword(comp, data[keyword], c_lib, img_path, page, c_name=company_name)
                     # other_obj = SubSection.objects.get(item='Other Equity')

@@ -11,7 +11,7 @@ balance_sheet = '[ (A-Za-z0-9. - )]*consolidated balance (sheets|sheet) *[ (A-Za
 
 
 similar_keyword_re = '[A-Za-z0-9. - ]* %s[ ,A-Za-z0-9.-]*$'
-extended_key = '% s[ ,A-Za-z0-9.-]*$'
+extended_key = '%s[ ,A-Za-z0-9.-]*$'
 
 equity_key_list =list(map(lambda x: get_alpha(x), ['shareholders-equity', 'stockholders-equity',"stockholders' equity","shareholders' equity"]))
 
